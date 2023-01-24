@@ -41,7 +41,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     authService.onAuthStateChanged((user) => {
       if (user) {
         setIsLoggedIn(true);
-        setUser(user.multiFactor.user);
+        setUser((user.multiFactor as any).user);
       } else {
         setIsLoggedIn(false);
       }
