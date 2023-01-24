@@ -2,6 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  images: {
+    domains: ["localhost", "lh3.googleusercontent.com"],
+    formats: ["image/avif", "image/webp"],
+  },
   async rewrites() {
     return [
       {

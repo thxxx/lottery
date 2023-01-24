@@ -9,7 +9,7 @@ import {
   ModalCloseButton,
   Input,
 } from "@chakra-ui/react";
-import { CustomButton, LOCAL_ID } from "../pages";
+import { CustomButton, LOCAL_ID } from "../pages/temps";
 import styled from "@emotion/styled";
 import { dbService } from "../utils/fbase";
 

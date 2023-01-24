@@ -4,14 +4,14 @@ export const theme = {
   purple03: "#A555EC",
   grey: "#EEF2F6",
   darkGrey: "#2F3747",
-  blue01: "#34b3f1",
+  blue01: "#8D9EFF",
   blue02: "#3496F1",
 };
 
 export const lightTheme = {
   ...theme,
   color: "#000000",
-  bgColor: "#f9f9f9",
+  bgColor: "#ffffff",
   bgColor01: "#27282E",
   bgColor02: "#F4F3F5",
   textColor02: "#000000",

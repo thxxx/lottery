@@ -1,31 +1,44 @@
 import create from "zustand";
+import { DomainOne } from "./persona";
+
+export enum ChatType {
+  BOT = "bot",
+  USER = "user",
+  LOADING = "loading",
+}
+
+export type ChatInputType = {
+  text: string;
+  type: ChatType;
+  questionKey?: string;
+};
 
 export type UserState = {
   darkMode: boolean;
-  question: string;
-  answer: string;
-  uid: string;
+  chats: ChatInputType[];
+  job: DomainOne | undefined;
+  user: any;
+  setChats: (by: ChatInputType[]) => void;
   setDarkMode: (by: boolean) => void;
-  setQuestion: (by: string) => void;
-  setAnswer: (by: string) => void;
-  setUid: (by: string) => void;
+  setJob: (by: DomainOne) => void;
+  setUser: (by: any) => void;
 };
 
-export const useStore = create<UserState>((set) => ({
+export const useChatStore = create<UserState>((set) => ({
   darkMode: false,
-  question: "",
-  answer: "",
-  uid: "anonymous",
+  chats: [],
+  job: "",
+  user: undefined,
+  setChats: (by) => {
+    set((state) => ({ ...state, chats: by }));
+  },
   setDarkMode: (by) => {
     set((state) => ({ ...state, darkMode: by }));
   },
-  setQuestion: (by) => {
-    set((state) => ({ ...state, question: by }));
+  setJob: (by) => {
+    set((state) => ({ ...state, job: by }));
   },
-  setAnswer: (by) => {
-    set((state) => ({ ...state, answer: by }));
-  },
-  setUid: (by) => {
-    set((state) => ({ ...state, uid: by }));
+  setUser: (by) => {
+    set((state) => ({ ...state, user: by }));
   },
 }));

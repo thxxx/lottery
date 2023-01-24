@@ -6,12 +6,12 @@ const Footer = () => {
   return (
     <FooterContainer>
       <div className="container">
-        <div className="logo">Solomon</div>
+        <div className="logo">Lottery</div>
         <div className="middle">
-          <span className="sentence">Solve all Problems by AI</span>
+          <span className="sentence">Get all answers you need</span>
           <span>contact@diceyai.com</span>
         </div>
-        <div className="site">© 2023 Solomon, Inc. All rights reserved.</div>
+        <div className="site">© 2023 Dice, Inc. All rights reserved.</div>
       </div>
     </FooterContainer>
   );

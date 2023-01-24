@@ -5,35 +5,53 @@ import styled from "@emotion/styled";
 // import { useChatStore } from "../utils/store";
 import { ThemeProvider } from "@emotion/react";
 import { lightTheme, darkTheme } from "../styles/theme";
-import { useStore } from "../utils/store";
+import { useChatStore } from "../utils/store";
 import AppBar from "../components/AppBar";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as ga from "../lib/gtag";
 import Script from "next/script";
+import { authService } from "../utils/fbase";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const { darkMode } = useStore();
+  const { darkMode } = useChatStore();
   const theme = darkMode ? darkTheme : lightTheme;
 
   const router = useRouter();
 
-  useEffect(() => {
-    const handleRouteChange = (url: string) => {
-      ga.pageview(url);
-    };
-    router.events.on("routeChangeComplete", handleRouteChange);
-    router.events.on("hashChangeComplete", handleRouteChange);
+  // useEffect(() => {
+  //   const handleRouteChange = (url: string) => {
+  //     ga.pageview(url);
+  //   };
+  //   router.events.on("routeChangeComplete", handleRouteChange);
+  //   router.events.on("hashChangeComplete", handleRouteChange);
 
-    return () => {
-      router.events.off("routeChangeComplete", handleRouteChange);
-      router.events.off("hashChangeComplete", handleRouteChange);
-    };
-  }, [router.events]);
+  //   return () => {
+  //     router.events.off("routeChangeComplete", handleRouteChange);
+  //     router.events.off("hashChangeComplete", handleRouteChange);
+  //   };
+  // }, [router.events]);
+
+  const [init, setInit] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { setUser } = useChatStore();
+
+  useEffect(() => {
+    // 유저가 제작한 랜딩페이지에 들어가는 사람들까지 로그인 검사를 하면 속도가 느려지니까
+    authService.onAuthStateChanged((user) => {
+      if (user) {
+        setIsLoggedIn(true);
+        setUser(user.multiFactor.user);
+      } else {
+        setIsLoggedIn(false);
+      }
+      setInit(true);
+    });
+  }, []);
 
   return (
     <ChakraProvider>
-      <Script
+      {/* <Script
         strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${ga.GA_TRACKING_ID}`}
       />
@@ -50,14 +68,16 @@ function MyApp({ Component, pageProps }: AppProps) {
             });
           `,
         }}
-      />
+      /> */}
       <ThemeProvider theme={theme}>
         <MobileContainer>
           <AppBar />
           <div className="backdrop" />
-          <div className="inner">
-            <Component {...pageProps} />
-          </div>
+          {init && (
+            <div className="inner">
+              <Component {...pageProps} />
+            </div>
+          )}
         </MobileContainer>
       </ThemeProvider>
     </ChakraProvider>
@@ -67,10 +87,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 export default MyApp;
 
 const MobileContainer = styled.div`
-  background: url("grad.png");
   font-family: Pretendard;
   width: 100%;
-  // background: ${({ theme }) => theme.bgColor};
+  background: ${({ theme }) => theme.bgColor};
   position: relative;
   flex: 1;
   display: flex;
@@ -81,7 +100,7 @@ const MobileContainer = styled.div`
   transition: 3s ease;
 
   .inner {
-    width: 900px;
+    width: 800px;
     min-height: 100vh;
     transition: 3s ease;
     z-index: 1;

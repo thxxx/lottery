@@ -9,11 +9,10 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
-import { CustomButton } from "../pages";
+import { CustomButton } from "../pages/temps";
 import { dbService } from "../utils/fbase";
 import styled from "@emotion/styled";
 import { useToast } from "@chakra-ui/react";
-import { useStore } from "../utils/store";
 
 type FeedbackModelProps = {
   isOpen: boolean;
@@ -31,7 +30,6 @@ const FeedbackModal = ({
   const options = [1, 2, 3, 4, 5];
   const [feedback, setFeedback] = useState("");
   const [rating, setRating] = useState(1);
-  const { uid } = useStore();
   const toast = useToast();
 
   const sendFeedback = () => {
@@ -41,7 +39,6 @@ const FeedbackModal = ({
       rating: rating,
       content: feedback,
       problemId: problem,
-      uid: uid,
     };
     dbService.collection("feedback").add(body);
     setRating(1);
