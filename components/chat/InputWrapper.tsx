@@ -64,59 +64,59 @@ const InputWrapper = ({ onSubmit, text, setText }: InputType) => {
 
   return (
     <InputOuter>
-      <Menu>
-        <CustomMenuList>
-          <div className="desc">Good text if you add.</div>
-          <MenuItem onClick={() => addPrompt("Download")}>Download</MenuItem>
-          <MenuItem onClick={() => addPrompt("Create a Copy")}>
-            Create a Copy
-          </MenuItem>
-          <MenuItem onClick={() => addPrompt("Mark as Draft")}>
-            Mark as Draft
-          </MenuItem>
-        </CustomMenuList>
-        <p className="noti">
-          <span>{status}</span> &nbsp; Please type . or ? and wait to ask
-        </p>
-        <InputContainer
-          onSubmit={(e) => {
-            console.log("제출");
-            e.preventDefault();
-            onSubmit();
-          }}>
-          {/* <Search2Icon className="search" color="gray.400" /> */}
-          <Textarea
-            ref={inputRef}
-            rows={1}
-            placeholder="Please ask..."
-            value={text}
-            onKeyDown={(e) => {
-              if (!e.shiftKey && (e.code === "Enter" || e.keyCode === 13)) {
-                e.preventDefault();
-                (inputRef.current as any).style.height = "52px";
-                onSubmit();
-              }
-            }}
-            onChange={(e) => {
-              auto_grow(e.currentTarget);
-              setText(e.currentTarget.value);
-            }}
-          />
-          {/* <span
+      <p className="noti">
+        <span>{status}</span> &nbsp; Please type . or ? and wait to ask
+      </p>
+      <InputContainer
+        onSubmit={(e) => {
+          console.log("제출");
+          e.preventDefault();
+          onSubmit();
+        }}>
+        {/* <Search2Icon className="search" color="gray.400" /> */}
+        <Textarea
+          ref={inputRef}
+          rows={1}
+          placeholder="Please ask..."
+          value={text}
+          onKeyDown={(e) => {
+            if (!e.shiftKey && (e.code === "Enter" || e.keyCode === 13)) {
+              e.preventDefault();
+              (inputRef.current as any).style.height = "52px";
+              onSubmit();
+            }
+          }}
+          onChange={(e) => {
+            auto_grow(e.currentTarget);
+            setText(e.currentTarget.value);
+          }}
+        />
+        {/* <span
           className="send"
           onClick={() => {
             onSubmit();
           }}>
           <ArrowForwardIcon className="send_icon" color="white" />
         </span> */}
-        </InputContainer>
-        <div>
+      </InputContainer>
+      <div>
+        <Menu>
+          <CustomMenuList>
+            <div className="desc">Good text if you add.</div>
+            <MenuItem onClick={() => addPrompt("Download")}>Download</MenuItem>
+            <MenuItem onClick={() => addPrompt("Create a Copy")}>
+              Create a Copy
+            </MenuItem>
+            <MenuItem onClick={() => addPrompt("Mark as Draft")}>
+              Mark as Draft
+            </MenuItem>
+          </CustomMenuList>
           <PromptButton as={Button}>
             <ArrowForwardIcon className="icon" color="black" />
             <span>Show good prompts</span>
           </PromptButton>
-        </div>
-      </Menu>
+        </Menu>
+      </div>
     </InputOuter>
   );
 };
@@ -130,6 +130,7 @@ const CustomMenuList = styled(MenuList)`
 `;
 
 const InputOuter = styled.div`
+  z-index: 3;
   background: white;
   position: fixed;
   bottom: 0px;

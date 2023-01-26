@@ -1,52 +1,65 @@
 import { ArrowForwardIcon, EmailIcon, SunIcon } from "@chakra-ui/icons";
 import styled from "@emotion/styled";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import FeedbackModal from "./FeedbackModal";
 import Image from "next/image";
 import { Home } from "@styled-icons/fluentui-system-filled";
 import Link from "next/link";
+import { useChatStore } from "../utils/store";
+import router from "next/router";
 
 type PagesType = "main" | "chat" | "my";
 
 type AppBarType = {
   page?: PagesType;
+  onClick?: Dispatch<SetStateAction<string>>;
 };
 
-const AppBar = ({ page }: AppBarType) => {
+const AppBar = ({ page, onClick }: AppBarType) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user } = useChatStore();
 
   const returnNavi = () => {
     switch (page) {
       case "chat":
-        return (
-          <>
-            <div className="icon">
-              <Home />
-              <span>MyPage</span>
-            </div>
-          </>
-        );
       case "main":
         return (
           <>
-            <>
+            {user ? (
+              <div
+                className="icon"
+                onClick={() => {
+                  router.push({
+                    pathname: "/my",
+                  });
+                }}>
+                <Home />
+                <span>MyPage</span>
+              </div>
+            ) : (
               <div className="icon">
                 <Home />
-                <span>Home</span>
+                <span>Login</span>
               </div>
-              <div className="icon">
-                <EmailIcon />
-                <span>Contact</span>
-              </div>
-              <div className="icon">
-                <SunIcon />
-              </div>
-            </>
+            )}
           </>
         );
       case "my":
-        return <></>;
+        return (
+          <>
+            <div
+              className="icon"
+              onClick={() => {
+                router.push({
+                  pathname: "/chat",
+                });
+              }}>
+              <Home />
+              <span>Chat</span>
+            </div>
+          </>
+        );
       default:
         return <></>;
     }
@@ -59,6 +72,12 @@ const AppBar = ({ page }: AppBarType) => {
           <Image src="/card.png" width={20} height={20} alt="logo" />
           <span>Lottery</span>
         </Link>
+        {page === "my" && onClick && (
+          <>
+            <Radio onClick={() => onClick("found")}>Found</Radio>
+            <Radio onClick={() => onClick("saved")}>Saved</Radio>
+          </>
+        )}
       </div>
       <div className="icons">{returnNavi()}</div>
       <FeedbackModal isOpen={isOpen} onClose={onClose} onOpen={onOpen} />
@@ -67,6 +86,15 @@ const AppBar = ({ page }: AppBarType) => {
 };
 
 export default React.memo(AppBar);
+
+const Radio = styled.div`
+  padding: 0px 10px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.hoverBack};
+  }
+`;
 
 const AppBarContainer = styled.div`
   font-family: Pretendard;

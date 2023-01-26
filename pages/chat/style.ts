@@ -39,7 +39,8 @@ export const MainContainer = styled.main`
   align-items: center;
   justify-content: center;
   background: ${({ theme }) => theme.bgColor};
-  height: 100vh;
+  // height: 100vh;
+  padding-bottom: 200px;
   padding-top: 50px;
 `;
 
@@ -49,8 +50,8 @@ export const UserChatWrapper = styled.div`
   aligm-items: center;
   justify-content: center;
   width: 100%;
-  border-bottom: 1px solid ${({ theme }) => theme.borderColor01};
-  padding: 25px 15px;
+  // border-bottom: 1px solid ${({ theme }) => theme.borderColor01};
+  padding: 30px 15px;
 
   .profile {
     width: 10%;

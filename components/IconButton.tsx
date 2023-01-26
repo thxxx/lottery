@@ -6,12 +6,13 @@ type IconButtonProps = {
   icon?: ReactNode;
   tooltip?: string;
   text?: string;
+  onClick: () => void;
 };
 
-const IconButton = ({ icon, tooltip, text }: IconButtonProps) => {
+const IconButton = ({ icon, tooltip, text, onClick }: IconButtonProps) => {
   return (
     <Tooltip label={tooltip} fontSize="md">
-      <IconWrapper>{icon}</IconWrapper>
+      <IconWrapper onClick={onClick}>{icon}</IconWrapper>
     </Tooltip>
   );
 };

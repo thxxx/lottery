@@ -8,9 +8,12 @@ export enum ChatType {
 }
 
 export type ChatInputType = {
-  text: string;
+  text: string | string[];
   type: ChatType;
   questionKey?: string;
+  saved?: boolean;
+  job: DomainOne;
+  id: number | string;
 };
 
 export type UserState = {

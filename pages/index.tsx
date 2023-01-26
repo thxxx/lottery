@@ -62,6 +62,7 @@ const Home: NextPage = () => {
                 key={item.id}
                 onClick={() => {
                   setJob(item.domain);
+                  localStorage.setItem("domain", item.domain);
                 }}
                 selected={item.domain === job}>
                 <div className="wrapper">
