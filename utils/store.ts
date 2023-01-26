@@ -27,7 +27,7 @@ export type UserState = {
 export const useChatStore = create<UserState>((set) => ({
   darkMode: false,
   chats: [],
-  job: "",
+  job: undefined,
   user: undefined,
   setChats: (by) => {
     set((state) => ({ ...state, chats: by }));
