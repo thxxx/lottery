@@ -71,7 +71,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       /> */}
       <ThemeProvider theme={theme}>
         <MobileContainer>
-          <AppBar />
           <div className="backdrop" />
           {init && (
             <div className="inner">

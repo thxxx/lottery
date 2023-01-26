@@ -1,97 +1,29 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import {
-  Button,
-  Divider,
-  Input,
-  Textarea,
-  useDisclosure,
-} from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useDisclosure } from "@chakra-ui/react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "@emotion/styled";
-import Footer from "../components/Footer";
 import AskModal from "../components/AskModal";
-import {
-  ArrowRightIcon,
-  StarIcon,
-  QuestionOutlineIcon,
-  MoonIcon,
-  LinkIcon,
-  EditIcon,
-  BellIcon,
-  ChatIcon,
-} from "@chakra-ui/icons";
-import Link from "next/link";
-import { personas } from "../utils/persona";
+import { DOMAINS } from "../utils/persona";
 import router from "next/router";
 import { useChatStore } from "../utils/store";
+import AppBar from "../components/AppBar";
+import InputWrapper from "../components/chat/InputWrapper";
 
 export const LOCAL_ID = "solomon_uuid";
 
-export enum DomainOne {
-  DEVELOPER = "DEVELOPER",
-  LAW = "LAW",
-  MEDICINE = "MEDICINE",
-  FARM = "FARM",
-  HEALTH = "HEALTH",
-  HISTORY = "HISTORY",
-  PHYSICS = "PHYSICS",
-  MATH = "MATH",
-}
-
-type DomainType = {
-  icon: React.ReactNode;
-  domain: DomainOne;
-  id: number;
-};
-
-const DOMAINS: DomainType[] = [
-  {
-    icon: <StarIcon />,
-    domain: DomainOne.DEVELOPER,
-    id: 1,
-  },
-  {
-    icon: <QuestionOutlineIcon />,
-    domain: DomainOne.MEDICINE,
-    id: 2,
-  },
-  {
-    icon: <MoonIcon />,
-    domain: DomainOne.LAW,
-    id: 3,
-  },
-  {
-    icon: <LinkIcon />,
-    domain: DomainOne.HISTORY,
-    id: 4,
-  },
-  {
-    icon: <EditIcon />,
-    domain: DomainOne.HEALTH,
-    id: 5,
-  },
-  {
-    icon: <BellIcon />,
-    domain: DomainOne.FARM,
-    id: 6,
-  },
-  {
-    icon: <ChatIcon />,
-    domain: DomainOne.PHYSICS,
-    id: 7,
-  },
-  {
-    icon: <StarIcon />,
-    domain: DomainOne.MATH,
-    id: 8,
-  },
-];
-
 const Home: NextPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { setJob } = useChatStore();
+  const { job, setJob } = useChatStore();
+  const [text, setText] = useState("");
+
+  const onSubmit = useCallback(() => {
+    console.log("전부 같지만 채팅 페이지로 이동");
+    router.push({
+      pathname: "/chat",
+    });
+  }, []);
 
   return (
     <>
@@ -100,16 +32,17 @@ const Home: NextPage = () => {
         <meta name="description" content="Lottery will give you solution" />
         <link rel="icon" href="/card.png" />
       </Head>
-
+      <AppBar page="main" />
       <MainContainer>
         <div className="logo">
-          <Image src="/card.png" width={40} height={40} alt="logo" />
+          <Image src="/card.png" width={30} height={30} alt="logo" />
           <span>Lottery</span>
           <span className="beta">Beta</span>
         </div>
         <p>Quora through conversational AI.</p>
         <p>You can ask and get answer directly, with no ads.</p>
-        <TopCardContainer>
+        <div>{DOMAINS.filter((doc) => doc.domain === job)[0]?.name}</div>
+        {/* <TopCardContainer>
           <div className="left">
             <span>
               <Image src="/lightning.png" width={30} height={30} alt="fire" />
@@ -121,7 +54,7 @@ const Home: NextPage = () => {
           </div>
         </TopCardContainer>
         <p>choose what kind of domain of your question?</p>
-        <p>We will introduce you best expert</p>
+        <p>We will introduce you best expert</p> */}
         <CardsContainer>
           {DOMAINS.map((item) => {
             return (
@@ -129,24 +62,19 @@ const Home: NextPage = () => {
                 key={item.id}
                 onClick={() => {
                   setJob(item.domain);
-                  router.push({
-                    pathname: "/ask",
-                  });
-                }}>
+                }}
+                selected={item.domain === job}>
                 <div className="wrapper">
                   {item.icon}
                   <p>{item.domain}</p>
-                </div>
-                <div className="persona">
-                  {personas.filter((doc) => doc.job === item.domain)[0].name}
                 </div>
               </Card>
             );
           })}
         </CardsContainer>
       </MainContainer>
+      <InputWrapper onSubmit={onSubmit} text={text} setText={setText} />
       <AskModal isOpen={isOpen} onClose={onClose} onOpen={onOpen} />
-      <Footer />
     </>
   );
 };
@@ -157,12 +85,12 @@ const MainContainer = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   background: ${({ theme }) => theme.bgColor};
   transition: 3s ease;
   min-height: 100vh;
-  padding-bottom: 450px;
-  padding-top: 120px;
+  padding-bottom: 150px;
+  padding-top: 80px;
 
   .logo {
     display: flex;
@@ -171,7 +99,7 @@ const MainContainer = styled.main`
     justify-content: center;
 
     span {
-      font-size: 2em;
+      font-size: 1.7em;
       font-weight: 900;
       margin-left: 10px;
       word-spacing: 20px;
@@ -199,17 +127,19 @@ const CardsContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-const Card = styled.div`
+const Card = styled.div<{ selected: boolean }>`
   width: 180px;
-  height: 170px;
-  border: 1px solid ${({ theme }) => theme.borderColor01};
+  height: 100px;
+  border: 1px solid
+    ${({ theme, selected }) => (selected ? theme.blue01 : theme.borderColor01)};
+  background: ${({ theme }) => theme.borderColor01};
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  margin: 10px;
+  margin: 7px;
   transition: 0.5s ease;
   padding: 10px;
 
@@ -242,7 +172,8 @@ const Card = styled.div`
   }
 
   &:hover {
-    border: 1px solid ${({ theme }) => theme.borderColor};
+    border: 1px solid
+      ${({ theme, selected }) => (selected ? theme.blue01 : theme.borderColor)};
     box-shadow: 3px 10px 15px rgba(0, 0, 0, 0.1);
   }
   @media (max-width: 420px) {

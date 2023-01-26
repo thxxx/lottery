@@ -7,8 +7,50 @@ import Image from "next/image";
 import { Home } from "@styled-icons/fluentui-system-filled";
 import Link from "next/link";
 
-const AppBar = () => {
+type PagesType = "main" | "chat" | "my";
+
+type AppBarType = {
+  page?: PagesType;
+};
+
+const AppBar = ({ page }: AppBarType) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const returnNavi = () => {
+    switch (page) {
+      case "chat":
+        return (
+          <>
+            <div className="icon">
+              <Home />
+              <span>MyPage</span>
+            </div>
+          </>
+        );
+      case "main":
+        return (
+          <>
+            <>
+              <div className="icon">
+                <Home />
+                <span>Home</span>
+              </div>
+              <div className="icon">
+                <EmailIcon />
+                <span>Contact</span>
+              </div>
+              <div className="icon">
+                <SunIcon />
+              </div>
+            </>
+          </>
+        );
+      case "my":
+        return <></>;
+      default:
+        return <></>;
+    }
+  };
 
   return (
     <AppBarContainer>
@@ -18,19 +60,7 @@ const AppBar = () => {
           <span>Lottery</span>
         </Link>
       </div>
-      <div className="icons">
-        <div className="icon">
-          <Home />
-          <span>Home</span>
-        </div>
-        <div className="icon">
-          <EmailIcon />
-          <span>Contact</span>
-        </div>
-        <div className="icon">
-          <SunIcon />
-        </div>
-      </div>
+      <div className="icons">{returnNavi()}</div>
       <FeedbackModal isOpen={isOpen} onClose={onClose} onOpen={onOpen} />
     </AppBarContainer>
   );

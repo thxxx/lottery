@@ -6,6 +6,7 @@ export const theme = {
   darkGrey: "#2F3747",
   blue01: "#8D9EFF",
   blue02: "#3496F1",
+  hoverBack: "rgba(0,0,0,0.1)",
 };
 
 export const lightTheme = {
