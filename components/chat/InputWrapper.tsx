@@ -93,7 +93,7 @@ const InputWrapper = ({ onSubmit, text, setText }: InputType) => {
             onKeyDown={(e) => {
               if (!e.shiftKey && (e.code === "Enter" || e.keyCode === 13)) {
                 e.preventDefault();
-                inputRef.current?.style.height = "52px";
+                (inputRef.current as any).style.height = "52px";
                 onSubmit();
               }
             }}
