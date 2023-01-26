@@ -8,8 +8,9 @@ import {
   ModalBody,
   ModalCloseButton,
   Input,
+  Button,
 } from "@chakra-ui/react";
-import { CustomButton, LOCAL_ID } from "../pages/temps";
+import { LOCAL_ID } from "../pages/index";
 import styled from "@emotion/styled";
 import { dbService } from "../utils/fbase";
 
@@ -73,7 +74,7 @@ const AskModal = ({ isOpen, onClose, onOpen }: AskModelProps) => {
         </CustomModalBody>
 
         <ModalFooter>
-          <CustomButton onClick={() => sendRequest()}>Send</CustomButton>
+          <Button onClick={() => sendRequest()}>Send</Button>
         </ModalFooter>
       </CustomModalContent>
     </Modal>

@@ -11,7 +11,6 @@ import {
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import Footer from "../components/Footer";
-import AskModal from "../components/AskModal";
 import {
   ArrowForwardIcon,
   ArrowRightIcon,
@@ -20,7 +19,6 @@ import {
 } from "@chakra-ui/icons";
 import router from "next/router";
 import { useChatStore } from "../utils/store";
-import { authService, firebaseInstance } from "../utils/fbase";
 
 const AskPage: NextPage = () => {
   const [text, setText] = useState("");

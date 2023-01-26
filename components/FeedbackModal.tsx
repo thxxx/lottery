@@ -8,8 +8,8 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  Button,
 } from "@chakra-ui/react";
-import { CustomButton } from "../pages/temps";
 import { dbService } from "../utils/fbase";
 import styled from "@emotion/styled";
 import { useToast } from "@chakra-ui/react";
@@ -81,7 +81,7 @@ const FeedbackModal = ({
           <Input placeholder="contact@diceyai.com" />
         </ModalBody>
         <ModalFooter>
-          <CustomButton onClick={() => sendFeedback()}>Send</CustomButton>
+          <Button onClick={() => sendFeedback()}>Send</Button>
         </ModalFooter>
       </CustomModalContent>
     </Modal>
