@@ -114,3 +114,11 @@ export const DOMAINS: DomainType[] = [
     desc: "He is brilliant",
   },
 ];
+
+import React from "react";
+
+const PersonaTemp = () => {
+  return <div>persona</div>;
+};
+
+export default PersonaTemp;

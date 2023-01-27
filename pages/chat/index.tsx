@@ -13,12 +13,12 @@ import {
   ChatContainer,
   MainContainer,
   RightContainer,
-  UserChatWrapper,
 } from "./style";
 import InputWrapper from "../../components/chat/InputWrapper";
 import AppBar from "../../components/AppBar";
 import BotChat from "./BotChat";
 import { DomainOne } from "../../utils/persona";
+import UserChat from "./UserChat";
 
 const ChatPage: NextPage = () => {
   const [text, setText] = useState("");
@@ -129,29 +129,12 @@ const ChatPage: NextPage = () => {
       </Head>
       <AppBar page="chat" />
       <MainContainer ref={mainRef}>
-        <p>{job}</p>
         <RightContainer>
+          <p>{job}</p>
           <ChatContainer>
             {currentChats?.map((item, i) => {
               if (item.type === ChatType.USER) {
-                return (
-                  <UserChatWrapper key={i}>
-                    <div className="profile">
-                      {/* <Image
-                        width={20}
-                        height={20}
-                        alt="img"
-                        className="img"
-                        src={user?.photoURL as string}> */}
-                      호진
-                      {/* </Image> */}
-                    </div>
-                    <div
-                      className="text"
-                      dangerouslySetInnerHTML={{ __html: item.text as string }}
-                    />
-                  </UserChatWrapper>
-                );
+                return <UserChat key={i} text={item.text as string} />;
               } else if (item.type === ChatType.LOADING) {
                 return (
                   <BotChatWrapper key={i}>

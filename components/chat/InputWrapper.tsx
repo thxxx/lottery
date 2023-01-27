@@ -26,8 +26,9 @@ type StatusType = "typing..." | "end" | "finishing";
 
 const InputWrapper = ({ onSubmit, text, setText }: InputType) => {
   const [status, setStatus] = useState<StatusType>("typing...");
-  let isEnd = useRef(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  let isEnd = useRef(false);
 
   useEffect(() => {
     if (status === "finishing") {
@@ -64,9 +65,11 @@ const InputWrapper = ({ onSubmit, text, setText }: InputType) => {
 
   return (
     <InputOuter>
-      <p className="noti">
-        <span>{status}</span> &nbsp; Please type . or ? and wait to ask
-      </p>
+      {isInputFocused && (
+        <p className="noti">
+          <span>{status}</span> &nbsp; Please type . or ? and wait to ask
+        </p>
+      )}
       <InputContainer
         onSubmit={(e) => {
           console.log("제출");
@@ -75,6 +78,8 @@ const InputWrapper = ({ onSubmit, text, setText }: InputType) => {
         }}>
         {/* <Search2Icon className="search" color="gray.400" /> */}
         <Textarea
+          onFocus={() => setIsInputFocused(true)}
+          onBlur={() => setIsInputFocused(false)}
           ref={inputRef}
           rows={1}
           placeholder="Please ask..."

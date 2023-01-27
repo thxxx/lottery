@@ -13,10 +13,11 @@ type PagesType = "main" | "chat" | "my";
 
 type AppBarType = {
   page?: PagesType;
+  radio?: string;
   onClick?: Dispatch<SetStateAction<string>>;
 };
 
-const AppBar = ({ page, onClick }: AppBarType) => {
+const AppBar = ({ page, onClick, radio }: AppBarType) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useChatStore();
 
@@ -74,8 +75,12 @@ const AppBar = ({ page, onClick }: AppBarType) => {
         </Link>
         {page === "my" && onClick && (
           <>
-            <Radio onClick={() => onClick("found")}>Found</Radio>
-            <Radio onClick={() => onClick("saved")}>Saved</Radio>
+            <Radio clicked={radio === "found"} onClick={() => onClick("found")}>
+              Found
+            </Radio>
+            <Radio clicked={radio === "saved"} onClick={() => onClick("saved")}>
+              Saved
+            </Radio>
           </>
         )}
       </div>
@@ -87,9 +92,11 @@ const AppBar = ({ page, onClick }: AppBarType) => {
 
 export default React.memo(AppBar);
 
-const Radio = styled.div`
+const Radio = styled.div<{ clicked: boolean }>`
   padding: 0px 10px;
   cursor: pointer;
+  border-bottom: 1px solid
+    ${({ theme, clicked }) => (clicked ? "rgba(200,0,0,1)" : "white")};
 
   &:hover {
     background-color: ${({ theme }) => theme.hoverBack};

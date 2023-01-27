@@ -8,7 +8,8 @@ import { useSwiper } from "swiper/react";
 import { useChatStore } from "../../utils/store";
 import { dbService } from "../../utils/fbase";
 import { useToast } from "@chakra-ui/react";
-import { DOMAINS } from "../../utils/persona";
+import { DOMAINS, DomainOne } from "../../utils/persona";
+import NameByDomain from "../../components/NameByDomain";
 
 const dummy = [
   {
@@ -30,12 +31,13 @@ const dummy = [
 
 type BotChatType = {
   texts: string[];
-  onSubmit: () => void;
+  onSubmit?: () => void;
   id: string | number;
   saved: boolean | undefined;
+  savedJob?: DomainOne;
 };
 
-const BotChat = ({ texts, onSubmit, id, saved }: BotChatType) => {
+const BotChat = ({ texts, onSubmit, id, saved, savedJob }: BotChatType) => {
   const { user, job, chats, setChats } = useChatStore();
   const toast = useToast();
   const [toggle, setToggle] = useState(false);
@@ -43,7 +45,7 @@ const BotChat = ({ texts, onSubmit, id, saved }: BotChatType) => {
   const saveThisChat = async (idx: number) => {
     // chats store도 바꿔야하고
     // firebase도 바꿔야함
-    const ff = chats.map((doc) => {
+    const changedChats = chats.map((doc) => {
       if (doc.id === id) {
         return {
           ...doc,
@@ -53,7 +55,7 @@ const BotChat = ({ texts, onSubmit, id, saved }: BotChatType) => {
         return doc;
       }
     });
-    setChats(ff);
+    setChats(changedChats);
 
     // save or delete
 
@@ -72,6 +74,7 @@ const BotChat = ({ texts, onSubmit, id, saved }: BotChatType) => {
         .where("uid", "==", user.uid)
         .where("job", "==", job)
         .where("responses", "==", query[1].text[idx])
+        .where("query", "==", query[0].text)
         .get()
         .then(function (querySnapshot) {
           querySnapshot.forEach(function (doc) {
@@ -101,19 +104,23 @@ const BotChat = ({ texts, onSubmit, id, saved }: BotChatType) => {
     <BotChatWrapper
       spaceBetween={16}
       slidesPerView={1}
+      allowTouchMove={false}
       scrollbar={{ draggable: true }}>
       {texts.map((item, i) => {
         return (
           <CustomSwipeSlide key={i}>
             {i !== 0 && <SwipeNext type="prev" />}
             <div className="profile">
-              <span className="img">전</span>
+              <span className="img">
+                <p>전</p>
+              </span>
             </div>
             <div className="text">
-              <p className="name">
-                {DOMAINS.filter((doc) => doc.domain === job)[0].name}{" "}
-                <span>@{job?.toLowerCase()}</span>
-              </p>
+              {savedJob ? (
+                <NameByDomain domain={savedJob} />
+              ) : (
+                <NameByDomain domain={job} />
+              )}
               <p className="main">{item}</p>
               <IconContainer>
                 <div>
@@ -168,17 +175,19 @@ const BotChat = ({ texts, onSubmit, id, saved }: BotChatType) => {
                 </WebContainer>
               )}
             </div>
-            {/* <SwipeNext type="next" /> */}
+            {onSubmit && <SwipeNext type="next" />}
           </CustomSwipeSlide>
         );
       })}
-      <CustomSwipeSlide>
-        <SwipeNext type="prev" />
-        <SelectionBtn onClick={() => onSubmit()}>
-          Generate another answer
-        </SelectionBtn>
-        <SelectionBtn>Get Answer from Quora</SelectionBtn>
-      </CustomSwipeSlide>
+      {onSubmit && (
+        <CustomSwipeSlide>
+          <SwipeNext type="prev" />
+          <SelectionBtn onClick={() => onSubmit()}>
+            Generate another answer
+          </SelectionBtn>
+          <SelectionBtn>Get Answer from Quora</SelectionBtn>
+        </CustomSwipeSlide>
+      )}
     </BotChatWrapper>
   );
 };
@@ -220,6 +229,9 @@ const WebContainer = styled.div`
 const SwipeDiv = styled.div`
   padding: 20px;
   cursor: pointer;
+  // position: absolute;
+  // background: blue;
+
   &:hover {
     background: red;
   }
@@ -278,10 +290,11 @@ const BotChatWrapper = styled(Swiper)`
   background: ${({ theme }) => theme.blue01 + "01"};
 
   .profile {
-    width: 10%;
+    width: 8%;
   }
+
   .text {
-    width: 90%;
+    width: 92%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -303,7 +316,7 @@ const BotChatWrapper = styled(Swiper)`
   }
 
   .img {
-    border-radius: 3px;
+    border-radius: 300px;
     background: brown;
     display: flex;
     flex-direction: row;
@@ -311,5 +324,6 @@ const BotChatWrapper = styled(Swiper)`
     justify-content: center;
     width: 35px;
     height: 35px;
+    color: white;
   }
 `;

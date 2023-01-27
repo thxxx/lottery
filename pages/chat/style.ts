@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { UserChatWrapper } from "./UserChat";
 
 export const LeftContainer = styled.div`
   display: flex;
@@ -43,35 +44,6 @@ export const MainContainer = styled.main`
   padding-bottom: 200px;
   padding-top: 50px;
 `;
-
-export const UserChatWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  aligm-items: center;
-  justify-content: center;
-  width: 100%;
-  // border-bottom: 1px solid ${({ theme }) => theme.borderColor01};
-  padding: 30px 15px;
-
-  .profile {
-    width: 10%;
-  }
-  .text {
-    width: 90%;
-  }
-
-  .img {
-    border-radius: 3px;
-    background: brown;
-    display: flex;
-    flex-direction: row;
-    aligm-items: center;
-    justify-content: center;
-    width: 35px;
-    height: 35px;
-  }
-`;
-
 export const BotChatWrapper = styled(UserChatWrapper)`
   background: ${({ theme }) => theme.blue01 + "22"};
 `;
