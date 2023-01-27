@@ -5,8 +5,11 @@ export const theme = {
   grey: "#EEF2F6",
   darkGrey: "#2F3747",
   blue01: "#8D9EFF",
-  blue02: "#3496F1",
+  blue02: "#8D9EFF96",
   hoverBack: "rgba(0,0,0,0.1)",
+  hoverBlue: "#8D9EFF4D",
+  bgColor02: "rgba(0,0,0,0.2)",
+  bgColor03: "rgba(0,0,0,0.3)",
 };
 
 export const lightTheme = {
@@ -14,7 +17,6 @@ export const lightTheme = {
   color: "#000000",
   bgColor: "#ffffff",
   bgColor01: "#27282E",
-  bgColor02: "#F4F3F5",
   textColor02: "#000000",
   borderColor: "#000000",
   borderColor01: "#77777733",
@@ -26,7 +28,6 @@ export const darkTheme = {
   color: "#ffffff",
   bgColor: "#0E1016",
   bgColor01: "#27282E",
-  bgColor02: "#1A1E28",
   textColor02: "#C1C3C4",
   borderColor: "#ffffff",
   borderColor01: "#ffffff33",

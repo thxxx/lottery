@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Swiper, SwiperSlide, useSwiperSlide } from "swiper/react"; // basic
 import "swiper/css"; //basic
 import styled from "@emotion/styled";
-import IconButton from "../../components/IconButton";
-import { ArrowLeftIcon, HamburgerIcon, SunIcon } from "@chakra-ui/icons";
+import { RepeatIcon } from "@chakra-ui/icons";
 import { useSwiper } from "swiper/react";
-import { useChatStore } from "../../utils/store";
+import { ChatInputType, useChatStore } from "../../utils/store";
 import { dbService } from "../../utils/fbase";
-import { useToast } from "@chakra-ui/react";
 import { DOMAINS, DomainOne } from "../../utils/persona";
 import NameByDomain from "../../components/NameByDomain";
+import IconContainer from "./IconContainer";
+import { SavedChatType } from ".";
 
 const dummy = [
   {
@@ -30,165 +30,174 @@ const dummy = [
 ];
 
 type BotChatType = {
-  texts: string[];
-  onSubmit?: () => void;
-  id: string | number;
-  saved: boolean | undefined;
-  savedJob?: DomainOne;
+  onSubmit?: (id: string | number) => void;
+  shared?: boolean;
+  item: any;
+  setSaves?: Dispatch<SetStateAction<SavedChatType[] | undefined>>;
+  saves?: SavedChatType[] | undefined;
+  savedIndex?: number;
 };
 
-const BotChat = ({ texts, onSubmit, id, saved, savedJob }: BotChatType) => {
+const BotChat = ({
+  onSubmit,
+  shared,
+  item,
+  setSaves,
+  saves,
+  savedIndex,
+}: BotChatType) => {
   const { user, job, chats, setChats } = useChatStore();
-  const toast = useToast();
   const [toggle, setToggle] = useState(false);
+  const [temps, setTemps] = useState<SavedChatType[]>();
+
+  useEffect(() => {
+    setTemps(saves);
+  }, []);
 
   const saveThisChat = async (idx: number) => {
     // chats store도 바꿔야하고
     // firebase도 바꿔야함
-    const changedChats = chats.map((doc) => {
-      if (doc.id === id) {
-        return {
-          ...doc,
-          saved: !doc.saved,
-        };
-      } else {
-        return doc;
-      }
-    });
-    setChats(changedChats);
+    const filteredTemp = temps?.filter((doc: any) => doc.id === item.id)[0];
+    const isSavedNow =
+      (!saves && item.saved && item.saved.includes(idx)) ||
+      (saves && filteredTemp?.saved.includes(idx));
+    const isNotEmpty =
+      (!saves && item.saved.length > 0) ||
+      (saves && filteredTemp?.saved.length > 0);
 
-    // save or delete
-
-    const query = chats.filter(
-      (doc) => doc.id === id || doc.id === (id as number) - 1
-    );
-
-    if (!query) return;
-    if (query.length < 2) return;
-
-    if (query[1].saved === true) {
-      console.log("얘는 지워야함");
-      // 찾아서 삭제
-      const fo = await dbService
-        .collection("saved")
-        .where("uid", "==", user.uid)
-        .where("job", "==", job)
-        .where("responses", "==", query[1].text[idx])
-        .where("query", "==", query[0].text)
-        .get()
-        .then(function (querySnapshot) {
-          querySnapshot.forEach(function (doc) {
-            console.log("데이터를 삭제");
-            doc.ref.delete();
-          });
-        })
-        .catch(function (error) {
-          console.log("Error getting documents: ", error);
-        });
+    let modified = {
+      ...item,
+      saved: [],
+    };
+    if (isNotEmpty) {
+      if (isSavedNow)
+        modified.saved = [...item.saved.filter((doc: number) => doc !== idx)];
+      else modified.saved = [...item.saved, idx];
     } else {
-      console.log("저장");
+      modified.saved = [idx];
+    }
 
-      const body = {
-        uid: user.uid,
-        job: job,
-        savedDate: new Date(),
-        query: query[0].text,
-        responses: query[1].text[idx],
-      };
+    if (saves && setSaves) {
+      // it means that this is being displayed on MyPage
+      const changedChats = temps?.map((doc) =>
+        doc.id === item.id ? { ...doc, saved: modified.saved } : { ...doc }
+      );
+      setTemps(changedChats);
+    } else {
+      const changedChats = chats.map((doc) =>
+        doc.id === item.id ? { ...doc, saved: modified.saved } : { ...doc }
+      );
+      setChats(changedChats);
+    }
 
-      await dbService.collection("saved").add(body);
+    if (isSavedNow) {
+      console.log("Delete this conversation");
+      updateFirebase(modified);
+    } else {
+      console.log("Save this conversation");
+      updateFirebase(modified);
     }
   };
 
+  const updateFirebase = async (modified: SavedChatType) => {
+    await dbService
+      .collection("chats")
+      .doc(item.id)
+      .update(modified)
+      .then(() => {
+        console.log("Document successfully updated!");
+      })
+      .catch((error) => {
+        console.error("Error updating document: ", error);
+      });
+  };
+
   return (
-    <BotChatWrapper
-      spaceBetween={16}
-      slidesPerView={1}
-      allowTouchMove={false}
-      scrollbar={{ draggable: true }}>
-      {texts.map((item, i) => {
-        return (
-          <CustomSwipeSlide key={i}>
-            {i !== 0 && <SwipeNext type="prev" />}
+    <>
+      <BotChatWrapper
+        spaceBetween={16}
+        slidesPerView={1}
+        allowTouchMove={false}
+        scrollbar={{ draggable: true }}>
+        {item.text.map((tex: string, i: number) => {
+          if (savedIndex && savedIndex !== i) {
+            return <></>;
+          }
+          return (
+            <CustomSwipeSlide key={i}>
+              {onSubmit && i !== 0 && <SwipeNext type="prev" />}
+              <div className="profile">
+                <span className="img">
+                  <p>전</p>
+                </span>
+              </div>
+              <div className="text">
+                <NameByDomain domain={item.job} />
+                <p className="main">{tex}</p>
+                <IconContainer
+                  saveThisChat={saveThisChat}
+                  shared={shared}
+                  saved={
+                    saves
+                      ? temps
+                          ?.filter((d: any) => d.id === item.id)[0]
+                          .saved.includes(i)
+                      : item.saved.includes(i)
+                  }
+                  index={i}
+                  id={item.id}
+                  toggle={toggle}
+                  setToggle={setToggle}
+                />
+                <>
+                  {toggle && (
+                    <WebContainer>
+                      {dummy.map((doc, i) => (
+                        <div className="content" key={i}>
+                          <div>
+                            <span className="favicon">{doc.favicon}</span>
+                            <span className="domain">{doc.domain}</span>
+                          </div>
+                          <p className="title">{doc.title}</p>
+                        </div>
+                      ))}
+                    </WebContainer>
+                  )}
+                </>
+              </div>
+              {onSubmit && <SwipeNext type="next" />}
+            </CustomSwipeSlide>
+          );
+        })}
+        {onSubmit && (
+          <CustomSwipeSlide>
             <div className="profile">
               <span className="img">
                 <p>전</p>
               </span>
             </div>
+            <SwipeNext type="prev" />
             <div className="text">
-              {savedJob ? (
-                <NameByDomain domain={savedJob} />
-              ) : (
-                <NameByDomain domain={job} />
-              )}
-              <p className="main">{item}</p>
-              <IconContainer>
-                <div>
-                  <IconButton
-                    icon={
-                      <SunIcon color={saved ? "red.400" : "blackAlpha.300"} />
-                    }
-                    tooltip="Save"
-                    onClick={() => {
-                      saveThisChat(i);
-                    }}
-                  />
-                  <IconButton
-                    icon={<SunIcon />}
-                    tooltip="Share"
-                    onClick={() => {
-                      toast({
-                        description: "Copied to Clipboard",
-                      });
-                    }}
-                  />
-                </div>
-                <div>
-                  {toggle ? (
-                    <IconButton
-                      icon={
-                        <ArrowLeftIcon style={{ transform: "rotate(90deg)" }} />
-                      }
-                      tooltip="Hide"
-                      onClick={() => setToggle(false)}
-                    />
-                  ) : (
-                    <IconButton
-                      icon={<HamburgerIcon />}
-                      tooltip="View"
-                      onClick={() => setToggle(true)}
-                    />
-                  )}
-                </div>
-              </IconContainer>
-              {toggle && (
-                <WebContainer>
-                  {dummy.map((doc, i) => (
-                    <div className="content" key={i}>
-                      <div>
-                        <span className="favicon">{doc.favicon}</span>
-                        <span className="domain">{doc.domain}</span>
-                      </div>
-                      <p className="title">{doc.title}</p>
-                    </div>
-                  ))}
-                </WebContainer>
-              )}
+              <NameByDomain domain={item.job} />
+              <div className="agains">
+                <SelectionBtn left={true} onClick={() => onSubmit(item.id)}>
+                  <RepeatIcon color="white" width={25} height={25} />
+                  <p>
+                    Do you want me to
+                    <br />
+                    answer it again?
+                  </p>
+                </SelectionBtn>
+                <SelectionBtn left={false}>
+                  <RepeatIcon color="white" width={25} height={25} />
+                  <p>Get Answer from Quora</p>
+                </SelectionBtn>
+              </div>
             </div>
-            {onSubmit && <SwipeNext type="next" />}
           </CustomSwipeSlide>
-        );
-      })}
-      {onSubmit && (
-        <CustomSwipeSlide>
-          <SwipeNext type="prev" />
-          <SelectionBtn onClick={() => onSubmit()}>
-            Generate another answer
-          </SelectionBtn>
-          <SelectionBtn>Get Answer from Quora</SelectionBtn>
-        </CustomSwipeSlide>
-      )}
-    </BotChatWrapper>
+        )}
+      </BotChatWrapper>
+    </>
   );
 };
 
@@ -208,6 +217,15 @@ const SwipeNext = ({ type }: { type: "prev" | "next" }) => {
   );
 };
 
+const SwipeDiv = styled.div`
+  padding: 20px;
+  cursor: pointer;
+
+  &:hover {
+    background: red;
+  }
+`;
+
 const WebContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -226,32 +244,28 @@ const WebContainer = styled.div`
   }
 `;
 
-const SwipeDiv = styled.div`
-  padding: 20px;
-  cursor: pointer;
-  // position: absolute;
-  // background: blue;
-
-  &:hover {
-    background: red;
-  }
-`;
-
-const SelectionBtn = styled.div`
-  width: 150px;
+const SelectionBtn = styled.div<{ left: boolean }>`
+  width: 45%;
   height: 100px;
   display: flex;
   flex-direction: column;
-  aligm-items: center;
+  align-items: center;
   justify-content: center;
+  text-align: center;
+  margin: 0px 25px;
+  color: white;
+  font-weight: 700;
 
-  flex-wrap: wrap;
-  overflow: wrap;
-  margin-left: 20px;
-  background: blue;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
+
+  background-color: ${({ theme, left }) =>
+    left ? theme.bgColor03 : theme.blue02};
+
+  p {
+    margin-top: 5px;
+  }
 `;
 
 const CustomSwipeSlide = styled(SwiperSlide)`
@@ -261,28 +275,13 @@ const CustomSwipeSlide = styled(SwiperSlide)`
   justify-content: center;
 `;
 
-const IconContainer = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  aligm-items: center;
-  justify-content: space-between;
-  margin-top: 20px;
-
-  div {
-    display: flex;
-    flex-direction: row;
-    aligm-items: center;
-    justify-content: center;
-  }
-`;
-
 const BotChatWrapper = styled(Swiper)`
   display: flex;
   flex-direction: row;
   aligm-items: center;
   justify-content: center;
   width: 100%;
+  position: relative;
   // border-bottom: 1px solid ${({ theme }) => theme.borderColor01};
   padding: 0px 15px;
   padding-top: 25px;
@@ -312,6 +311,15 @@ const BotChatWrapper = styled(Swiper)`
 
     .main {
       margin-top: 15px;
+    }
+
+    .agains {
+      width: 100%;
+      margin-top: 15px;
+      display: flex;
+      flex-direction: row;
+      aligm-items: center;
+      justify-content: center;
     }
   }
 

@@ -40,8 +40,14 @@ function MyApp({ Component, pageProps }: AppProps) {
     // 유저가 제작한 랜딩페이지에 들어가는 사람들까지 로그인 검사를 하면 속도가 느려지니까
     authService.onAuthStateChanged((user) => {
       if (user) {
+        const body = {
+          displayName: (user.multiFactor as any).user.displayName,
+          photoURL: (user.multiFactor as any).user.photoURL,
+          email: (user.multiFactor as any).user.email,
+          uid: (user.multiFactor as any).user.uid,
+        };
+        setUser(body);
         setIsLoggedIn(true);
-        setUser((user.multiFactor as any).user);
       } else {
         setIsLoggedIn(false);
       }

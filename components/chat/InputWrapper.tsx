@@ -20,11 +20,12 @@ type InputType = {
   onSubmit: () => void;
   text: string;
   setText: Dispatch<SetStateAction<string>>;
+  loading?: boolean;
 };
 
 type StatusType = "typing..." | "end" | "finishing";
 
-const InputWrapper = ({ onSubmit, text, setText }: InputType) => {
+const InputWrapper = ({ onSubmit, text, loading, setText }: InputType) => {
   const [status, setStatus] = useState<StatusType>("typing...");
   const [isInputFocused, setIsInputFocused] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -39,6 +40,7 @@ const InputWrapper = ({ onSubmit, text, setText }: InputType) => {
           // if (inputRef.current) inputRef.current?.style.height = "52px";
           onSubmit();
           setStatus("end");
+          isEnd.current = false;
         }
         clearTimeout(to);
       }, 1200);
@@ -60,7 +62,7 @@ const InputWrapper = ({ onSubmit, text, setText }: InputType) => {
 
   const addPrompt = (prompt: string) => {
     inputRef.current && inputRef.current.focus();
-    setText(text + prompt);
+    setText(prompt + " " + text);
   };
 
   return (
@@ -78,6 +80,7 @@ const InputWrapper = ({ onSubmit, text, setText }: InputType) => {
         }}>
         {/* <Search2Icon className="search" color="gray.400" /> */}
         <Textarea
+          disabled={loading}
           onFocus={() => setIsInputFocused(true)}
           onBlur={() => setIsInputFocused(false)}
           ref={inputRef}
@@ -163,8 +166,9 @@ const PromptButton = styled(MenuButton)`
   padding: 0px 12px;
   height: 30px;
   font-weight: 700;
-  margin-top: 5px;
+  margin-top: 2px;
   font-size: 0.9em;
+  background: rgba(0, 0, 0, 0);
 
   &:hover {
     background: ${({ theme }) => theme.hoverBack};

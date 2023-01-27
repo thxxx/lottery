@@ -30,6 +30,6 @@ const IconWrapper = styled.div`
   margin-right: 4px;
 
   &:hover {
-    background: ${({ theme }) => theme.hoverBack};
+    background: ${({ theme }) => theme.hoverBlue};
   }
 `;

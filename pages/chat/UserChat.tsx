@@ -4,18 +4,18 @@ import styled from "@emotion/styled";
 
 type UserChatProps = {
   text: string;
+  displayName?: string;
+  photoURL?: string;
 };
 
-const UserChat = ({ text }: UserChatProps) => {
-  const { user } = useChatStore();
-
+const UserChat = ({ text, displayName, photoURL }: UserChatProps) => {
   return (
     <UserChatWrapper>
       <div className="profile">
-        <img className="img" src={user?.photoURL as string} alt="img" />
+        <img className="img" src={photoURL} alt="img" />
       </div>
       <div className="text">
-        <p className="name">{user.displayName}</p>
+        <p className="name">{displayName}</p>
         <div
           className="main"
           dangerouslySetInnerHTML={{ __html: text as string }}

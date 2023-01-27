@@ -5,7 +5,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import AskModal from "../components/AskModal";
-import { DOMAINS } from "../utils/persona";
+import { DOMAINS, DomainOne } from "../utils/persona";
 import router from "next/router";
 import { useChatStore } from "../utils/store";
 import AppBar from "../components/AppBar";
@@ -17,6 +17,14 @@ const Home: NextPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { job, setJob } = useChatStore();
   const [text, setText] = useState("");
+  console.log(job);
+
+  useEffect(() => {
+    const localJob = localStorage.getItem("domain");
+    console.log(job, localJob);
+    if (localJob) setJob(localJob as DomainOne);
+    else setJob(DOMAINS[0].domain);
+  }, []);
 
   const onSubmit = useCallback(() => {
     console.log("전부 같지만 채팅 페이지로 이동");
@@ -74,7 +82,12 @@ const Home: NextPage = () => {
           })}
         </CardsContainer>
       </MainContainer>
-      <InputWrapper onSubmit={onSubmit} text={text} setText={setText} />
+      <InputWrapper
+        onSubmit={onSubmit}
+        text={text}
+        setText={setText}
+        loading={job ? true : false}
+      />
       <AskModal isOpen={isOpen} onClose={onClose} onOpen={onOpen} />
     </>
   );

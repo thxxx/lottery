@@ -8,34 +8,28 @@ import styled from "@emotion/styled";
 import BotChat from "./chat/BotChat";
 import { DomainOne } from "../utils/persona";
 import UserChat from "./chat/UserChat";
-
-type SavedType = {
-  uid: string;
-  job: DomainOne;
-  savedDate: any;
-  query: string;
-  responses: string;
-  id?: any;
-};
+import { SavedChatType } from "./chat";
 
 const MyPage: NextPage = () => {
   const [radio, setRadio] = useState<string>("found");
-  const [saves, setSaves] = useState<SavedType[]>();
+  const [saves, setSaves] = useState<SavedChatType[]>();
   const { user } = useChatStore();
 
   useEffect(() => {
     // get saved chats 시간순으로
     init();
-  }, []);
+  }, [radio]);
 
   const init = async () => {
     await dbService
-      .collection("saved")
-      .where("uid", "==", user.uid)
+      .collection("chats")
+      .where("uid", "==", user?.uid)
+      .where("saved", "array-contains-any", [0, 1, 2, 3, 4, 5, 6, 7, 8])
+      // .orderBy("createdAt")
       .get()
       .then((res) => {
         const response = res.docs.map((doc) => {
-          return { ...(doc.data() as SavedType), id: doc.id };
+          return { ...(doc.data() as SavedChatType), id: doc.id };
         });
         setSaves(response);
       });
@@ -49,17 +43,29 @@ const MyPage: NextPage = () => {
           <div>{radio}</div>
           {radio === "saved" && (
             <SavedContainer>
-              {saves?.map((item, i) => (
-                <div key={i} className="card">
-                  <UserChat text={item.query} />
-                  <BotChat
-                    texts={[item.responses]}
-                    saved={true}
-                    id={item.id}
-                    savedJob={item.job}
-                  />
-                </div>
-              ))}
+              {saves?.map((item, i) => {
+                return (
+                  <>
+                    {item.saved.map((doc: number) => {
+                      return (
+                        <div key={`key_${i}${doc}`} className="card">
+                          <UserChat
+                            text={item.query as string}
+                            displayName={item.displayName}
+                            photoURL={item.photoURL}
+                          />
+                          <BotChat
+                            item={item}
+                            savedIndex={doc}
+                            saves={saves}
+                            setSaves={setSaves}
+                          />
+                        </div>
+                      );
+                    })}
+                  </>
+                );
+              })}
             </SavedContainer>
           )}
         </MyPageConainer>

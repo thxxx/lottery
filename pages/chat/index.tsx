@@ -1,9 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { Input, Textarea, useDisclosure } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
-import { ArrowForwardIcon, Search2Icon } from "@chakra-ui/icons";
+import { useCallback, useEffect, useRef, useState } from "react";
 import router from "next/router";
 import { ChatInputType, ChatType, useChatStore } from "../../utils/store";
 import { dbService } from "../../utils/fbase";
@@ -20,10 +18,19 @@ import BotChat from "./BotChat";
 import { DomainOne } from "../../utils/persona";
 import UserChat from "./UserChat";
 
+export type SavedChatType = {
+  displayName?: string;
+  email?: string;
+  photoURL?: string;
+  uid?: string;
+  createdAt: Date;
+} & ChatInputType;
+
 const ChatPage: NextPage = () => {
   const [text, setText] = useState("");
-  const { chats, job, setChats, user, setJob } = useChatStore();
   const [currentChats, setCurrentChats] = useState<ChatInputType[]>();
+  const [loading, setLoading] = useState(false);
+  const { chats, job, setChats, user, setJob } = useChatStore();
   const mainRef = useRef(null);
 
   useEffect(() => {
@@ -36,13 +43,14 @@ const ChatPage: NextPage = () => {
     }
   }, [chats, job, setJob]);
 
-  const callApi = async () => {
+  const callApi = useCallback(async () => {
     return "tt" + String(chats.length);
-  };
+  }, [chats]);
 
   const doSubmit = async () => {
     if (!job) return;
     if (!text) return;
+    setLoading(true);
     setText("");
     const inputText = text.replaceAll("\n", "<br />");
 
@@ -81,44 +89,69 @@ const ChatPage: NextPage = () => {
 
     const response = await callApi();
 
-    const addedChats = [
-      {
-        text: inputText,
-        type: ChatType.USER,
-        job: job,
-        id: chats.length + 1,
-      },
-      {
-        text: [response],
-        type: ChatType.BOT,
-        job: job,
-        id: chats.length + 2,
-      },
-    ];
-
-    const allChats = [...chats, ...addedChats];
-
-    setChats(allChats);
-
-    const body = {
+    const body: SavedChatType = {
       query: inputText,
-      chats: [response],
+      text: [response],
       createdAt: new Date(),
-      userName: user.displayName,
-      userEmail: user.email,
-      userPhoto: user.photoURL,
-      uid: user.uid,
+      displayName: user?.displayName,
+      email: user?.email,
+      photoURL: user?.photoURL,
+      uid: user?.uid,
+      saved: [],
+      job: job,
     };
-    // await dbService.collection("chats").add(body);
 
-    (mainRef.current as any).scrollIntoView({
-      behavior: "smooth",
-      block: "end",
-      inline: "nearest",
-    });
+    await dbService
+      .collection("chats")
+      .add(body)
+      .then((docRef) => {
+        console.log(docRef.id);
+
+        const addedChats = [
+          {
+            text: inputText,
+            type: ChatType.USER,
+            job: job,
+            id: chats.length + 1,
+          },
+          {
+            text: [response],
+            type: ChatType.BOT,
+            job: job,
+            id: docRef.id,
+            query: inputText,
+            saved: [],
+          },
+        ];
+        setChats([...chats, ...addedChats]);
+        setLoading(false);
+
+        (mainRef.current as any).scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+          inline: "nearest",
+        });
+      });
   };
 
-  const generateAnotherAnswer = () => {};
+  const generateAnotherAnswer = useCallback(
+    async (id: string | number) => {
+      console.log("하나 더 추가", id);
+      const response = await callApi();
+      const filtered = chats.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            text: [...(item.text as string[]), response],
+          };
+        } else {
+          return item;
+        }
+      });
+      setChats(filtered);
+    },
+    [chats, callApi, setChats]
+  );
 
   return (
     <>
@@ -134,38 +167,34 @@ const ChatPage: NextPage = () => {
           <ChatContainer>
             {currentChats?.map((item, i) => {
               if (item.type === ChatType.USER) {
-                return <UserChat key={i} text={item.text as string} />;
-              } else if (item.type === ChatType.LOADING) {
                 return (
-                  <BotChatWrapper key={i}>
-                    <div className="profile">
-                      <span className="img">전문가</span>
-                    </div>
-                    <div className="text">
-                      <Image
-                        src="/loading.gif"
-                        width={50}
-                        height={40}
-                        alt="loading"
-                      />
-                    </div>
-                  </BotChatWrapper>
+                  <UserChat
+                    key={i}
+                    text={item.text as string}
+                    displayName={user?.displayName}
+                    photoURL={user?.photoURL}
+                  />
                 );
+              } else if (item.type === ChatType.LOADING) {
+                return <BotChatWrapper key={i}>...</BotChatWrapper>;
               } else {
                 return (
                   <BotChat
                     key={i}
-                    texts={item.text as string[]}
-                    onSubmit={doSubmit}
-                    id={item.id}
-                    saved={item.saved}
+                    item={item}
+                    onSubmit={generateAnotherAnswer}
                   />
                 );
               }
             })}
           </ChatContainer>
           <BottomContainer>
-            <InputWrapper onSubmit={doSubmit} text={text} setText={setText} />
+            <InputWrapper
+              onSubmit={doSubmit}
+              text={text}
+              setText={setText}
+              loading={loading}
+            />
           </BottomContainer>
         </RightContainer>
       </MainContainer>

@@ -47,3 +47,7 @@ export const MainContainer = styled.main`
 export const BotChatWrapper = styled(UserChatWrapper)`
   background: ${({ theme }) => theme.blue01 + "22"};
 `;
+
+const temp = "";
+
+export default temp;

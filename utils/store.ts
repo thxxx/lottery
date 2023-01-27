@@ -9,22 +9,30 @@ export enum ChatType {
 
 export type ChatInputType = {
   text: string | string[];
-  type: ChatType;
+  type?: ChatType;
   questionKey?: string;
-  saved?: boolean;
+  saved?: any;
+  query?: string; // input of user, only exist when bot.
   job: DomainOne;
-  id: number | string;
+  id?: number | string | undefined;
+};
+
+export type UserType = {
+  displayName: string;
+  photoURL: string;
+  email: string;
+  uid: string;
 };
 
 export type UserState = {
   darkMode: boolean;
   chats: ChatInputType[];
   job: DomainOne | undefined;
-  user: any;
+  user: UserType | undefined;
   setChats: (by: ChatInputType[]) => void;
   setDarkMode: (by: boolean) => void;
   setJob: (by: DomainOne) => void;
-  setUser: (by: any) => void;
+  setUser: (by: UserType) => void;
 };
 
 export const useChatStore = create<UserState>((set) => ({
