@@ -48,6 +48,10 @@ export const BotChatWrapper = styled(UserChatWrapper)`
   background: ${({ theme }) => theme.blue01 + "22"};
 `;
 
-const temp = "";
+import React from "react";
 
-export default temp;
+const Style = () => {
+  return <div>Style</div>;
+};
+
+export default Style;
