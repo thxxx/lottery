@@ -1,6 +1,8 @@
 import React from "react";
 import { useChatStore } from "../../utils/store";
 import styled from "@emotion/styled";
+import { Swiper } from "swiper/react";
+import { CustomSwipeSlide } from "./BotChat";
 
 type UserChatProps = {
   text: string;
@@ -10,34 +12,44 @@ type UserChatProps = {
 
 const UserChat = ({ text, displayName, photoURL }: UserChatProps) => {
   return (
-    <UserChatWrapper>
-      <div className="profile">
-        <img className="img" src={photoURL} alt="img" />
-      </div>
-      <div className="text">
-        <p className="name">{displayName}</p>
-        <div
-          className="main"
-          dangerouslySetInnerHTML={{ __html: text as string }}
-        />
-      </div>
+    <UserChatWrapper
+      spaceBetween={26}
+      slidesPerView={1}
+      allowTouchMove={false}
+      scrollbar={{ draggable: true }}>
+      <CustomSwipeSlide>
+        <div className="innerd">
+          <div className="profile">
+            <img className="img" src={photoURL} alt="img" />
+          </div>
+          <div className="text">
+            <p className="name">{displayName}</p>
+            <div
+              className="main"
+              dangerouslySetInnerHTML={{ __html: text as string }}
+            />
+          </div>
+        </div>
+      </CustomSwipeSlide>
     </UserChatWrapper>
   );
 };
 
 export default React.memo(UserChat);
 
-export const UserChatWrapper = styled.div`
+export const UserChatWrapper = styled(Swiper)`
   display: flex;
   flex-direction: row;
   aligm-items: center;
   justify-content: center;
   width: 100%;
-  // border-bottom: 1px solid ${({ theme }) => theme.borderColor01};
+  position: relative;
   padding: 30px 15px;
 
   .profile {
-    border-bottom: 1px solid ${({ theme }) => theme.borderColor01};
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
     width: 8%;
   }
 
@@ -61,6 +73,9 @@ export const UserChatWrapper = styled.div`
     .main {
       margin-top: 15px;
     }
+    .bot {
+      min-height: 50px;
+    }
   }
 
   .img {
@@ -72,15 +87,17 @@ export const UserChatWrapper = styled.div`
     justify-content: center;
     width: 35px;
     height: 35px;
+    color: white;
   }
   @media (max-width: 800px) {
-    padding: 15px 10px;
+    padding: 20px 10px;
 
     .profile {
-      width: 12%;
+      width: 14%;
+      justify-content: flex-start;
     }
     .text {
-      width: 88%;
+      width: 86%;
       .main {
         margin-top: 5px;
       }
@@ -88,6 +105,46 @@ export const UserChatWrapper = styled.div`
     .img {
       width: 30px;
       height: 30px;
+    }
+  }
+`;
+
+export const BotChatWrapper = styled(UserChatWrapper)<{ w: number }>`
+  padding: 0px 15px;
+  padding-top: 25px;
+  padding-bottom: 5px;
+  background: ${({ theme }) => theme.blue01 + "01"};
+
+  width: ${({ w }) => (w < 1200 ? w : 1200)}px;
+  max-width: 100vw;
+  left: -${({ w }) => (w < 1200 ? `${w / 4.3 - 80}px` : "200px")};
+
+  .text {
+    .agains {
+      width: 100%;
+      margin-top: 15px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      .again {
+        color: ${({ theme }) => theme.black06};
+      }
+    }
+  }
+
+  @media (max-width: 800px) {
+    padding: 10px 10px;
+    width: 100%;
+    left: 0px;
+
+    .text {
+      .agains {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
     }
   }
 `;

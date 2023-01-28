@@ -23,7 +23,7 @@ export type SavedChatType = {
   email?: string;
   photoURL?: string;
   uid?: string;
-  createdAt: Date;
+  createdAt: number;
 } & ChatInputType;
 
 const ChatPage: NextPage = () => {
@@ -101,7 +101,7 @@ const ChatPage: NextPage = () => {
     const body: SavedChatType = {
       query: inputText,
       text: [response],
-      createdAt: new Date(),
+      createdAt: new Date().getTime(),
       displayName: user?.displayName,
       email: user?.email,
       photoURL: user?.photoURL,
@@ -172,7 +172,6 @@ const ChatPage: NextPage = () => {
       <AppBar page="chat" />
       <MainContainer ref={mainRef}>
         <RightContainer>
-          <p>{job}</p>
           <ChatContainer>
             {currentChats?.map((item, i) => {
               if (item.type === ChatType.USER) {

@@ -59,9 +59,12 @@ const Home: NextPage = () => {
               (doc) => doc.domain === job
             )[0]?.domain.toLowerCase()}
           </p>
-          <p className="desc">
-            {DOMAINS.filter((doc) => doc.domain === job)[0]?.desc}
-          </p>
+          <p
+            className="desc"
+            dangerouslySetInnerHTML={{
+              __html: DOMAINS.filter((doc) => doc.domain === job)[0]?.desc,
+            }}
+          />
         </DomainDesc>
         {/* <TopCardContainer>
           <div className="left">
@@ -88,7 +91,9 @@ const Home: NextPage = () => {
                 selected={item.domain === job}>
                 <div className="wrapper">
                   {item.blackIcon}
-                  <div className="desc">{item.domain}</div>
+                  <div className="desc">
+                    {item.domain.charAt(0) + item.domain.slice(1).toLowerCase()}
+                  </div>
                 </div>
               </Card>
             );
@@ -139,7 +144,7 @@ const MainContainer = styled.main`
   background: ${({ theme }) => theme.bgColor};
   transition: 3s ease;
   min-height: 100vh;
-  padding-bottom: 150px;
+  padding-bottom: 120px;
   padding-top: 80px;
 
   .logo {
@@ -175,7 +180,7 @@ const CardsContainer = styled.div`
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  margin-top: 18px;
+  margin-top: 20px;
   // background: #00005c;
   outline: 5px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -226,7 +231,7 @@ const Card = styled.div<{ selected: boolean }>`
 
   .desc {
     margin-top: 9px;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 1.1em;
   }
 

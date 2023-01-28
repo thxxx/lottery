@@ -2,7 +2,7 @@ export const theme = {
   purple01: "#F3CCFF",
   purple02: "#D09CFA",
   purple03: "#A555EC",
-  grey: "#EEF2F6",
+  grey: "#CCD5DF",
   darkGrey: "#2F3747",
   blue01: "#8D9EFF",
   blue02: "#8D9EFF96",
@@ -11,6 +11,9 @@ export const theme = {
   bgColor02: "rgba(0,0,0,0.2)",
   bgColor03: "#D9D9D966",
   bgColor04: "#D9D9D9AA",
+  black04: "rgba(0,0,0,0.4)",
+  black06: "rgba(0,0,0,0.6)",
+  black08: "rgba(0,0,0,0.8)",
 };
 
 export const lightTheme = {

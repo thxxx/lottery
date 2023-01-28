@@ -11,22 +11,28 @@ import NameByDomain from "../../components/NameByDomain";
 import IconContainer from "./IconContainer";
 import { SavedChatType } from ".";
 import useWindowDimensions from "../../hook/useWindowDimensions";
+import { BotChatWrapper, UserChatWrapper } from "./UserChat";
+
+const BWIDTH = 200;
 
 const dummy = [
   {
     favicon: "favicon",
     domain: "google.com",
     title: "Title of this website",
+    link: "https://google.com",
   },
   {
     favicon: "favicon",
     domain: "google.com",
     title: "Title of this website",
+    link: "https://google.com",
   },
   {
     favicon: "favicon",
     domain: "google.com",
     title: "Title of this website",
+    link: "https://google.com",
   },
 ];
 
@@ -49,6 +55,7 @@ const BotChat = ({
 }: BotChatType) => {
   const { user, job, chats, setChats } = useChatStore();
   const [toggle, setToggle] = useState(false);
+  const [asked, setAsked] = useState(false);
   const [temps, setTemps] = useState<SavedChatType[]>();
   const { width, height } = useWindowDimensions();
 
@@ -114,9 +121,33 @@ const BotChat = ({
       });
   };
 
+  const askQuora = async () => {
+    setAsked(true);
+    // 다른 DB에 저장되어야겠지??
+    // const body = { ...item, askedAt: new Date().getTime() };
+    // await dbService.collection("asked").add(body);
+
+    const modified = {
+      ...item,
+      asked: true,
+    };
+
+    await dbService
+      .collection("chats")
+      .doc(item.id)
+      .update(modified)
+      .then(() => {
+        console.log("Document successfully updated!");
+      })
+      .catch((error) => {
+        console.error("Error updating document: ", error);
+      });
+  };
+
   return (
     <>
       <BotChatWrapper
+        w={width}
         spaceBetween={26}
         slidesPerView={1}
         allowTouchMove={width < 800}
@@ -140,7 +171,7 @@ const BotChat = ({
                 </div>
                 <div className="text">
                   <NameByDomain domain={item.job} />
-                  <p className="main">{tex}</p>
+                  <p className="main bot">{tex}</p>
                   <IconContainer
                     saveThisChat={saveThisChat}
                     shared={shared}
@@ -160,11 +191,16 @@ const BotChat = ({
                     {toggle && (
                       <WebContainer>
                         {dummy.map((doc, i) => (
-                          <div className="content" key={i}>
-                            <div>
+                          <div
+                            className="content"
+                            key={i}
+                            onClick={() => {
+                              window.open(doc.link);
+                            }}>
+                            <span className="links">
                               <span className="favicon">{doc.favicon}</span>
                               <span className="domain">{doc.domain}</span>
-                            </div>
+                            </span>
                             <p className="title">{doc.title}</p>
                           </div>
                         ))}
@@ -173,7 +209,7 @@ const BotChat = ({
                   </>
                 </div>
               </div>
-              {width < 800 && (
+              {width < 800 && onSubmit && (
                 <SwipeNoti>
                   &nbsp; {">>"} &nbsp; swipe to get another response
                 </SwipeNoti>
@@ -193,20 +229,31 @@ const BotChat = ({
               </div>
               <div className="text">
                 <NameByDomain domain={item.job} />
-                <div className="agains">
-                  <SelectionBtn left={true} onClick={() => onSubmit(item.id)}>
-                    <RepeatIcon color="white" width={25} height={25} />
-                    <p>
-                      Do you want me to
-                      <br />
-                      answer it again?
-                    </p>
-                  </SelectionBtn>
-                  <SelectionBtn left={false}>
-                    <RepeatIcon color="white" width={25} height={25} />
-                    <p>Get Answer from Quora</p>
-                  </SelectionBtn>
-                </div>
+                {asked ? (
+                  <>
+                    We will find the answer as soon as possible and let you know
+                    by notification.
+                  </>
+                ) : (
+                  <div className="agains">
+                    <SelectionBtn left={true} onClick={() => onSubmit(item.id)}>
+                      <RepeatIcon
+                        color="blackAlpha.600"
+                        width={25}
+                        height={25}
+                      />
+                      <p className="again">
+                        Do you want me to
+                        <br />
+                        answer it again?
+                      </p>
+                    </SelectionBtn>
+                    <SelectionBtn left={false} onClick={() => askQuora()}>
+                      <RepeatIcon color="white" width={25} height={25} />
+                      <p>Get Answer from Quora</p>
+                    </SelectionBtn>
+                  </div>
+                )}
               </div>
             </div>
             <Empty />
@@ -230,27 +277,34 @@ const SwipeNext = ({ type }: { type: "prev" | "next" }) => {
       }}>
       {type === "next" && (
         <>
-          <ArrowRightIcon />
+          <ArrowRightIcon boxSize={9} color="gray.300" />
           <p>click to get another response</p>
         </>
       )}
-      {type === "prev" && <ArrowLeftIcon />}
+      {type === "prev" && <ArrowLeftIcon boxSize={9} color="gray.300" />}
     </SwipeDiv>
   );
 };
 
 const SwipeDiv = styled.div`
   cursor: pointer;
-  background: rgba(0, 0, 0, 0.05);
-  width: 200px;
+  width: ${BWIDTH}px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
+  color: ${({ theme }) => theme.grey};
+  font-weight: 700;
+  min-height: 140px;
+
+  p {
+    margin-top: 15px;
+    line-height: 20px;
+  }
 
   &:hover {
-    background: red;
+    background: ${({ theme }) => theme.grey + "22"};
   }
 `;
 
@@ -258,6 +312,7 @@ const SwipeNoti = styled.div`
   color: #cfcfcf;
   margin: 3px 0px;
   padding: 4px 0px;
+  padding-left: 4%;
   // border-top: 1px solid #cfcfcf;
   // border-bottom: 1px solid #cfcfcf;
   width: 100%;
@@ -266,17 +321,47 @@ const SwipeNoti = styled.div`
 const WebContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
+  text-align: start;
+  width: 100%;
 
   .content {
-    padding: 10px 0px;
+    padding: 7px 0px;
+    cursor: pointer;
+    width: 100%;
+    .title {
+      transition: 0.2s ease;
+    }
+
+    &:hover {
+      .title {
+        color: ${({ theme }) => theme.blue01};
+      }
+    }
+
     p {
       margin-top: 7px;
       font-weight: 700;
     }
     .domain {
       margin-left: 5px;
+    }
+
+    .links {
+      // border: 1px solid rgba(0, 0, 0, 0.07);
+      // border-radius: 50px;
+      // padding: 2px 10px;
+      // margin-left: -3px;
+    }
+  }
+
+  @media (max-width: 800px) {
+    font-size: 0.9em;
+    .content {
+      p {
+        margin-top: 4px;
+      }
     }
   }
 `;
@@ -315,7 +400,7 @@ const SelectionBtn = styled.div<{ left: boolean }>`
   }
 `;
 
-const CustomSwipeSlide = styled(SwiperSlide)`
+export const CustomSwipeSlide = styled(SwiperSlide)`
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -326,99 +411,14 @@ const CustomSwipeSlide = styled(SwiperSlide)`
     flex-direction: row;
     justify-content: center;
     width: 100%;
+    max-width: 750px;
   }
 
   @media (max-width: 800px) {
     flex-direction: column;
-  }
-`;
-
-const BotChatWrapper = styled(Swiper)`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  // border-bottom: 1px solid ${({ theme }) => theme.borderColor01};
-  padding: 0px 15px;
-  padding-top: 25px;
-  padding-bottom: 5px;
-  background: ${({ theme }) => theme.blue01 + "01"};
-
-  width: 1200px;
-  left: -200px;
-
-  .profile {
-    width: 64px;
-  }
-
-  .text {
-    width: 736px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-
-    .name {
-      font-weight: 700;
-      span {
-        font-weight: 500;
-        color: rgba(0, 0, 0, 0.6);
-        font-size: 1em;
-        margin-left: 4px;
-      }
-    }
-
-    .main {
-      margin-top: 15px;
-    }
-
-    .agains {
-      width: 100%;
-      margin-top: 15px;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-    }
-  }
-  .img {
-    border-radius: 300px;
-    background: brown;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 35px;
-    height: 35px;
-    color: white;
-  }
-
-  @media (max-width: 800px) {
-    padding: 10px 10px;
-
-    .profile {
-      width: 12%;
-    }
-    .text {
-      width: 88%;
-      .main {
-        margin-top: 5px;
-      }
-
-      .agains {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-    }
-    .img {
-      width: 30px;
-      height: 30px;
-    }
   }
 `;
 
 const Empty = styled.div`
-  width: 200px;
+  width: ${BWIDTH}px;
 `;

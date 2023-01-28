@@ -15,7 +15,7 @@ type PagesType = "main" | "chat" | "my";
 type AppBarType = {
   page?: PagesType;
   radio?: string;
-  onClick?: Dispatch<SetStateAction<string>>;
+  onClick?: Dispatch<SetStateAction<"found" | "saved">>;
 };
 
 const AppBar = ({ page, onClick, radio }: AppBarType) => {
@@ -26,7 +26,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
     let provider;
     provider = new firebaseInstance.auth.GoogleAuthProvider();
 
-    const data = await authService
+    await authService
       .signInWithPopup(provider)
       .then((res) => {
         console.log("Successfully Logged In!");
@@ -69,7 +69,6 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
                   pathname: "/chat",
                 });
               }}>
-              <Home />
               <span>Chat</span>
             </div>
           </>
@@ -89,7 +88,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
         {page === "my" && onClick && (
           <>
             <Radio clicked={radio === "found"} onClick={() => onClick("found")}>
-              Found
+              Recent
             </Radio>
             <Radio clicked={radio === "saved"} onClick={() => onClick("saved")}>
               Saved
@@ -106,10 +105,13 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
 export default React.memo(AppBar);
 
 const Radio = styled.div<{ clicked: boolean }>`
-  padding: 0px 10px;
+  padding: 3px 10px;
   cursor: pointer;
-  border-bottom: 1px solid
-    ${({ theme, clicked }) => (clicked ? "rgba(200,0,0,1)" : "white")};
+  transition: 0.15s ease;
+  border-radius: 6px;
+  margin-left: 10px;
+  color: ${({ theme, clicked }) =>
+    clicked ? theme.blue01 : "rgba(0,0,0,0.7)"};
 
   &:hover {
     background-color: ${({ theme }) => theme.hoverBack};

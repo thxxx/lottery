@@ -124,7 +124,7 @@ const InputWrapper = ({ onSubmit, text, loading, setText }: InputType) => {
             </CustomMenuList>
             <PromptButton as={Button}>
               <ArrowForwardIcon className="icon" color="black" />
-              <span>Show good prompts</span>
+              <span>Press if you want better answer</span>
             </PromptButton>
           </Menu>
         </div>
@@ -142,8 +142,9 @@ const CustomMenuList = styled(MenuList)`
 `;
 
 const InputOuter = styled.div`
+  background: linear-gradient(rgba(0, 0, 0, 0), 10%, white);
+  backdrop-filter: blur(3px);
   z-index: 3;
-  background: white;
   position: fixed;
   bottom: 0px;
   padding-bottom: 5px;
@@ -195,6 +196,7 @@ const PromptButton = styled(MenuButton)`
 export const InputContainer = styled.form`
   position: relative;
   width: 100%;
+  background: white;
 
   textarea {
     border: 1px solid ${({ theme }) => theme.borderColor01};

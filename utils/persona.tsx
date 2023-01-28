@@ -25,8 +25,8 @@ export type DomainType = {
   blackIcon: React.ReactNode;
 };
 
-const WIDTH = 40;
-const HEIGHT = 40;
+const WIDTH = 45;
+const HEIGHT = 45;
 const WIDTHB = 20;
 const HEIGHTB = 20;
 
@@ -44,7 +44,7 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.MUSIC,
     id: 1,
     name: "Elizabeth",
-    desc: "Hello, I am Elizabeth, a musician. I am good at music theory.  \
+    desc: "Hello, I am Elizabeth, a musician. I am good at music theory.  <br /> \
           Also, I have various knowledge such as music history and musical instruments.",
   },
   {
@@ -67,7 +67,7 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.PHILOSOPHY,
     id: 2,
     name: "Amelia",
-    desc: "Hello, I am Amelia. I'm a philosopher. \
+    desc: "Hello, I am Amelia. I'm a philosopher. <br /> \
         You're always welcome if you want to have a philosophical conversation with me.",
   },
   {
@@ -78,7 +78,7 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.LAW,
     id: 3,
     name: "Olivia",
-    desc: "Hello, I am Olivia. I know a lot of law knowledge.  \
+    desc: "Hello, I am Olivia. I know a lot of law knowledge.  <br /> \
       I'm an AI expert, so it's not always right for me to answer. But I can help you.",
   },
   {
@@ -96,7 +96,7 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.HISTORY,
     id: 4,
     name: "Tom",
-    desc: "Hello, I am Daniel. I know a lot of history knowledge.  \
+    desc: "Hello, I am Daniel. I know a lot of history knowledge.  <br /> \
           I know every country's history well, so ask me anything.",
   },
   {
@@ -114,7 +114,7 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.HEALTH,
     id: 5,
     name: "Michael",
-    desc: "Hello, I am Michael. I know a lot of health knowledge.  \
+    desc: "Hello, I am Michael. I know a lot of health knowledge.  <br /> \
         I am interested in health and I am also an expert in various sports such as soccer and basketball.",
   },
   {
@@ -137,7 +137,7 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.AGRICULTURE,
     id: 6,
     name: "Joseph",
-    desc: "Hello, I am Joseph. I specialize in agriculture. \
+    desc: "Hello, I am Joseph. I specialize in agriculture. <br /> \
         Ask me whenever you want about farming.",
   },
   {
@@ -155,7 +155,7 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.SCIENCE,
     id: 7,
     name: "Emma",
-    desc: "Hello, I am Emma. I know a lot of scientific knowledge.  \
+    desc: "Hello, I am Emma. I know a lot of scientific knowledge.  <br /> \
           Also, I am good at explaining using formulas unlike other friends.",
   },
   {
@@ -166,7 +166,7 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.ART,
     id: 8,
     name: "Andrew",
-    desc: "Hello, I am Andrew.I'm very interested in art. \
+    desc: "Hello, I am Andrew.I'm very interested in art. <br /> \
         I'm the next Picasso. That's how serious I am about art.",
   },
   {
@@ -184,7 +184,7 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.BUSINESS,
     id: 9,
     name: "Metthew",
-    desc: "Hello, I am Matthew. I'm an entrepreneur.  \
+    desc: "Hello, I am Matthew. I'm an entrepreneur.  <br /> \
         I am an experienced professional in the business industry. Ask me anything.",
   },
   {
@@ -207,7 +207,7 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.COMMONSENSE,
     id: 10,
     name: "Shopia",
-    desc: "Hello, I am Shopia. I know a lot of miscellaneous knowledge.  \
+    desc: "Hello, I am Shopia. I know a lot of miscellaneous knowledge. <br /> \
         I know all the knowledge necessary for life, such as cooking and cleaning.",
   },
   {
@@ -225,7 +225,8 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.SOFTWARE,
     id: 11,
     name: "Noah",
-    desc: "Hello, I am Noah. I know a lot of programming knowledge. Unlike other kids, I can make code and modify it for you.",
+    desc: "Hello, I am Noah. I know a lot of programming knowledge. <br /> \
+          Unlike other kids, I can make code and modify it for you.",
   },
   {
     icon: (
@@ -242,7 +243,7 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.MEDICAL,
     id: 12,
     name: "Liam",
-    desc: "Hello, I am Liam. I know a lot of medical knowledge.  \
+    desc: "Hello, I am Liam. I know a lot of medical knowledge.  <br /> \
           I can't get the exact medical treatment and I can give you simple help.",
   },
 ];
