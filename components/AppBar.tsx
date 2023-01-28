@@ -1,6 +1,6 @@
 import { ArrowForwardIcon, EmailIcon, SunIcon } from "@chakra-ui/icons";
 import styled from "@emotion/styled";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import FeedbackModal from "./FeedbackModal";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import { Home } from "@styled-icons/fluentui-system-filled";
 import Link from "next/link";
 import { useChatStore } from "../utils/store";
 import router from "next/router";
+import { authService, firebaseInstance } from "../utils/fbase";
 
 type PagesType = "main" | "chat" | "my";
 
@@ -20,6 +21,20 @@ type AppBarType = {
 const AppBar = ({ page, onClick, radio }: AppBarType) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useChatStore();
+
+  const doLogin = useCallback(async () => {
+    let provider;
+    provider = new firebaseInstance.auth.GoogleAuthProvider();
+
+    const data = await authService
+      .signInWithPopup(provider)
+      .then((res) => {
+        console.log("Successfully Logged In!");
+      })
+      .catch((err) => {
+        console.log("Err occured! ", err);
+      });
+  }, []);
 
   const returnNavi = () => {
     switch (page) {
@@ -38,8 +53,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
                 <Image src="/my.png" width={24} height={24} alt="mypage" />
               </div>
             ) : (
-              <div className="icon">
-                <Home />
+              <div className="icon" onClick={() => doLogin()}>
                 <span>Login</span>
               </div>
             )}

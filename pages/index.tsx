@@ -15,7 +15,7 @@ export const LOCAL_ID = "solomon_uuid";
 
 const Home: NextPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { job, setJob } = useChatStore();
+  const { job, user, setJob } = useChatStore();
   const [text, setText] = useState("");
 
   useEffect(() => {
@@ -25,6 +25,8 @@ const Home: NextPage = () => {
   }, []);
 
   const onSubmit = useCallback((inputText: string) => {
+    if (!user) alert("Log in first! this is temporary message");
+
     console.log("전부 같지만 채팅 페이지로 이동", inputText);
     router.push({
       pathname: "/chat",
