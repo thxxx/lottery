@@ -103,7 +103,7 @@ const MyPage: NextPage = () => {
           {radio === "found" && (
             <SavedContainer>
               <div>Recent</div>
-              {asks?.map((item, i) => {
+              {asks?.map((item: any, i: number) => {
                 return (
                   <>
                     <SavedContent
