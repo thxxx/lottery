@@ -17,19 +17,18 @@ const Home: NextPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { job, setJob } = useChatStore();
   const [text, setText] = useState("");
-  console.log(job);
 
   useEffect(() => {
     const localJob = localStorage.getItem("domain");
-    console.log(job, localJob);
     if (localJob) setJob(localJob as DomainOne);
     else setJob(DOMAINS[0].domain);
   }, []);
 
-  const onSubmit = useCallback(() => {
-    console.log("전부 같지만 채팅 페이지로 이동");
+  const onSubmit = useCallback((inputText: string) => {
+    console.log("전부 같지만 채팅 페이지로 이동", inputText);
     router.push({
       pathname: "/chat",
+      query: { isFromHome: true, inputQuery: inputText },
     });
   }, []);
 
@@ -47,9 +46,21 @@ const Home: NextPage = () => {
           <span>Lottery</span>
           <span className="beta">Beta</span>
         </div>
-        <p>Quora through conversational AI.</p>
-        <p>You can ask and get answer directly, with no ads.</p>
-        <div>{DOMAINS.filter((doc) => doc.domain === job)[0]?.name}</div>
+        <DomainDesc>
+          <div>{DOMAINS.filter((doc) => doc.domain === job)[0]?.icon}</div>
+          <p className="name">
+            {DOMAINS.filter((doc) => doc.domain === job)[0]?.name}
+          </p>
+          <p className="domain">
+            @
+            {DOMAINS.filter(
+              (doc) => doc.domain === job
+            )[0]?.domain.toLowerCase()}
+          </p>
+          <p className="desc">
+            {DOMAINS.filter((doc) => doc.domain === job)[0]?.desc}
+          </p>
+        </DomainDesc>
         {/* <TopCardContainer>
           <div className="left">
             <span>
@@ -74,26 +85,49 @@ const Home: NextPage = () => {
                 }}
                 selected={item.domain === job}>
                 <div className="wrapper">
-                  {item.icon}
-                  <p>{item.domain}</p>
+                  {item.blackIcon}
+                  <div className="desc">{item.domain}</div>
                 </div>
               </Card>
             );
           })}
         </CardsContainer>
       </MainContainer>
-      <InputWrapper
-        onSubmit={onSubmit}
-        text={text}
-        setText={setText}
-        loading={job ? true : false}
-      />
+      <InputWrapper onSubmit={onSubmit} text={text} setText={setText} />
       <AskModal isOpen={isOpen} onClose={onClose} onOpen={onOpen} />
     </>
   );
 };
 
 export default Home;
+
+const DomainDesc = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 18px;
+
+  .name {
+    margin-top: 3px;
+    font-weight: 700;
+  }
+  .domain {
+    color: rgba(0, 0, 0, 0.6);
+  }
+  .desc {
+    margin-top: 8px;
+  }
+
+  @media (max-width: 800px) {
+    padding: 0px 25px;
+  }
+`;
+
+const DescContainer = styled.div`
+  padding: 10px 0px;
+`;
 
 const MainContainer = styled.main`
   display: flex;
@@ -139,23 +173,42 @@ const CardsContainer = styled.div`
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: 18px;
+  // background: #00005c;
+  outline: 5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 6px 52px;
+
+  @media (max-width: 800px) {
+    outline: none;
+    padding: 0px;
+  }
 `;
 
 const Card = styled.div<{ selected: boolean }>`
-  width: 180px;
+  width: 140px;
   height: 100px;
   border: 1px solid
-    ${({ theme, selected }) => (selected ? theme.blue01 : theme.borderColor01)};
-  background: ${({ theme }) => theme.borderColor01};
+    ${({ theme, selected }) => (selected ? theme.blue01 : "rgba(0,0,0,0)")};
+  background: ${({ theme, selected }) =>
+    selected ? "#8D9EFFCC" : theme.bgColor03};
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: space-between;
   justify-content: space-between;
   cursor: pointer;
-  margin: 7px;
-  transition: 0.5s ease;
+  margin: 8.5px;
+  transition: 0.25s ease;
   padding: 10px;
+  font-weight: 700;
+  font-size: 0.9em;
+  color: rgba(0, 0, 0, 0.6);
+
+  &:hover {
+    background: ${({ theme, selected }) => !selected && theme.bgColor04};
+    // box-shadow: 3px 10px 15px rgba(0, 0, 0, 0.1);
+  }
 
   .wrapper {
     display: flex;
@@ -169,8 +222,8 @@ const Card = styled.div<{ selected: boolean }>`
     width: 100px;
   }
 
-  p {
-    margin-top: 16px;
+  .desc {
+    margin-top: 9px;
     font-weight: 700;
     font-size: 1.1em;
   }
@@ -185,17 +238,11 @@ const Card = styled.div<{ selected: boolean }>`
     text-align: center;
   }
 
-  &:hover {
-    border: 1px solid
-      ${({ theme, selected }) => (selected ? theme.blue01 : theme.borderColor)};
-    box-shadow: 3px 10px 15px rgba(0, 0, 0, 0.1);
-  }
-  @media (max-width: 420px) {
-    width: 140px;
-    height: 110px;
-    p {
-      margin-top: 10px;
-    }
+  @media (max-width: 800px) {
+    width: 100px;
+    height: 73px;
+    font-size: 11px;
+    margin: 6px;
   }
 `;
 

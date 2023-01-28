@@ -32,6 +32,15 @@ const ChatPage: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const { chats, job, setChats, user, setJob } = useChatStore();
   const mainRef = useRef(null);
+  let temp = 0;
+
+  useEffect(() => {
+    if (temp === 0 && router.query.isFromHome) {
+      doSubmit(router.query.inputQuery as string);
+      router.replace("/chat", undefined, { shallow: true });
+      temp = 1;
+    }
+  }, []);
 
   useEffect(() => {
     if (job) {
@@ -47,12 +56,12 @@ const ChatPage: NextPage = () => {
     return "tt" + String(chats.length);
   }, [chats]);
 
-  const doSubmit = async () => {
+  const doSubmit = async (inText: string) => {
     if (!job) return;
-    if (!text) return;
+    if (!inText) return;
     setLoading(true);
     setText("");
-    const inputText = text.replaceAll("\n", "<br />");
+    const inputText = inText.replaceAll("\n", "<br />");
 
     if (!chats)
       setChats([

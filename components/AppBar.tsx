@@ -35,8 +35,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
                     pathname: "/my",
                   });
                 }}>
-                <Home />
-                <span>MyPage</span>
+                <Image src="/my.png" width={24} height={24} alt="mypage" />
               </div>
             ) : (
               <div className="icon">

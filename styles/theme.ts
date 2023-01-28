@@ -9,7 +9,8 @@ export const theme = {
   hoverBack: "rgba(0,0,0,0.1)",
   hoverBlue: "#8D9EFF4D",
   bgColor02: "rgba(0,0,0,0.2)",
-  bgColor03: "rgba(0,0,0,0.3)",
+  bgColor03: "#D9D9D966",
+  bgColor04: "#D9D9D9AA",
 };
 
 export const lightTheme = {

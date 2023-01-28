@@ -19,5 +19,6 @@ declare module "@emotion/react" {
     hoverBack: string;
     bgColor03: string;
     hoverBlue: string;
+    bgColor04: string;
   }
 }

@@ -26,7 +26,7 @@ export const ChatContainer = styled.div`
 
 export const BottomContainer = styled.div`
   width: 100%;
-  border-top: 1px solid ${({ theme }) => theme.bgColor02};
+  // border-top: 1px solid ${({ theme }) => theme.bgColor02};
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -37,6 +37,7 @@ export const UserChatWrapper = styled.div`
   padding: 30px 15px;
 
   .profile {
+    border-bottom: 1px solid ${({ theme }) => theme.borderColor01};
     width: 8%;
   }
 
@@ -71,5 +72,22 @@ export const UserChatWrapper = styled.div`
     justify-content: center;
     width: 35px;
     height: 35px;
+  }
+  @media (max-width: 800px) {
+    padding: 15px 10px;
+
+    .profile {
+      width: 12%;
+    }
+    .text {
+      width: 88%;
+      .main {
+        margin-top: 5px;
+      }
+    }
+    .img {
+      width: 30px;
+      height: 30px;
+    }
   }
 `;

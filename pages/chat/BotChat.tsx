@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Swiper, SwiperSlide, useSwiperSlide } from "swiper/react"; // basic
 import "swiper/css"; //basic
 import styled from "@emotion/styled";
-import { RepeatIcon } from "@chakra-ui/icons";
+import { ArrowLeftIcon, ArrowRightIcon, RepeatIcon } from "@chakra-ui/icons";
 import { useSwiper } from "swiper/react";
 import { ChatInputType, useChatStore } from "../../utils/store";
 import { dbService } from "../../utils/fbase";
@@ -10,6 +10,7 @@ import { DOMAINS, DomainOne } from "../../utils/persona";
 import NameByDomain from "../../components/NameByDomain";
 import IconContainer from "./IconContainer";
 import { SavedChatType } from ".";
+import useWindowDimensions from "../../hook/useWindowDimensions";
 
 const dummy = [
   {
@@ -49,6 +50,7 @@ const BotChat = ({
   const { user, job, chats, setChats } = useChatStore();
   const [toggle, setToggle] = useState(false);
   const [temps, setTemps] = useState<SavedChatType[]>();
+  const { width, height } = useWindowDimensions();
 
   useEffect(() => {
     setTemps(saves);
@@ -115,9 +117,9 @@ const BotChat = ({
   return (
     <>
       <BotChatWrapper
-        spaceBetween={16}
+        spaceBetween={26}
         slidesPerView={1}
-        allowTouchMove={false}
+        allowTouchMove={width < 800}
         scrollbar={{ draggable: true }}>
         {item.text.map((tex: string, i: number) => {
           if (savedIndex && savedIndex !== i) {
@@ -125,7 +127,65 @@ const BotChat = ({
           }
           return (
             <CustomSwipeSlide key={i}>
-              {onSubmit && i !== 0 && <SwipeNext type="prev" />}
+              {onSubmit && i !== 0 && width > 800 ? (
+                <SwipeNext type="prev" />
+              ) : (
+                <Empty />
+              )}
+              <div className="innerd">
+                <div className="profile">
+                  <span className="img">
+                    <p>전</p>
+                  </span>
+                </div>
+                <div className="text">
+                  <NameByDomain domain={item.job} />
+                  <p className="main">{tex}</p>
+                  <IconContainer
+                    saveThisChat={saveThisChat}
+                    shared={shared}
+                    saved={
+                      saves
+                        ? temps
+                            ?.filter((d: any) => d.id === item.id)[0]
+                            .saved.includes(i)
+                        : item.saved.includes(i)
+                    }
+                    index={i}
+                    id={item.id}
+                    toggle={toggle}
+                    setToggle={setToggle}
+                  />
+                  <>
+                    {toggle && (
+                      <WebContainer>
+                        {dummy.map((doc, i) => (
+                          <div className="content" key={i}>
+                            <div>
+                              <span className="favicon">{doc.favicon}</span>
+                              <span className="domain">{doc.domain}</span>
+                            </div>
+                            <p className="title">{doc.title}</p>
+                          </div>
+                        ))}
+                      </WebContainer>
+                    )}
+                  </>
+                </div>
+              </div>
+              {width < 800 && (
+                <SwipeNoti>
+                  &nbsp; {">>"} &nbsp; swipe to get another response
+                </SwipeNoti>
+              )}
+              {onSubmit && width > 800 ? <SwipeNext type="next" /> : <Empty />}
+            </CustomSwipeSlide>
+          );
+        })}
+        {onSubmit && (
+          <CustomSwipeSlide>
+            {width > 800 && <SwipeNext type="prev" />}
+            <div className="innerd">
               <div className="profile">
                 <span className="img">
                   <p>전</p>
@@ -133,67 +193,23 @@ const BotChat = ({
               </div>
               <div className="text">
                 <NameByDomain domain={item.job} />
-                <p className="main">{tex}</p>
-                <IconContainer
-                  saveThisChat={saveThisChat}
-                  shared={shared}
-                  saved={
-                    saves
-                      ? temps
-                          ?.filter((d: any) => d.id === item.id)[0]
-                          .saved.includes(i)
-                      : item.saved.includes(i)
-                  }
-                  index={i}
-                  id={item.id}
-                  toggle={toggle}
-                  setToggle={setToggle}
-                />
-                <>
-                  {toggle && (
-                    <WebContainer>
-                      {dummy.map((doc, i) => (
-                        <div className="content" key={i}>
-                          <div>
-                            <span className="favicon">{doc.favicon}</span>
-                            <span className="domain">{doc.domain}</span>
-                          </div>
-                          <p className="title">{doc.title}</p>
-                        </div>
-                      ))}
-                    </WebContainer>
-                  )}
-                </>
-              </div>
-              {onSubmit && <SwipeNext type="next" />}
-            </CustomSwipeSlide>
-          );
-        })}
-        {onSubmit && (
-          <CustomSwipeSlide>
-            <div className="profile">
-              <span className="img">
-                <p>전</p>
-              </span>
-            </div>
-            <SwipeNext type="prev" />
-            <div className="text">
-              <NameByDomain domain={item.job} />
-              <div className="agains">
-                <SelectionBtn left={true} onClick={() => onSubmit(item.id)}>
-                  <RepeatIcon color="white" width={25} height={25} />
-                  <p>
-                    Do you want me to
-                    <br />
-                    answer it again?
-                  </p>
-                </SelectionBtn>
-                <SelectionBtn left={false}>
-                  <RepeatIcon color="white" width={25} height={25} />
-                  <p>Get Answer from Quora</p>
-                </SelectionBtn>
+                <div className="agains">
+                  <SelectionBtn left={true} onClick={() => onSubmit(item.id)}>
+                    <RepeatIcon color="white" width={25} height={25} />
+                    <p>
+                      Do you want me to
+                      <br />
+                      answer it again?
+                    </p>
+                  </SelectionBtn>
+                  <SelectionBtn left={false}>
+                    <RepeatIcon color="white" width={25} height={25} />
+                    <p>Get Answer from Quora</p>
+                  </SelectionBtn>
+                </div>
               </div>
             </div>
+            <Empty />
           </CustomSwipeSlide>
         )}
       </BotChatWrapper>
@@ -212,24 +228,45 @@ const SwipeNext = ({ type }: { type: "prev" | "next" }) => {
         type === "prev" && swiper.slidePrev();
         type === "next" && swiper.slideNext();
       }}>
-      L
+      {type === "next" && (
+        <>
+          <ArrowRightIcon />
+          <p>click to get another response</p>
+        </>
+      )}
+      {type === "prev" && <ArrowLeftIcon />}
     </SwipeDiv>
   );
 };
 
 const SwipeDiv = styled.div`
-  padding: 20px;
   cursor: pointer;
+  background: rgba(0, 0, 0, 0.05);
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 
   &:hover {
     background: red;
   }
 `;
 
+const SwipeNoti = styled.div`
+  color: #cfcfcf;
+  margin: 3px 0px;
+  padding: 4px 0px;
+  // border-top: 1px solid #cfcfcf;
+  // border-bottom: 1px solid #cfcfcf;
+  width: 100%;
+`;
+
 const WebContainer = styled.div`
   display: flex;
   flex-direction: column;
-  aligm-items: center;
+  align-items: center;
   justify-content: flex-start;
 
   .content {
@@ -266,21 +303,41 @@ const SelectionBtn = styled.div<{ left: boolean }>`
   p {
     margin-top: 5px;
   }
+
+  @media (max-width: 800px) {
+    width: 95%;
+    margin: 5px 0px;
+    padding: 5px;
+    height: 50px;
+    p {
+      margin-top: 1px;
+    }
+  }
 `;
 
 const CustomSwipeSlide = styled(SwiperSlide)`
   display: flex;
   flex-direction: row;
-  aligm-items: center;
   justify-content: center;
+  width: 100%;
+
+  .innerd {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+  }
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+  }
 `;
 
 const BotChatWrapper = styled(Swiper)`
   display: flex;
   flex-direction: row;
-  aligm-items: center;
+  align-items: center;
   justify-content: center;
-  width: 100%;
   position: relative;
   // border-bottom: 1px solid ${({ theme }) => theme.borderColor01};
   padding: 0px 15px;
@@ -288,12 +345,15 @@ const BotChatWrapper = styled(Swiper)`
   padding-bottom: 5px;
   background: ${({ theme }) => theme.blue01 + "01"};
 
+  width: 1200px;
+  left: -200px;
+
   .profile {
-    width: 8%;
+    width: 64px;
   }
 
   .text {
-    width: 92%;
+    width: 736px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -318,20 +378,47 @@ const BotChatWrapper = styled(Swiper)`
       margin-top: 15px;
       display: flex;
       flex-direction: row;
-      aligm-items: center;
+      align-items: center;
       justify-content: center;
     }
   }
-
   .img {
     border-radius: 300px;
     background: brown;
     display: flex;
     flex-direction: row;
-    aligm-items: center;
     justify-content: center;
     width: 35px;
     height: 35px;
     color: white;
   }
+
+  @media (max-width: 800px) {
+    padding: 10px 10px;
+
+    .profile {
+      width: 12%;
+    }
+    .text {
+      width: 88%;
+      .main {
+        margin-top: 5px;
+      }
+
+      .agains {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    .img {
+      width: 30px;
+      height: 30px;
+    }
+  }
+`;
+
+const Empty = styled.div`
+  width: 200px;
 `;
