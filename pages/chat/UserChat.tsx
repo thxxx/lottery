@@ -151,9 +151,10 @@ export const BotChatWrapper = styled(UserChatWrapper)<{
     .text {
       .agains {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
+        min-height: 100px;
       }
     }
   }

@@ -1,5 +1,6 @@
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import styled from "@emotion/styled";
+import Image from "next/image";
 import React from "react";
 import { useSwiper } from "swiper/react";
 
@@ -14,11 +15,24 @@ const SwipeNext = ({ type }: { type: "prev" | "next" }) => {
       }}>
       {type === "next" && (
         <>
-          <ArrowRightIcon boxSize={9} color="gray.300" />
+          <Image
+            width={50}
+            height={50}
+            alt="right"
+            src="/right-double-arrow.svg"
+          />
           <p>click to get another response</p>
         </>
       )}
-      {type === "prev" && <ArrowLeftIcon boxSize={9} color="gray.300" />}
+      {type === "prev" && (
+        <Image
+          width={50}
+          height={50}
+          alt="right"
+          src="/right-double-arrow.svg"
+          style={{ transform: "rotate(180deg)" }}
+        />
+      )}
     </SwipeDiv>
   );
 };

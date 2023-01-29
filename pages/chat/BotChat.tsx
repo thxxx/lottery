@@ -8,7 +8,7 @@ import React, {
 import { Swiper, SwiperSlide } from "swiper/react"; // basic
 import "swiper/css"; //basic
 import styled from "@emotion/styled";
-import { RepeatIcon } from "@chakra-ui/icons";
+import { EditIcon, RepeatIcon, Search2Icon } from "@chakra-ui/icons";
 import { SavedChatType, WebLink, useChatStore } from "../../utils/store";
 import { dbService } from "../../utils/fbase";
 import IconContainer from "./IconContainer";
@@ -111,10 +111,24 @@ const BotChat = ({
     [item.id]
   );
 
-  const callWebApi = async () => {
-    // const body = {
-    //   query: inputText,
-    // };
+  const callWebApi = useCallback(async () => {
+    // ## bing API
+    // https://z0ssobbdqh.execute-api.us-west-1.amazonaws.com/v1/bing
+
+    // #Input
+    // {
+    //   "query": "I'm a grandmother in her 60s. What exercise should I do when my neck hurts?"
+    // }
+
+    // #Output
+    // [
+    //     processed_result, # list of {"title": ~~, "url": ~~, "snippet": ~~}
+    //     raw_result
+    // ]
+
+    const body = {
+      query: item.query,
+    };
 
     // const response = await fetch("/api/web", {
     //   method: "POST",
@@ -122,29 +136,50 @@ const BotChat = ({
     //   headers: { "Content-Type": "application/json" },
     // });
     // const output = await response.json();
-    // console.log(output, "응답ㅎ ㅘㄱ인", output[0]);
+    // console.log(output, "웹, 응확답인", output[0]);
+
+    // const ma = output[0].map((doc: any) => {
+    //   return {
+    //     link: doc.url,
+    //     title: doc.title,
+    //     snippet: doc.snippet,
+    //   };
+    // });
+    // console.log(ma, "웹, 응확답인");
+
+    // await sleep(5);
 
     return [
       {
-        link: "google.com",
-        title: "where is gravity?",
+        link: "https://support.google.com/websearch/answer/134479?hl=en",
+        title: "How to search on Google - Google Search Help",
+        snippet:
+          "The Pyramids Today Built during a time when Egypt was one of the richest and most powerful civilizations in the world, the pyramids—especially the Great Pyramids of Giza—are some of the...",
       },
       {
-        link: "google.com",
-        title: "where is gravity?",
+        link: "https://support.google.com/websearch/answer/134479?hl=en",
+        title: "How to search on Google - Google Search Help",
+        snippet:
+          "The Pyramids Today Built during a time when Egypt was one of the richest and most powerful civilizations in the world, the pyramids—especially the Great Pyramids of Giza—are some of the...",
       },
       {
-        link: "google.com",
-        title: "where is gravity?",
+        link: "https://support.google.com/websearch/answer/134479?hl=en",
+        title: "How to search on Google - Google Search Help",
+        snippet:
+          "The Pyramids Today Built during a time when Egypt was one of the richest and most powerful civilizations in the world, the pyramids—especially the Great Pyramids of Giza—are some of the...",
       },
     ];
-  };
+  }, [item.query]);
+
+  const sleep = (sec: number) => {
+    return new Promise((resolve) => setTimeout(resolve, sec * 1000));
+  }; // 함수정의
 
   const clickWebOpen = useCallback(async () => {
     // 처음에만 호출한다.
     console.log("클릭 웹 오픈", item);
+    setToggle(true);
     if (item.webLinks) {
-      setToggle(true);
       return;
     }
 
@@ -163,9 +198,7 @@ const BotChat = ({
       webLinks: response,
     };
     await updateFirebase(modified);
-
-    setToggle(true);
-  }, [chats, item, updateFirebase, setChats]);
+  }, [chats, item, updateFirebase, setChats, callWebApi]);
 
   const askQuora = async () => {
     setAsked(true);
@@ -209,42 +242,58 @@ const BotChat = ({
                     <TextAnswer text={tex} />
                   )}
                 </div>
-                <IconContainer
-                  saveThisChat={saveThisChat}
-                  shared={shared}
-                  saved={
-                    saves
-                      ? temps
-                          ?.filter((d: any) => d.id === item.id)[0]
-                          .saved.includes(i)
-                      : item.saved.includes(i)
-                  }
-                  index={i}
-                  id={item.id}
-                  toggle={toggle}
-                  setToggle={setToggle}
-                  clickWebOpen={clickWebOpen}
-                />
-                <>
-                  {toggle && item.webLinks && (
-                    <WebContainer>
-                      {item.webLinks.map((doc: WebLink, i: number) => (
-                        <div
-                          className="content"
-                          key={i}
-                          onClick={() => {
-                            window.open(doc.link);
-                          }}>
-                          <span className="links">
-                            <span className="favicon">f</span>
-                            <span className="domain">{doc.link}</span>
-                          </span>
-                          <p className="title">{doc.title}</p>
-                        </div>
-                      ))}
-                    </WebContainer>
-                  )}
-                </>
+                <Bottom>
+                  <IconContainer
+                    saveThisChat={saveThisChat}
+                    shared={shared}
+                    saved={
+                      saves
+                        ? temps
+                            ?.filter((d: any) => d.id === item.id)[0]
+                            .saved.includes(i)
+                        : item.saved.includes(i)
+                    }
+                    index={i}
+                    id={item.id}
+                    toggle={toggle}
+                    setToggle={setToggle}
+                    clickWebOpen={clickWebOpen}
+                  />
+                  <>
+                    {toggle && (
+                      <>
+                        {item.webLinks ? (
+                          <WebContainer>
+                            {item.webLinks.map((doc: WebLink, i: number) => (
+                              <div
+                                className="content"
+                                key={i}
+                                onClick={() => {
+                                  window.open(doc.link);
+                                }}>
+                                <span className="links">
+                                  <span className="domain">
+                                    {doc.link
+                                      .replace(/https:\/\//g, "")
+                                      .replace(/\/.*/, "")}
+                                  </span>
+                                </span>
+                                <p className="title">{doc.title}</p>
+                                <span>{doc.snippet}</span>
+                              </div>
+                            ))}
+                          </WebContainer>
+                        ) : (
+                          <>
+                            <Skeleton width="95%" height={8} mt={4} />
+                            <Skeleton width="95%" height={8} mt={3} />
+                            <Skeleton width="95%" height={8} mt={3} />
+                          </>
+                        )}
+                      </>
+                    )}
+                  </>
+                </Bottom>
               </ChatSlideInner>
               {width < 1100 && onSubmit && (
                 <SwipeNoti>
@@ -277,7 +326,7 @@ const BotChat = ({
                     </p>
                   </SelectionBtn>
                   <SelectionBtn left={false} onClick={() => askQuora()}>
-                    <RepeatIcon color="white" width={25} height={25} />
+                    <Search2Icon color="white" width={25} height={25} />
                     <p>Get Answer from Quora</p>
                   </SelectionBtn>
                 </div>
@@ -310,11 +359,16 @@ const WebContainer = styled.div`
   justify-content: flex-start;
   text-align: start;
   width: 100%;
+  padding: 0px 2px;
 
   .content {
-    padding: 7px 0px;
+    padding: 5px 5px;
     cursor: pointer;
     width: 100%;
+    margin-top: 7px;
+    // background: ${({ theme }) => theme.grey + "44"};
+    // border-radius: 8px;
+
     .title {
       transition: 0.2s ease;
     }
@@ -326,11 +380,13 @@ const WebContainer = styled.div`
     }
 
     p {
-      margin-top: 7px;
+      margin-top: 4px;
       font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .domain {
-      margin-left: 5px;
     }
 
     .links {
@@ -353,6 +409,7 @@ const WebContainer = styled.div`
 
 const SelectionBtn = styled.div<{ left: boolean }>`
   width: 45%;
+  min-height: 120px;
   height: 100px;
   display: flex;
   flex-direction: column;
@@ -371,17 +428,16 @@ const SelectionBtn = styled.div<{ left: boolean }>`
     left ? theme.bgColor03 : theme.blue02};
 
   p {
-    margin-top: 5px;
+    margin-top: 10px;
+    line-height: 1.4em;
   }
 
   @media (max-width: 1100px) {
     width: 95%;
-    margin: 5px 0px;
+    margin: 0px 3px;
     padding: 5px;
     height: 50px;
-    p {
-      margin-top: 1px;
-    }
+    font-size: 0.9em;
   }
 `;
 
@@ -407,4 +463,12 @@ export const CustomSwipeSlide = styled(SwiperSlide)`
 
 const Empty = styled.div`
   width: ${BWIDTH}px;
+`;
+
+export const Bottom = styled.div`
+  margin-top: 20px;
+  width: 100%;
+  background: ${({ theme }) => theme.grey + "44"};
+  padding: 5px 5px;
+  border-radius: 8px;
 `;

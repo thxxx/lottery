@@ -3,6 +3,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import IconButton from "../../components/IconButton";
 import { ArrowLeftIcon, HamburgerIcon, SunIcon } from "@chakra-ui/icons";
 import { useToast } from "@chakra-ui/react";
+import Image from "next/image";
 
 type IconContainerProps = {
   toggle: boolean;
@@ -50,14 +51,23 @@ const IconContainer = ({
         {!shared && (
           <>
             <IconButton
-              icon={<SunIcon color={saved ? "red.400" : "blackAlpha.300"} />}
+              icon={
+                <Image
+                  width={25}
+                  height={25}
+                  alt="bookmark"
+                  src={saved ? "/bookmarkfill.svg" : "bookmark.svg"}
+                />
+              }
               tooltip="Save"
               onClick={() => {
                 saveThisChat(index);
               }}
             />
             <IconButton
-              icon={<SunIcon />}
+              icon={
+                <Image width={25} height={25} alt="share" src="/share.svg" />
+              }
               tooltip="Share"
               onClick={() => {
                 share();
@@ -69,13 +79,22 @@ const IconContainer = ({
       <div>
         {toggle ? (
           <IconButton
-            icon={<ArrowLeftIcon style={{ transform: "rotate(90deg)" }} />}
+            icon={
+              <Image width={25} height={25} alt="share" src="/up-arrow.svg" />
+            }
             tooltip="Hide"
             onClick={() => setToggle(false)}
           />
         ) : (
           <IconButton
-            icon={<HamburgerIcon />}
+            icon={
+              <Image
+                width={25}
+                height={25}
+                alt="share"
+                src="/hamburger-menu.svg"
+              />
+            }
             tooltip="View"
             onClick={() => clickWebOpen()}
           />
@@ -93,7 +112,6 @@ const IconContainerWrapper = styled.div`
   flex-direction: row;
   aligm-items: center;
   justify-content: space-between;
-  margin-top: 20px;
 
   div {
     display: flex;

@@ -9,6 +9,7 @@ import BotChat, { CustomSwipeSlide } from "./chat/BotChat";
 import { DomainOne } from "../utils/persona";
 import UserChat, { UserChatWrapper } from "./chat/UserChat";
 import { Button, Skeleton, SkeletonCircle } from "@chakra-ui/react";
+import Image from "next/image";
 
 const LOADONENUM = 2;
 
@@ -43,7 +44,6 @@ const MyPage: NextPage = () => {
         const response = res.docs.map((doc) => {
           return { ...(doc.data() as SavedChatType), id: doc.id };
         });
-        console.log("파지:,", response);
         if (saves) setSaves([...saves, ...response]);
         else setSaves(response);
 
@@ -61,7 +61,6 @@ const MyPage: NextPage = () => {
         const response = res.docs.map((doc) => {
           return { ...(doc.data() as SavedChatType), id: doc.id };
         });
-        console.log(response);
         localStorage.setItem(
           "read",
           JSON.stringify(response.map((item) => item.id))
@@ -106,28 +105,14 @@ const MyPage: NextPage = () => {
                   })}
                 </>
               ) : (
-                <>
-                  <SkeletonContainer>
-                    <div className="top">
-                      <div className="left">
-                        <SkeletonCircle mt={4} width={35} height={35} />
-                      </div>
-                      <div className="right">
-                        <Skeleton mt={4} width="100%" height={25} />
-                      </div>
-                    </div>
-                    <div>
-                      <Skeleton mt={4} width="100%" height={25} />
-                      <Skeleton mt={4} width="100%" height={25} />
-                    </div>
-                  </SkeletonContainer>
-                </>
+                <ChatSkeleton />
               )}
               {pagi !== 0 && (
                 <LoadMoreButton pt={4} pb={4} onClick={() => init()}>
                   Load more
                 </LoadMoreButton>
               )}
+              {saves && saves.length === 0 && <EmptyThing text="save" />}
             </SavedContainer>
           )}
           {radio === "found" && (
@@ -158,33 +143,9 @@ const MyPage: NextPage = () => {
                   })}
                 </>
               ) : (
-                <>
-                  <UserChatWrapper
-                    spaceBetween={26}
-                    slidesPerView={1}
-                    allowTouchMove={false}
-                    scrollbar={{ draggable: true }}>
-                    <CustomSwipeSlide>
-                      <div className="innerd">
-                        <div className="profile">
-                          <SkeletonCircle mt={4} width={35} height={35} />
-                        </div>
-                        <div className="text">
-                          <p
-                            className="name"
-                            style={{ width: "100%", marginTop: "3px" }}>
-                            <Skeleton mt={4} width="50%" height={25} />
-                          </p>
-                          <div className="main" style={{ width: "100%" }}>
-                            <Skeleton mt={3} width="100%" height={25} />
-                            <Skeleton mt={3} width="100%" height={25} />
-                          </div>
-                        </div>
-                      </div>
-                    </CustomSwipeSlide>
-                  </UserChatWrapper>
-                </>
+                <ChatSkeleton />
               )}
+              {asks && asks.length === 0 && <EmptyThing text="ask for" />}
             </SavedContainer>
           )}
         </MyPageConainer>
@@ -195,27 +156,60 @@ const MyPage: NextPage = () => {
 
 export default MyPage;
 
-const SkeletonContainer = styled.div`
+const ChatSkeleton = () => {
+  return (
+    <UserChatWrapper
+      spaceBetween={26}
+      slidesPerView={1}
+      allowTouchMove={false}
+      scrollbar={{ draggable: true }}>
+      <CustomSwipeSlide>
+        <div className="innerd">
+          <div className="profile">
+            <SkeletonCircle mt={4} width={35} height={35} />
+          </div>
+          <div className="text">
+            <p className="name" style={{ width: "100%", marginTop: "3px" }}>
+              <Skeleton mt={4} width="50%" height={25} />
+            </p>
+            <div className="main" style={{ width: "100%" }}>
+              <Skeleton mt={3} width="100%" height={25} />
+              <Skeleton mt={3} width="100%" height={25} />
+            </div>
+          </div>
+        </div>
+      </CustomSwipeSlide>
+    </UserChatWrapper>
+  );
+};
+
+const EmptyThing = ({ text }: { text: string }) => {
+  return (
+    <EmptyTitle>
+      <Image src="/empty.gif" width={150} height={150} alt="empty" />
+      <div>
+        You didn{"'"}t {text} anything yet.
+      </div>
+    </EmptyTitle>
+  );
+};
+
+const EmptyTitle = styled.div`
   display: flex;
   flex-direction: column;
-  width: 95%;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  font-size: 1.1em;
 
-  .top {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    .left {
-      width: 15%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    .right {
-      width: 85%;
-    }
+  div {
+    margin-top: 30px;
+    font-size: 1.4em;
+    font-weight: 700;
+  }
+
+  @media (max-width: 800px) {
+    font-size: 0.9em;
   }
 `;
 
@@ -252,7 +246,7 @@ const SavedContent = styled.div<{ isNew?: boolean }>`
 `;
 
 const LoadMoreButton = styled(Button)`
-  width: 100%;
+  width: 95%;
   margin-top: 15px;
   height: 50px;
 `;

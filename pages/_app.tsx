@@ -109,6 +109,7 @@ const MobileContainer = styled.div`
     min-height: 100vh;
     transition: 3s ease;
     z-index: 1;
+    color: #1d1c2f;
 
     @media (max-width: 900px) {
       width: 100%;

@@ -13,7 +13,7 @@ export default async function handler(
   console.log("api 호출");
 
   const response = await axios.post(
-    "https://z0ssobbdqh.execute-api.us-west-1.amazonaws.com/v1/davinci",
+    "https://z0ssobbdqh.execute-api.us-west-1.amazonaws.com/v1/bing",
     req.body,
     {
       headers: {

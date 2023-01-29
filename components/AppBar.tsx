@@ -136,10 +136,6 @@ const AppBarContainer = styled.div`
   justify-content: space-between;
   font-weight: 700;
 
-  @media (max-width: 600px) {
-    font-size: 10px;
-  }
-
   div,
   a {
     display: flex;

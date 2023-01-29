@@ -18,6 +18,7 @@ export type UserChatType = {
 export type WebLink = {
   link: string;
   title: string;
+  snippet: string;
 };
 
 export type SavedChatType = {
