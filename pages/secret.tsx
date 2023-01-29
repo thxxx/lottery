@@ -82,11 +82,11 @@ const AdminPage: NextPage = () => {
               ))}
             </>
             <form
-              onSubmit={(e) => {
+              onSubmit={(e: any) => {
                 e.preventDefault();
                 submit(e.target[0].value, item);
               }}>
-              <Input disabled={item.asked !== "finding"} rows={3} />
+              <Input disabled={item.asked !== "finding"} />
             </form>
           </Contents>
         );

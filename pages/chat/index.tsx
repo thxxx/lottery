@@ -81,23 +81,23 @@ const ChatPage: NextPage = () => {
         option
       );
 
-      // const body = {
-      //   query: inputText,
-      //   history: history,
-      //   field: job?.toLowerCase(),
-      //   tag: String(option),
-      // };
+      const body = {
+        query: inputText,
+        history: history,
+        field: job?.toLowerCase(),
+        tag: String(option),
+      };
 
-      // const response = await fetch("/api/call", {
-      //   method: "POST",
-      //   body: JSON.stringify(body),
-      //   headers: { "Content-Type": "application/json" },
-      // });
-      // const output = await response.json();
-      // console.log(output, "응답ㅎ ㅘㄱ인", output[0]);
+      const response = await fetch("/api/call", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: { "Content-Type": "application/json" },
+      });
+      const output = await response.json();
+      console.log(output, "응답ㅎ ㅘㄱ인", output[0]);
 
-      return dummy[1];
-      // return output[0];
+      return output[0];
+      // return dummy[1];
     },
     [queries, job]
   );

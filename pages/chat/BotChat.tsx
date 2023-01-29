@@ -130,45 +130,45 @@ const BotChat = ({
       query: item.query,
     };
 
-    // const response = await fetch("/api/web", {
-    //   method: "POST",
-    //   body: JSON.stringify(body),
-    //   headers: { "Content-Type": "application/json" },
-    // });
-    // const output = await response.json();
-    // console.log(output, "웹, 응확답인", output[0]);
+    const response = await fetch("/api/web", {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json" },
+    });
+    const output = await response.json();
+    console.log(output, "웹, 응확답인", output[0]);
 
-    // const ma = output[0].map((doc: any) => {
-    //   return {
-    //     link: doc.url,
-    //     title: doc.title,
-    //     snippet: doc.snippet,
-    //   };
-    // });
-    // console.log(ma, "웹, 응확답인");
+    const ma = output[0].map((doc: any) => {
+      return {
+        link: doc.url,
+        title: doc.title,
+        snippet: doc.snippet,
+      };
+    });
+    console.log(ma, "웹, 응확답인");
 
-    // await sleep(5);
+    return ma;
 
-    return [
-      {
-        link: "https://support.google.com/websearch/answer/134479?hl=en",
-        title: "How to search on Google - Google Search Help",
-        snippet:
-          "The Pyramids Today Built during a time when Egypt was one of the richest and most powerful civilizations in the world, the pyramids—especially the Great Pyramids of Giza—are some of the...",
-      },
-      {
-        link: "https://support.google.com/websearch/answer/134479?hl=en",
-        title: "How to search on Google - Google Search Help",
-        snippet:
-          "The Pyramids Today Built during a time when Egypt was one of the richest and most powerful civilizations in the world, the pyramids—especially the Great Pyramids of Giza—are some of the...",
-      },
-      {
-        link: "https://support.google.com/websearch/answer/134479?hl=en",
-        title: "How to search on Google - Google Search Help",
-        snippet:
-          "The Pyramids Today Built during a time when Egypt was one of the richest and most powerful civilizations in the world, the pyramids—especially the Great Pyramids of Giza—are some of the...",
-      },
-    ];
+    // return [
+    //   {
+    //     link: "https://support.google.com/websearch/answer/134479?hl=en",
+    //     title: "How to search on Google - Google Search Help",
+    //     snippet:
+    //       "The Pyramids Today Built during a time when Egypt was one of the richest and most powerful civilizations in the world, the pyramids—especially the Great Pyramids of Giza—are some of the...",
+    //   },
+    //   {
+    //     link: "https://support.google.com/websearch/answer/134479?hl=en",
+    //     title: "How to search on Google - Google Search Help",
+    //     snippet:
+    //       "The Pyramids Today Built during a time when Egypt was one of the richest and most powerful civilizations in the world, the pyramids—especially the Great Pyramids of Giza—are some of the...",
+    //   },
+    //   {
+    //     link: "https://support.google.com/websearch/answer/134479?hl=en",
+    //     title: "How to search on Google - Google Search Help",
+    //     snippet:
+    //       "The Pyramids Today Built during a time when Egypt was one of the richest and most powerful civilizations in the world, the pyramids—especially the Great Pyramids of Giza—are some of the...",
+    //   },
+    // ];
   }, [item.query]);
 
   const sleep = (sec: number) => {
