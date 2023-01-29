@@ -46,7 +46,7 @@ const ChatPage: NextPage = () => {
     if (temp === 0 && router.query.isFromHome) {
       doSubmit(
         router.query.inputQuery as string,
-        router.query.inputOption as number
+        router.query.inputOption as any
       );
       router.replace("/chat", undefined, { shallow: true });
       temp = 1;
