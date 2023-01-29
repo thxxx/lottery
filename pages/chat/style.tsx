@@ -44,9 +44,6 @@ export const MainContainer = styled.main`
   padding-bottom: 200px;
   padding-top: 50px;
 `;
-export const BotChatWrapper = styled(UserChatWrapper)`
-  background: ${({ theme }) => theme.blue01 + "22"};
-`;
 
 import React from "react";
 

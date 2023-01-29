@@ -19,9 +19,12 @@
     "axios": "^1.2.2",
     "firebase": "^9.15.0",
     "framer-motion": "^8.3.0",
+    "lodash": "^4.17.21",
     "next": "13.1.1",
     "react": "18.2.0",
+    "react-code-blocks": "^0.0.9-0",
     "react-dom": "18.2.0",
+    "react-latex-next": "^2.2.0",
     "styled-components": "^5.3.6",
     "styled-icons": "^10.47.0",
     "swiper": "^8.4.6",
@@ -36,6 +39,5 @@
     "eslint-config-next": "13.1.1",
     "typescript": "4.9.4"
   },
-  "homepage": "https://solomongpt.com",
-  "proxy": "https://b9zm4cxhn1.execute-api.us-west-2.amazonaws.com/v1"
+  "proxy": "https://z0ssobbdqh.execute-api.us-west-1.amazonaws.com/v1"
 }

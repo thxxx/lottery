@@ -24,13 +24,13 @@ const Home: NextPage = () => {
     else setJob(DOMAINS[0].domain);
   }, []);
 
-  const onSubmit = useCallback((inputText: string) => {
+  const onSubmit = useCallback((inputText: string, option: number) => {
     if (!user) alert("Log in first! this is temporary message");
 
-    console.log("전부 같지만 채팅 페이지로 이동", inputText);
+    console.log("전부 같지만 채팅 페이지로 이동", inputText, option);
     router.push({
       pathname: "/chat",
-      query: { isFromHome: true, inputQuery: inputText },
+      query: { isFromHome: true, inputQuery: inputText, inputOption: option },
     });
   }, []);
 

@@ -3,6 +3,7 @@ import { useChatStore } from "../../utils/store";
 import styled from "@emotion/styled";
 import { Swiper } from "swiper/react";
 import { CustomSwipeSlide } from "./BotChat";
+import ExpertPhoto from "../../components/ExpertPhoto";
 
 type UserChatProps = {
   text: string;
@@ -20,7 +21,7 @@ const UserChat = ({ text, displayName, photoURL }: UserChatProps) => {
       <CustomSwipeSlide>
         <div className="innerd">
           <div className="profile">
-            <img className="img" src={photoURL} alt="img" />
+            <ExpertPhoto src={photoURL} />
           </div>
           <div className="text">
             <p className="name">{displayName}</p>
@@ -71,25 +72,32 @@ export const UserChatWrapper = styled(Swiper)`
     }
 
     .main {
+      width: 100%;
       margin-top: 15px;
+
+      .loadings {
+        width: 600px;
+      }
+      .loading {
+        animation: expandWidth 2s ease-in-out infinite;
+      }
+
+      @keyframes expandWidth {
+        from {
+          width: 0%;
+        }
+        to {
+          width: 90%;
+        }
+      }
     }
+
     .bot {
       min-height: 50px;
     }
   }
 
-  .img {
-    border-radius: 300px;
-    background: brown;
-    display: flex;
-    flex-direction: row;
-    aligm-items: center;
-    justify-content: center;
-    width: 35px;
-    height: 35px;
-    color: white;
-  }
-  @media (max-width: 800px) {
+  @media (max-width: 1100px) {
     padding: 20px 10px;
 
     .profile {
@@ -99,25 +107,27 @@ export const UserChatWrapper = styled(Swiper)`
     .text {
       width: 86%;
       .main {
+        width: 100%;
         margin-top: 5px;
+        .loadings {
+          width: 250px;
+        }
       }
-    }
-    .img {
-      width: 30px;
-      height: 30px;
     }
   }
 `;
 
-export const BotChatWrapper = styled(UserChatWrapper)<{ w: number }>`
+export const BotChatWrapper = styled(UserChatWrapper)<{
+  w: number;
+}>`
   padding: 0px 15px;
   padding-top: 25px;
   padding-bottom: 5px;
-  background: ${({ theme }) => theme.blue01 + "01"};
+  background-color: rgba(0, 0, 0, 0);
 
-  width: ${({ w }) => (w < 1200 ? w : 1200)}px;
+  width: ${({ w }) => (w < 1100 ? w : 1100)}px;
   max-width: 100vw;
-  left: -${({ w }) => (w < 1200 ? `${w / 4.3 - 80}px` : "200px")};
+  left: -${({ w }) => (w < 1100 ? `${w / 4.3 - 80}px` : "150px")};
 
   .text {
     .agains {
@@ -133,7 +143,7 @@ export const BotChatWrapper = styled(UserChatWrapper)<{ w: number }>`
     }
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 1100px) {
     padding: 10px 10px;
     width: 100%;
     left: 0px;

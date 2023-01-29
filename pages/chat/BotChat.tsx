@@ -1,48 +1,34 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Swiper, SwiperSlide, useSwiperSlide } from "swiper/react"; // basic
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { Swiper, SwiperSlide } from "swiper/react"; // basic
 import "swiper/css"; //basic
 import styled from "@emotion/styled";
-import { ArrowLeftIcon, ArrowRightIcon, RepeatIcon } from "@chakra-ui/icons";
-import { useSwiper } from "swiper/react";
-import { ChatInputType, useChatStore } from "../../utils/store";
+import { RepeatIcon } from "@chakra-ui/icons";
+import { SavedChatType, WebLink, useChatStore } from "../../utils/store";
 import { dbService } from "../../utils/fbase";
-import { DOMAINS, DomainOne } from "../../utils/persona";
-import NameByDomain from "../../components/NameByDomain";
 import IconContainer from "./IconContainer";
-import { SavedChatType } from ".";
 import useWindowDimensions from "../../hook/useWindowDimensions";
-import { BotChatWrapper, UserChatWrapper } from "./UserChat";
+import { BotChatWrapper } from "./UserChat";
+import { Skeleton } from "@chakra-ui/react";
+import TextAnswer from "./TextAnswer";
+import ChatSlideInner from "./ChatSlide";
+import SwipeNext from "./SwipeNext";
 
-const BWIDTH = 200;
-
-const dummy = [
-  {
-    favicon: "favicon",
-    domain: "google.com",
-    title: "Title of this website",
-    link: "https://google.com",
-  },
-  {
-    favicon: "favicon",
-    domain: "google.com",
-    title: "Title of this website",
-    link: "https://google.com",
-  },
-  {
-    favicon: "favicon",
-    domain: "google.com",
-    title: "Title of this website",
-    link: "https://google.com",
-  },
-];
+const BWIDTH = 150;
 
 type BotChatType = {
-  onSubmit?: (id: string | number) => void;
+  onSubmit?: (id: string | number, query: string, option: number) => void;
   shared?: boolean;
   item: any;
   setSaves?: Dispatch<SetStateAction<SavedChatType[] | undefined>>;
   saves?: SavedChatType[] | undefined;
   savedIndex?: number;
+  loading?: boolean;
 };
 
 const BotChat = ({
@@ -52,6 +38,7 @@ const BotChat = ({
   setSaves,
   saves,
   savedIndex,
+  loading,
 }: BotChatType) => {
   const { user, job, chats, setChats } = useChatStore();
   const [toggle, setToggle] = useState(false);
@@ -108,18 +95,77 @@ const BotChat = ({
     }
   };
 
-  const updateFirebase = async (modified: SavedChatType) => {
-    await dbService
-      .collection("chats")
-      .doc(item.id)
-      .update(modified)
-      .then(() => {
-        console.log("Document successfully updated!");
-      })
-      .catch((error) => {
-        console.error("Error updating document: ", error);
-      });
+  const updateFirebase = useCallback(
+    async (modified: SavedChatType) => {
+      await dbService
+        .collection("chats")
+        .doc(item.id)
+        .update(modified)
+        .then(() => {
+          console.log("Document successfully updated!");
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
+    },
+    [item.id]
+  );
+
+  const callWebApi = async () => {
+    // const body = {
+    //   query: inputText,
+    // };
+
+    // const response = await fetch("/api/web", {
+    //   method: "POST",
+    //   body: JSON.stringify(body),
+    //   headers: { "Content-Type": "application/json" },
+    // });
+    // const output = await response.json();
+    // console.log(output, "응답ㅎ ㅘㄱ인", output[0]);
+
+    return [
+      {
+        link: "google.com",
+        title: "where is gravity?",
+      },
+      {
+        link: "google.com",
+        title: "where is gravity?",
+      },
+      {
+        link: "google.com",
+        title: "where is gravity?",
+      },
+    ];
   };
+
+  const clickWebOpen = useCallback(async () => {
+    // 처음에만 호출한다.
+    console.log("클릭 웹 오픈", item);
+    if (item.webLinks) {
+      setToggle(true);
+      return;
+    }
+
+    const response: WebLink[] = await callWebApi();
+
+    // update store
+    const addedChats = chats.map((doc) => {
+      if (doc.id === item.id) return { ...doc, webLinks: response };
+      else return doc;
+    });
+    setChats(addedChats);
+
+    // update db
+    const modified = {
+      ...item,
+      webLinks: response,
+    };
+    await updateFirebase(modified);
+
+    setToggle(true);
+  }, [chats, item, updateFirebase, setChats]);
 
   const askQuora = async () => {
     setAsked(true);
@@ -132,16 +178,7 @@ const BotChat = ({
       asked: true,
     };
 
-    await dbService
-      .collection("chats")
-      .doc(item.id)
-      .update(modified)
-      .then(() => {
-        console.log("Document successfully updated!");
-      })
-      .catch((error) => {
-        console.error("Error updating document: ", error);
-      });
+    await updateFirebase(modified);
   };
 
   return (
@@ -150,7 +187,7 @@ const BotChat = ({
         w={width}
         spaceBetween={26}
         slidesPerView={1}
-        allowTouchMove={width < 800}
+        allowTouchMove={width < 1100}
         scrollbar={{ draggable: true }}>
         {item.text.map((tex: string, i: number) => {
           if (savedIndex && savedIndex !== i) {
@@ -158,104 +195,99 @@ const BotChat = ({
           }
           return (
             <CustomSwipeSlide key={i}>
-              {onSubmit && i !== 0 && width > 800 ? (
+              {onSubmit && i !== 0 && width > 1100 ? (
                 <SwipeNext type="prev" />
               ) : (
                 <Empty />
               )}
-              <div className="innerd">
-                <div className="profile">
-                  <span className="img">
-                    <p>전</p>
-                  </span>
+              <ChatSlideInner item={item}>
+                <div className="main bot">
+                  {loading ? (
+                    <div className="loadings">
+                      <Skeleton h={6} />
+                      <div style={{ marginTop: "10px" }}></div>
+                      <Skeleton h={6} />
+                      <div style={{ marginTop: "10px" }}></div>
+                      <Skeleton className="loading" h={6} />
+                    </div>
+                  ) : (
+                    <TextAnswer text={tex} />
+                  )}
                 </div>
-                <div className="text">
-                  <NameByDomain domain={item.job} />
-                  <p className="main bot">{tex}</p>
-                  <IconContainer
-                    saveThisChat={saveThisChat}
-                    shared={shared}
-                    saved={
-                      saves
-                        ? temps
-                            ?.filter((d: any) => d.id === item.id)[0]
-                            .saved.includes(i)
-                        : item.saved.includes(i)
-                    }
-                    index={i}
-                    id={item.id}
-                    toggle={toggle}
-                    setToggle={setToggle}
-                  />
-                  <>
-                    {toggle && (
-                      <WebContainer>
-                        {dummy.map((doc, i) => (
-                          <div
-                            className="content"
-                            key={i}
-                            onClick={() => {
-                              window.open(doc.link);
-                            }}>
-                            <span className="links">
-                              <span className="favicon">{doc.favicon}</span>
-                              <span className="domain">{doc.domain}</span>
-                            </span>
-                            <p className="title">{doc.title}</p>
-                          </div>
-                        ))}
-                      </WebContainer>
-                    )}
-                  </>
-                </div>
-              </div>
-              {width < 800 && onSubmit && (
+                <IconContainer
+                  saveThisChat={saveThisChat}
+                  shared={shared}
+                  saved={
+                    saves
+                      ? temps
+                          ?.filter((d: any) => d.id === item.id)[0]
+                          .saved.includes(i)
+                      : item.saved.includes(i)
+                  }
+                  index={i}
+                  id={item.id}
+                  toggle={toggle}
+                  setToggle={setToggle}
+                  clickWebOpen={clickWebOpen}
+                />
+                <>
+                  {toggle && item.webLinks && (
+                    <WebContainer>
+                      {item.webLinks.map((doc: WebLink, i: number) => (
+                        <div
+                          className="content"
+                          key={i}
+                          onClick={() => {
+                            window.open(doc.link);
+                          }}>
+                          <span className="links">
+                            <span className="favicon">f</span>
+                            <span className="domain">{doc.link}</span>
+                          </span>
+                          <p className="title">{doc.title}</p>
+                        </div>
+                      ))}
+                    </WebContainer>
+                  )}
+                </>
+              </ChatSlideInner>
+              {width < 1100 && onSubmit && (
                 <SwipeNoti>
                   &nbsp; {">>"} &nbsp; swipe to get another response
                 </SwipeNoti>
               )}
-              {onSubmit && width > 800 ? <SwipeNext type="next" /> : <Empty />}
+              {onSubmit && width > 1100 ? <SwipeNext type="next" /> : <Empty />}
             </CustomSwipeSlide>
           );
         })}
         {onSubmit && (
           <CustomSwipeSlide>
-            {width > 800 && <SwipeNext type="prev" />}
-            <div className="innerd">
-              <div className="profile">
-                <span className="img">
-                  <p>전</p>
-                </span>
-              </div>
-              <div className="text">
-                <NameByDomain domain={item.job} />
-                {asked ? (
-                  <>
-                    We will find the answer as soon as possible and let you know
-                    by notification.
-                  </>
-                ) : (
-                  <div className="agains">
-                    <SelectionBtn left={true} onClick={() => onSubmit(item.id)}>
-                      <RepeatIcon
-                        color="blackAlpha.600"
-                        width={25}
-                        height={25}
-                      />
-                      <p className="again">
-                        Do you want me to
-                        <br />
-                        answer it again?
-                      </p>
-                    </SelectionBtn>
-                    <SelectionBtn left={false} onClick={() => askQuora()}>
-                      <RepeatIcon color="white" width={25} height={25} />
-                      <p>Get Answer from Quora</p>
-                    </SelectionBtn>
-                  </div>
-                )}
-              </div>
-            </div>
+            {width > 1100 && <SwipeNext type="prev" />}
+            <ChatSlideInner item={item}>
+              {asked ? (
+                <>
+                  We will find the answer as soon as possible and let you know
+                  by notification.
+                </>
+              ) : (
+                <div className="agains">
+                  <SelectionBtn
+                    left={true}
+                    onClick={() => onSubmit(item.id, item.query, item.option)}>
+                    <RepeatIcon color="blackAlpha.600" width={25} height={25} />
+                    <p className="again">
+                      Do you want me to
+                      <br />
+                      answer it again?
+                    </p>
+                  </SelectionBtn>
+                  <SelectionBtn left={false} onClick={() => askQuora()}>
+                    <RepeatIcon color="white" width={25} height={25} />
+                    <p>Get Answer from Quora</p>
+                  </SelectionBtn>
+                </div>
+              )}
+            </ChatSlideInner>
             <Empty />
           </CustomSwipeSlide>
         )}
@@ -265,48 +297,6 @@ const BotChat = ({
 };
 
 export default React.memo(BotChat);
-
-const SwipeNext = ({ type }: { type: "prev" | "next" }) => {
-  const swiper = useSwiper();
-
-  return (
-    <SwipeDiv
-      onClick={() => {
-        type === "prev" && swiper.slidePrev();
-        type === "next" && swiper.slideNext();
-      }}>
-      {type === "next" && (
-        <>
-          <ArrowRightIcon boxSize={9} color="gray.300" />
-          <p>click to get another response</p>
-        </>
-      )}
-      {type === "prev" && <ArrowLeftIcon boxSize={9} color="gray.300" />}
-    </SwipeDiv>
-  );
-};
-
-const SwipeDiv = styled.div`
-  cursor: pointer;
-  width: ${BWIDTH}px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: ${({ theme }) => theme.grey};
-  font-weight: 700;
-  min-height: 140px;
-
-  p {
-    margin-top: 15px;
-    line-height: 20px;
-  }
-
-  &:hover {
-    background: ${({ theme }) => theme.grey + "22"};
-  }
-`;
 
 const SwipeNoti = styled.div`
   color: #cfcfcf;
@@ -356,7 +346,7 @@ const WebContainer = styled.div`
     }
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 1100px) {
     font-size: 0.9em;
     .content {
       p {
@@ -389,7 +379,7 @@ const SelectionBtn = styled.div<{ left: boolean }>`
     margin-top: 5px;
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 1100px) {
     width: 95%;
     margin: 5px 0px;
     padding: 5px;
@@ -410,11 +400,12 @@ export const CustomSwipeSlide = styled(SwiperSlide)`
     display: flex;
     flex-direction: row;
     justify-content: center;
+    height: 100%;
     width: 100%;
     max-width: 750px;
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 1100px) {
     flex-direction: column;
   }
 `;

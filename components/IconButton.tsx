@@ -17,7 +17,7 @@ const IconButton = ({ icon, tooltip, text, onClick }: IconButtonProps) => {
   );
 };
 
-export default IconButton;
+export default React.memo(IconButton);
 
 const IconWrapper = styled.div`
   display: flex;

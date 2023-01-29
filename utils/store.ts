@@ -7,15 +7,30 @@ export enum ChatType {
   LOADING = "loading",
 }
 
-export type ChatInputType = {
+export type UserChatType = {
+  createdAt: number;
   text: string | string[];
   type?: ChatType;
-  questionKey?: string;
-  saved?: any;
-  query?: string; // input of user, only exist when bot.
   job: DomainOne;
   id?: number | string | undefined;
 };
+
+export type WebLink = {
+  link: string;
+  title: string;
+};
+
+export type SavedChatType = {
+  questionKey?: string;
+  saved?: any;
+  query?: string; // input of user, only exist when bot.
+  webLinks?: WebLink[];
+  displayName?: string;
+  email?: string;
+  photoURL?: string;
+  uid?: string;
+  option?: number;
+} & UserChatType;
 
 export type UserType = {
   displayName: string;
@@ -24,15 +39,22 @@ export type UserType = {
   uid: string;
 };
 
+export type QueryType = {
+  query: string;
+  domain: DomainOne;
+};
+
 export type UserState = {
   darkMode: boolean;
-  chats: ChatInputType[];
+  chats: SavedChatType[];
   job: DomainOne | undefined;
   user: UserType | undefined;
-  setChats: (by: ChatInputType[]) => void;
+  queries: QueryType[];
+  setChats: (by: SavedChatType[]) => void;
   setDarkMode: (by: boolean) => void;
   setJob: (by: DomainOne) => void;
   setUser: (by: UserType) => void;
+  setQueries: (by: QueryType[]) => void;
 };
 
 export const useChatStore = create<UserState>((set) => ({
@@ -40,6 +62,7 @@ export const useChatStore = create<UserState>((set) => ({
   chats: [],
   job: undefined,
   user: undefined,
+  queries: [],
   setChats: (by) => {
     set((state) => ({ ...state, chats: by }));
   },
@@ -51,5 +74,8 @@ export const useChatStore = create<UserState>((set) => ({
   },
   setUser: (by) => {
     set((state) => ({ ...state, user: by }));
+  },
+  setQueries: (by) => {
+    set((state) => ({ ...state, queries: by }));
   },
 }));

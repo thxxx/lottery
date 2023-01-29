@@ -1,35 +1,53 @@
 import React, {
   Dispatch,
   SetStateAction,
+  useCallback,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { ArrowForwardIcon, Search2Icon } from "@chakra-ui/icons";
+import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { Button, Textarea } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuDivider,
-} from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
+import { PromptType, prompts } from "../../utils/prompts";
+import { useChatStore } from "../../utils/store";
 
 type InputType = {
-  onSubmit: (text: string) => void;
   text: string;
-  setText: Dispatch<SetStateAction<string>>;
   loading?: boolean;
+  onSubmit: (text: string, option: number) => void;
+  setText: Dispatch<SetStateAction<string>>;
 };
 
 type StatusType = "typing..." | "end" | "finishing";
 
-const InputWrapper = ({ onSubmit, text, loading, setText }: InputType) => {
+const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
   const [status, setStatus] = useState<StatusType>("typing...");
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const [nowPrompts, setNowPrompts] = useState<PromptType[]>();
+  const [option, setOption] = useState(0);
+  const { job } = useChatStore();
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   let isEnd = useRef(false);
+
+  useEffect(() => {
+    setNowPrompts(
+      prompts
+        .filter((doc) => doc.domain === job || doc.domain === "default")
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 3)
+    );
+  }, [job, option]);
+
+  const callSubmit = useCallback(() => {
+    if (status !== "finishing") {
+      onSubmit(text, option);
+      setStatus("end");
+      setOption(0);
+      isEnd.current = false;
+    }
+  }, [status, text, option, onSubmit]);
 
   useEffect(() => {
     if (status === "finishing") {
@@ -38,14 +56,12 @@ const InputWrapper = ({ onSubmit, text, loading, setText }: InputType) => {
         if (isEnd.current) {
           console.log("제출", isEnd.current);
           // if (inputRef.current) inputRef.current?.style.height = "52px";
-          onSubmit(text);
-          setStatus("end");
-          isEnd.current = false;
+          callSubmit();
         }
         clearTimeout(to);
       }, 1200);
     }
-  }, [status, onSubmit]);
+  }, [status, callSubmit]);
 
   const auto_grow = (element: any) => {
     element.style.height = "5px";
@@ -60,9 +76,10 @@ const InputWrapper = ({ onSubmit, text, loading, setText }: InputType) => {
     }
   };
 
-  const addPrompt = (prompt: string) => {
+  const addPrompt = (prompt: string, tag: number) => {
     inputRef.current && inputRef.current.focus();
     setText(prompt + " " + text);
+    setOption(tag);
   };
 
   return (
@@ -77,7 +94,7 @@ const InputWrapper = ({ onSubmit, text, loading, setText }: InputType) => {
           onSubmit={(e) => {
             console.log("제출");
             e.preventDefault();
-            onSubmit(text);
+            callSubmit();
           }}>
           {/* <Search2Icon className="search" color="gray.400" /> */}
           <Textarea
@@ -92,7 +109,7 @@ const InputWrapper = ({ onSubmit, text, loading, setText }: InputType) => {
               if (!e.shiftKey && (e.code === "Enter" || e.keyCode === 13)) {
                 e.preventDefault();
                 (inputRef.current as any).style.height = "52px";
-                onSubmit(text);
+                callSubmit();
               }
             }}
             onChange={(e) => {
@@ -100,27 +117,20 @@ const InputWrapper = ({ onSubmit, text, loading, setText }: InputType) => {
               setText(e.currentTarget.value);
             }}
           />
-          {/* <span
-          className="send"
-          onClick={() => {
-            onSubmit();
-          }}>
-          <ArrowForwardIcon className="send_icon" color="white" />
-        </span> */}
         </InputContainer>
         <div>
           <Menu>
             <CustomMenuList>
               <div className="desc">Good text if you add.</div>
-              <MenuItem onClick={() => addPrompt("Download")}>
-                Download
-              </MenuItem>
-              <MenuItem onClick={() => addPrompt("Create a Copy")}>
-                Create a Copy
-              </MenuItem>
-              <MenuItem onClick={() => addPrompt("Mark as Draft")}>
-                Mark as Draft
-              </MenuItem>
+              {nowPrompts?.map((item) => {
+                return (
+                  <MenuItem
+                    key={item.tag}
+                    onClick={() => addPrompt(item.text, item.tag)}>
+                    {item.text}
+                  </MenuItem>
+                );
+              })}
             </CustomMenuList>
             <PromptButton as={Button}>
               <ArrowForwardIcon className="icon" color="black" />

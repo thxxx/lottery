@@ -10,7 +10,7 @@ const nextConfig = {
     return [
       {
         source: "/:path*",
-        destination: `https://b9zm4cxhn1.execute-api.us-west-2.amazonaws.com/v1/:path*`,
+        destination: `https://z0ssobbdqh.execute-api.us-west-1.amazonaws.com/v1/:path*`,
       },
     ];
   },

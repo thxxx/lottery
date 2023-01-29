@@ -12,6 +12,7 @@ type IconContainerProps = {
   index: number;
   id: string | number;
   shared?: boolean;
+  clickWebOpen: () => void;
 };
 
 const IconContainer = ({
@@ -22,6 +23,7 @@ const IconContainer = ({
   shared,
   setToggle,
   saveThisChat,
+  clickWebOpen,
 }: IconContainerProps) => {
   const toast = useToast();
 
@@ -75,7 +77,7 @@ const IconContainer = ({
           <IconButton
             icon={<HamburgerIcon />}
             tooltip="View"
-            onClick={() => setToggle(true)}
+            onClick={() => clickWebOpen()}
           />
         )}
       </div>

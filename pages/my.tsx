@@ -3,13 +3,14 @@ import React, { useEffect, useState } from "react";
 import AppBar from "../components/AppBar";
 import { MainContainer } from "./chat/style";
 import { dbService } from "../utils/fbase";
-import { useChatStore } from "../utils/store";
+import { SavedChatType, useChatStore } from "../utils/store";
 import styled from "@emotion/styled";
 import BotChat from "./chat/BotChat";
 import { DomainOne } from "../utils/persona";
 import UserChat from "./chat/UserChat";
-import { SavedChatType } from "./chat";
 import { Button } from "@chakra-ui/react";
+
+const LOADONENUM = 2;
 
 const MyPage: NextPage = () => {
   const [radio, setRadio] = useState<"found" | "saved">("found");
@@ -37,16 +38,17 @@ const MyPage: NextPage = () => {
       .where("saved", "array-contains-any", [0, 1, 2, 3, 4, 5, 6, 7, 8])
       .orderBy("createdAt")
       .startAfter(pagi)
-      .limit(3)
+      .limit(LOADONENUM)
       .get()
       .then((res) => {
         const response = res.docs.map((doc) => {
           return { ...(doc.data() as SavedChatType), id: doc.id };
         });
+        console.log("파지:,", response);
         if (saves) setSaves([...saves, ...response]);
         else setSaves(response);
 
-        if (response.length < 3) setPagi(0);
+        if (response.length < LOADONENUM) setPagi(0);
         else setPagi(response.slice(-1)[0].createdAt);
       });
     await dbService
@@ -97,7 +99,11 @@ const MyPage: NextPage = () => {
                   </>
                 );
               })}
-              {pagi !== 0 && <Button onClick={() => init()}>Load more</Button>}
+              {pagi !== 0 && (
+                <LoadMoreButton pt={4} pb={4} onClick={() => init()}>
+                  Load more
+                </LoadMoreButton>
+              )}
             </SavedContainer>
           )}
           {radio === "found" && (
@@ -160,4 +166,10 @@ const SavedContent = styled.div<{ isNew?: boolean }>`
   // border-radius: 8px;
   // border: 1px solid black;
   // margin-top: 10px;
+`;
+
+const LoadMoreButton = styled(Button)`
+  width: 100%;
+  margin-top: 15px;
+  height: 50px;
 `;
