@@ -169,15 +169,10 @@ const BotChat = ({
 
   const askQuora = async () => {
     setAsked(true);
-    // 다른 DB에 저장되어야겠지??
-    // const body = { ...item, askedAt: new Date().getTime() };
-    // await dbService.collection("asked").add(body);
-
     const modified = {
       ...item,
-      asked: true,
+      asked: "finding",
     };
-
     await updateFirebase(modified);
   };
 

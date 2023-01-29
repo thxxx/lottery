@@ -24,15 +24,18 @@ const Home: NextPage = () => {
     else setJob(DOMAINS[0].domain);
   }, []);
 
-  const onSubmit = useCallback((inputText: string, option: number) => {
-    if (!user) alert("Log in first! this is temporary message");
+  const onSubmit = useCallback(
+    (inputText: string, option: number) => {
+      if (!user) alert("Log in first! this is temporary message");
 
-    console.log("전부 같지만 채팅 페이지로 이동", inputText, option);
-    router.push({
-      pathname: "/chat",
-      query: { isFromHome: true, inputQuery: inputText, inputOption: option },
-    });
-  }, []);
+      console.log("전부 같지만 채팅 페이지로 이동", inputText, option);
+      router.push({
+        pathname: "/chat",
+        query: { isFromHome: true, inputQuery: inputText, inputOption: option },
+      });
+    },
+    [user]
+  );
 
   return (
     <>
@@ -66,19 +69,6 @@ const Home: NextPage = () => {
             }}
           />
         </DomainDesc>
-        {/* <TopCardContainer>
-          <div className="left">
-            <span>
-              <Image src="/lightning.png" width={30} height={30} alt="fire" />
-            </span>
-            <span>See my history</span>
-          </div>
-          <div>
-            <ArrowRightIcon />
-          </div>
-        </TopCardContainer>
-        <p>choose what kind of domain of your question?</p>
-        <p>We will introduce you best expert</p> */}
         <CardsContainer>
           {DOMAINS.map((item) => {
             return (
@@ -250,29 +240,5 @@ const Card = styled.div<{ selected: boolean }>`
     height: 73px;
     font-size: 11px;
     margin: 6px;
-  }
-`;
-
-const TopCardContainer = styled.div`
-  margin-top: 60px;
-  padding: 15px 0px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid ${({ theme }) => theme.borderColor01};
-  width: 100%;
-  margin-bottom: 30px;
-  font-size: 1.2em;
-  font-weight: 700;
-
-  .left {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    span {
-      margin-left: 10px;
-    }
   }
 `;

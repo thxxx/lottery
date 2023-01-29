@@ -7,14 +7,12 @@ import BotChat from "../chat/BotChat";
 import styled from "@emotion/styled";
 import AppBar from "../../components/AppBar";
 import Head from "next/head";
-import { SavedChatType } from "../chat";
+import { SavedChatType } from "../../utils/store";
 
 const SharePage = () => {
   const router = useRouter();
   const { id, saved } = router.query;
   const [data, setData] = useState<SavedChatType>();
-
-  console.log("피아이디", id, saved);
 
   useEffect(() => {
     init();
@@ -42,8 +40,8 @@ const SharePage = () => {
       {data && (
         <>
           <Head>
-            <title>{data ? data.query : "Shared"}</title>
-            <meta name="description" content="Lottery will give you solution" />
+            <title>{data ? data.query : "Shared Content from "}</title>
+            <meta name="description" content="Shared Content from " />
             <link rel="icon" href="/card.png" />
           </Head>
           <AppBar page="my" />

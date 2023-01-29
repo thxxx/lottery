@@ -10,9 +10,9 @@ export enum ChatType {
 export type UserChatType = {
   createdAt: number;
   text: string | string[];
-  type?: ChatType;
+  type: ChatType;
   job: DomainOne;
-  id?: number | string | undefined;
+  id: number | string | undefined;
 };
 
 export type WebLink = {
@@ -23,6 +23,7 @@ export type WebLink = {
 export type SavedChatType = {
   questionKey?: string;
   saved?: any;
+  asked?: "no" | "finding" | "found";
   query?: string; // input of user, only exist when bot.
   webLinks?: WebLink[];
   displayName?: string;

@@ -5,10 +5,10 @@ import { MainContainer } from "./chat/style";
 import { dbService } from "../utils/fbase";
 import { SavedChatType, useChatStore } from "../utils/store";
 import styled from "@emotion/styled";
-import BotChat from "./chat/BotChat";
+import BotChat, { CustomSwipeSlide } from "./chat/BotChat";
 import { DomainOne } from "../utils/persona";
-import UserChat from "./chat/UserChat";
-import { Button } from "@chakra-ui/react";
+import UserChat, { UserChatWrapper } from "./chat/UserChat";
+import { Button, Skeleton, SkeletonCircle } from "@chakra-ui/react";
 
 const LOADONENUM = 2;
 
@@ -27,7 +27,6 @@ const MyPage: NextPage = () => {
     const readIds = localStorage.getItem("read");
     if (readIds) {
       setReaded(JSON.parse(readIds));
-      console.log("리드 아이디으", JSON.parse(readIds));
     }
   }, []);
 
@@ -51,16 +50,18 @@ const MyPage: NextPage = () => {
         if (response.length < LOADONENUM) setPagi(0);
         else setPagi(response.slice(-1)[0].createdAt);
       });
+
     await dbService
       .collection("chats")
       .where("uid", "==", user?.uid)
-      .where("asked", "==", true)
+      .where("asked", "==", "found")
+      .orderBy("createdAt", "asc")
       .get()
       .then((res) => {
         const response = res.docs.map((doc) => {
           return { ...(doc.data() as SavedChatType), id: doc.id };
         });
-        console.log(JSON.stringify(response.map((item) => item.id)));
+        console.log(response);
         localStorage.setItem(
           "read",
           JSON.stringify(response.map((item) => item.id))
@@ -76,29 +77,52 @@ const MyPage: NextPage = () => {
         <MyPageConainer>
           {radio === "saved" && (
             <SavedContainer>
-              {saves?.map((item, i) => {
-                return (
-                  <>
-                    {item.saved.map((doc: number) => {
-                      return (
-                        <SavedContent key={`key_${i}${doc}`} className="card">
-                          <UserChat
-                            text={item.query as string}
-                            displayName={item.displayName}
-                            photoURL={item.photoURL}
-                          />
-                          <BotChat
-                            item={item}
-                            savedIndex={doc}
-                            saves={saves}
-                            setSaves={setSaves}
-                          />
-                        </SavedContent>
-                      );
-                    })}
-                  </>
-                );
-              })}
+              {saves ? (
+                <>
+                  {saves.map((item, i) => {
+                    return (
+                      <>
+                        {item.saved.map((doc: number) => {
+                          return (
+                            <SavedContent
+                              key={`key_${i}${doc}`}
+                              className="card">
+                              <UserChat
+                                text={item.query as string}
+                                displayName={item.displayName}
+                                photoURL={item.photoURL}
+                              />
+                              <BotChat
+                                item={item}
+                                savedIndex={doc}
+                                saves={saves}
+                                setSaves={setSaves}
+                              />
+                            </SavedContent>
+                          );
+                        })}
+                      </>
+                    );
+                  })}
+                </>
+              ) : (
+                <>
+                  <SkeletonContainer>
+                    <div className="top">
+                      <div className="left">
+                        <SkeletonCircle mt={4} width={35} height={35} />
+                      </div>
+                      <div className="right">
+                        <Skeleton mt={4} width="100%" height={25} />
+                      </div>
+                    </div>
+                    <div>
+                      <Skeleton mt={4} width="100%" height={25} />
+                      <Skeleton mt={4} width="100%" height={25} />
+                    </div>
+                  </SkeletonContainer>
+                </>
+              )}
               {pagi !== 0 && (
                 <LoadMoreButton pt={4} pb={4} onClick={() => init()}>
                   Load more
@@ -108,24 +132,59 @@ const MyPage: NextPage = () => {
           )}
           {radio === "found" && (
             <SavedContainer>
-              <div>Recent</div>
-              {asks?.map((item: any, i: number) => {
-                return (
-                  <>
-                    <SavedContent
-                      key={`key_${i}`}
-                      className="card"
-                      isNew={!readed.includes(item.id as string)}>
-                      <UserChat
-                        text={item.query as string}
-                        displayName={item.displayName}
-                        photoURL={item.photoURL}
-                      />
-                      <BotChat item={item} saves={asks} setSaves={setAsks} />
-                    </SavedContent>
-                  </>
-                );
-              })}
+              {asks ? (
+                <>
+                  {asks.map((item: any, i: number) => {
+                    return (
+                      <>
+                        <SavedContent
+                          key={`key_${i}`}
+                          className="card"
+                          isNew={!readed.includes(item.id as string)}>
+                          <UserChat
+                            text={item.query as string}
+                            displayName={item.displayName}
+                            photoURL={item.photoURL}
+                          />
+                          <BotChat
+                            item={item}
+                            saves={asks}
+                            savedIndex={item.text.length - 1}
+                            setSaves={setAsks}
+                          />
+                        </SavedContent>
+                      </>
+                    );
+                  })}
+                </>
+              ) : (
+                <>
+                  <UserChatWrapper
+                    spaceBetween={26}
+                    slidesPerView={1}
+                    allowTouchMove={false}
+                    scrollbar={{ draggable: true }}>
+                    <CustomSwipeSlide>
+                      <div className="innerd">
+                        <div className="profile">
+                          <SkeletonCircle mt={4} width={35} height={35} />
+                        </div>
+                        <div className="text">
+                          <p
+                            className="name"
+                            style={{ width: "100%", marginTop: "3px" }}>
+                            <Skeleton mt={4} width="50%" height={25} />
+                          </p>
+                          <div className="main" style={{ width: "100%" }}>
+                            <Skeleton mt={3} width="100%" height={25} />
+                            <Skeleton mt={3} width="100%" height={25} />
+                          </div>
+                        </div>
+                      </div>
+                    </CustomSwipeSlide>
+                  </UserChatWrapper>
+                </>
+              )}
             </SavedContainer>
           )}
         </MyPageConainer>
@@ -135,6 +194,30 @@ const MyPage: NextPage = () => {
 };
 
 export default MyPage;
+
+const SkeletonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 95%;
+
+  .top {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    .left {
+      width: 15%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .right {
+      width: 85%;
+    }
+  }
+`;
 
 const MyPageConainer = styled.div`
   display: flex;

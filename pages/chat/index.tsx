@@ -81,23 +81,23 @@ const ChatPage: NextPage = () => {
         option
       );
 
-      const body = {
-        query: inputText,
-        history: history,
-        field: job?.toLowerCase(),
-        tag: String(option),
-      };
+      // const body = {
+      //   query: inputText,
+      //   history: history,
+      //   field: job?.toLowerCase(),
+      //   tag: String(option),
+      // };
 
-      const response = await fetch("/api/call", {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: { "Content-Type": "application/json" },
-      });
-      const output = await response.json();
-      console.log(output, "응답ㅎ ㅘㄱ인", output[0]);
+      // const response = await fetch("/api/call", {
+      //   method: "POST",
+      //   body: JSON.stringify(body),
+      //   headers: { "Content-Type": "application/json" },
+      // });
+      // const output = await response.json();
+      // console.log(output, "응답ㅎ ㅘㄱ인", output[0]);
 
-      // return dummy[2];
-      return output[0];
+      return dummy[1];
+      // return output[0];
     },
     [queries, job]
   );
@@ -134,9 +134,10 @@ const ChatPage: NextPage = () => {
     setChats(tempChats);
 
     const response = await callApi(inputText, option);
-    console.log("wefew", 2);
 
     const body: SavedChatType = {
+      id: user?.uid,
+      type: ChatType.BOT,
       query: inputText,
       text: [response],
       createdAt: new Date().getTime(),
@@ -147,15 +148,13 @@ const ChatPage: NextPage = () => {
       saved: [],
       job: job,
       webLinks: [],
+      asked: "no",
     };
-    console.log(12);
 
     await dbService
       .collection("chats")
       .add(body)
       .then((docRef) => {
-        console.log(docRef.id);
-
         const addedChats = [
           {
             text: inputText,
@@ -187,7 +186,6 @@ const ChatPage: NextPage = () => {
 
   const generateAnotherAnswer = useCallback(
     async (id: string | number, query: string, option: number) => {
-      console.log("하나 더 추가", id);
       const response = await callApi(query, option);
       const filtered = chats.map((item) => {
         if (item.id === id) {

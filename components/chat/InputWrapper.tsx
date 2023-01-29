@@ -41,7 +41,7 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
   }, [job, option]);
 
   const callSubmit = useCallback(() => {
-    if (status !== "finishing") {
+    if (status !== "end") {
       onSubmit(text, option);
       setStatus("end");
       setOption(0);
@@ -54,7 +54,6 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
       console.log("1.2초 세고, 입력 없으면 그대로 제출");
       const to = setTimeout(() => {
         if (isEnd.current) {
-          console.log("제출", isEnd.current);
           // if (inputRef.current) inputRef.current?.style.height = "52px";
           callSubmit();
         }
@@ -92,7 +91,6 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
         )}
         <InputContainer
           onSubmit={(e) => {
-            console.log("제출");
             e.preventDefault();
             callSubmit();
           }}>
@@ -109,7 +107,7 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
               if (!e.shiftKey && (e.code === "Enter" || e.keyCode === 13)) {
                 e.preventDefault();
                 (inputRef.current as any).style.height = "52px";
-                callSubmit();
+                if (status === "typing...") callSubmit();
               }
             }}
             onChange={(e) => {

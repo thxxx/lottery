@@ -46,6 +46,7 @@ export const UserChatWrapper = styled(Swiper)`
   width: 100%;
   position: relative;
   padding: 30px 15px;
+  width: 100%;
 
   .profile {
     display: flex;
@@ -72,7 +73,6 @@ export const UserChatWrapper = styled(Swiper)`
     }
 
     .main {
-      width: 100%;
       margin-top: 15px;
 
       .loadings {
