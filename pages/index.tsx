@@ -107,7 +107,7 @@ const DomainDesc = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
-  margin-top: 18px;
+  margin-top: 13px;
 
   .name {
     margin-top: 3px;
@@ -117,18 +117,13 @@ const DomainDesc = styled.div`
     color: rgba(0, 0, 0, 0.6);
   }
   .desc {
-    margin-top: 8px;
+    margin-top: 5px;
   }
 
   @media (max-width: 800px) {
     padding: 0px 25px;
   }
 `;
-
-const DescContainer = styled.div`
-  padding: 10px 0px;
-`;
-
 const MainContainer = styled.main`
   display: flex;
   flex-direction: column;
@@ -138,7 +133,7 @@ const MainContainer = styled.main`
   transition: 3s ease;
   min-height: 100vh;
   padding-bottom: 120px;
-  padding-top: 80px;
+  padding-top: 70px;
 
   .logo {
     display: flex;
