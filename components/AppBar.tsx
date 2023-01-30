@@ -1,16 +1,37 @@
-import { ArrowForwardIcon, EmailIcon, SunIcon } from "@chakra-ui/icons";
 import styled from "@emotion/styled";
-import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
-import { useDisclosure } from "@chakra-ui/react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
+import {
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  useDisclosure,
+} from "@chakra-ui/react";
 import FeedbackModal from "./FeedbackModal";
 import Image from "next/image";
-import { Home } from "@styled-icons/fluentui-system-filled";
 import Link from "next/link";
 import { useChatStore } from "../utils/store";
 import router from "next/router";
 import { authService, firebaseInstance } from "../utils/fbase";
+import useWindowDimensions from "../hook/useWindowDimensions";
+import { HamburgerIcon } from "@chakra-ui/icons";
 
-type PagesType = "main" | "chat" | "my" | "share";
+enum PagesType {
+  MAIN = "main",
+  CHAT = "chat",
+  MY = "my",
+  SHARE = "share",
+}
 
 type AppBarType = {
   page?: PagesType;
@@ -21,6 +42,9 @@ type AppBarType = {
 const AppBar = ({ page, onClick, radio }: AppBarType) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useChatStore();
+  const { width } = useWindowDimensions();
+  const [isDrawer, setIsDrawer] = useState(false);
+  const btnRef = useRef(null);
 
   const doLogin = useCallback(async () => {
     let provider;
@@ -39,28 +63,90 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
 
   const returnNavi = () => {
     switch (page) {
-      case "chat":
-      case "main":
+      case PagesType.CHAT:
+      case PagesType.MAIN:
         return (
           <>
-            {user ? (
-              <div
-                className="icon"
-                onClick={() => {
-                  router.push({
-                    pathname: "/my",
-                  });
-                }}>
-                <Image src="/my.png" width={24} height={24} alt="mypage" />
-              </div>
+            {width < 800 ? (
+              <>
+                <div ref={btnRef} onClick={() => setIsDrawer(true)}>
+                  <HamburgerIcon />
+                </div>
+                <Drawer
+                  closeOnEsc
+                  closeOnOverlayClick
+                  isOpen={isDrawer}
+                  placement="right"
+                  onClose={() => setIsDrawer(false)}
+                  finalFocusRef={btnRef}>
+                  <DrawerOverlay />
+                  <CustomDrawer>
+                    <DrawerCloseButton />
+                    <DrawerHeader>AID</DrawerHeader>
+                    <DrawerBody>
+                      <div>
+                        {user ? (
+                          <div
+                            className="item"
+                            onClick={() => {
+                              router.push({
+                                pathname: "/my",
+                              });
+                            }}>
+                            My Page
+                          </div>
+                        ) : (
+                          <div className="item" onClick={() => doLogin()}>
+                            Login
+                          </div>
+                        )}
+                        <div className="item" onClick={() => {}}>
+                          Discord
+                        </div>
+                        <div className="item" onClick={() => {}}>
+                          Contact us
+                        </div>
+                      </div>
+                    </DrawerBody>
+                    <DrawerFooter>
+                      <button
+                        onClick={() => setIsDrawer(false)}
+                        className="cancel">
+                        Cancel
+                      </button>
+                    </DrawerFooter>
+                  </CustomDrawer>
+                </Drawer>
+              </>
             ) : (
-              <Radio clicked={false} className="icon" onClick={() => doLogin()}>
-                Login
-              </Radio>
+              <>
+                <>
+                  <Radio onClick={() => {}}>Discord</Radio>
+                  <Radio onClick={() => {}}>Contact us</Radio>
+                </>
+                {user ? (
+                  <div
+                    className="icon"
+                    onClick={() => {
+                      router.push({
+                        pathname: "/my",
+                      });
+                    }}>
+                    <Image src="/my.png" width={24} height={24} alt="mypage" />
+                  </div>
+                ) : (
+                  <Radio
+                    clicked={false}
+                    className="icon"
+                    onClick={() => doLogin()}>
+                    Login
+                  </Radio>
+                )}
+              </>
             )}
           </>
         );
-      case "my":
+      case PagesType.MY:
         return (
           <>
             <Radio
@@ -73,7 +159,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
             </Radio>
           </>
         );
-      case "share":
+      case PagesType.SHARE:
         return (
           <>
             {user ? (
@@ -116,15 +202,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
           </>
         )}
       </div>
-      <div className="icons">
-        {page === "main" && (
-          <>
-            <Radio onClick={() => {}}>Discord</Radio>
-            <Radio onClick={() => {}}>Contact us</Radio>
-          </>
-        )}
-        {returnNavi()}
-      </div>
+      <div className="icons">{returnNavi()}</div>
       <FeedbackModal isOpen={isOpen} onClose={onClose} onOpen={onOpen} />
     </AppBarContainer>
   );
@@ -191,5 +269,34 @@ const AppBarContainer = styled.div`
       }
     }
     color: rgba(0, 0, 0, 0.6);
+  }
+`;
+
+const CustomDrawer = styled(DrawerContent)`
+  display: flex;
+  flex-direction: column;
+  color: #2d1c2a;
+  font-weight: 700;
+  padding: 0px;
+
+  .item {
+    padding: 14px 10px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    margin: 5px 0px;
+    border-radius: 6px;
+
+    &:hover {
+      background-color: ${({ theme }) => theme.hoverBack};
+    }
+  }
+
+  .cancel {
+    border-radius: 6px;
+    padding: 10px;
+    background: white;
+    width: 100%;
+    border: 1px solid ${({ theme }) => theme.bgColor04};
   }
 `;

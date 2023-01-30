@@ -135,11 +135,11 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
               {/* <div className="desc">Good text if you add.</div> */}
               {nowPrompts?.map((item) => {
                 return (
-                  <MenuItem
+                  <CustomMenuItem
                     key={item.tag}
                     onClick={() => addPrompt(item.text, item.tag)}>
-                    {item.text}
-                  </MenuItem>
+                    {item.text.slice(0, 1).toUpperCase() + item.text.slice(1)}
+                  </CustomMenuItem>
                 );
               })}
             </CustomMenuList>
@@ -176,6 +176,7 @@ export const CustomMenuList = styled(MenuList)`
   display: flex;
   flex-direction: column;
   border: 1.5px solid ${({ theme }) => theme.black04};
+  max-width: 100vw;
 
   .desc {
     padding: 4px 10px;
@@ -297,4 +298,8 @@ export const InputContainer = styled.form`
     display: flex;
     flex-direction: row;
   }
+`;
+
+const CustomMenuItem = styled(MenuItem)`
+  flex-wrap: wrap;
 `;

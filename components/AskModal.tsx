@@ -25,21 +25,6 @@ const AskModal = ({ isOpen, onClose, onOpen }: AskModelProps) => {
   const [feedback, setFeedback] = useState("");
   const [email, setEmail] = useState("");
 
-  // const sendRequest = async () => {
-  //   const uuid = localStorage.getItem(LOCAL_ID);
-  //   const body = {
-  //     who: who,
-  //     feedback: feedback,
-  //     email: email,
-  //     uid: uuid,
-  //   };
-  //   await dbService.collection("request").add(body);
-  //   setWho("");
-  //   setFeedback("");
-  //   setEmail("");
-  //   onClose();
-  // };
-
   const sendRequest = async () => {
     let provider;
     provider = new firebaseInstance.auth.GoogleAuthProvider();
