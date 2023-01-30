@@ -47,20 +47,24 @@ const SharePage = () => {
           <AppBar page="share" />
           <MainContainer>
             <SharedContainer>
-              {data && data.query && saved && (
-                <OneChat>
-                  <UserChat
-                    text={data.query as string}
-                    displayName={data.displayName}
-                    photoURL={data.photoURL}
-                  />
-                  <BotChat
-                    savedIndex={parseInt(saved as string)}
-                    item={data}
-                    shared
-                  />
-                </OneChat>
-              )}
+              {data &&
+                data.query &&
+                data.displayName &&
+                data.photoURL &&
+                saved && (
+                  <OneChat>
+                    <UserChat
+                      text={data.query as string}
+                      displayName={data.displayName}
+                      photoURL={data.photoURL}
+                    />
+                    <BotChat
+                      savedIndex={parseInt(saved as string)}
+                      item={data}
+                      shared
+                    />
+                  </OneChat>
+                )}
             </SharedContainer>
           </MainContainer>
         </>
