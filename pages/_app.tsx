@@ -6,20 +6,26 @@ import styled from "@emotion/styled";
 import { ThemeProvider } from "@emotion/react";
 import { lightTheme, darkTheme } from "../styles/theme";
 import { useChatStore } from "../utils/store";
-import AppBar from "../components/AppBar";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import * as ga from "../lib/gtag";
 import Script from "next/script";
 import { authService } from "../utils/fbase";
+import TagManager, { TagManagerArgs } from "react-gtm-module";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { darkMode } = useChatStore();
   const theme = darkMode ? darkTheme : lightTheme;
 
+  const tagManagerArgs: TagManagerArgs = {
+    gtmId: ga.GTM_TRACKING_ID,
+  };
+
   const router = useRouter();
 
   useEffect(() => {
+    TagManager.initialize(tagManagerArgs);
+
     const handleRouteChange = (url: string) => {
       ga.pageview(url);
     };
@@ -57,7 +63,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ChakraProvider>
-      <Script
+      {/* <Script
         strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${ga.GTM_TRACKING_ID}`}
       />
@@ -74,7 +80,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             });
           `,
         }}
-      />
+      /> */}
       <ThemeProvider theme={theme}>
         <MobileContainer>
           <div className="backdrop" />
