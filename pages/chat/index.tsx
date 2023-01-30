@@ -94,16 +94,12 @@ const ChatPage: NextPage = () => {
       //   headers: { "Content-Type": "application/json" },
       // });
 
-      const response = await axios.post(
-        "https://z0ssobbdqh.execute-api.us-west-1.amazonaws.com/v1/davinci",
-        body,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
-      );
+      const response = await axios.post("/davinci", body, {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
 
       console.log("응답", response);
       const output = response;

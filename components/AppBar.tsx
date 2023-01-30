@@ -53,9 +53,9 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
                 <Image src="/my.png" width={24} height={24} alt="mypage" />
               </div>
             ) : (
-              <div className="icon" onClick={() => doLogin()}>
-                <span>Login</span>
-              </div>
+              <Radio clicked={false} className="icon" onClick={() => doLogin()}>
+                Login
+              </Radio>
             )}
           </>
         );
