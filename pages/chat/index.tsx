@@ -215,7 +215,7 @@ const ChatPage: NextPage = () => {
   return (
     <>
       <Head>
-        <title>AID</title>
+        <title>AID Chat</title>
         <meta name="description" content="AID will give you solution" />
         <link rel="icon" href="/card.png" />
       </Head>

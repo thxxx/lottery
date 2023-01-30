@@ -40,11 +40,11 @@ const SharePage = () => {
       {data && (
         <>
           <Head>
-            <title>{data ? data.query : "Shared Content from "}</title>
-            <meta name="description" content="Shared Content from " />
+            <title>{data ? data.query : "Shared Content if AID"}</title>
+            <meta name="description" content="Shared Content from AID" />
             <link rel="icon" href="/card.png" />
           </Head>
-          <AppBar page="my" />
+          <AppBar page="share" />
           <MainContainer>
             <SharedContainer>
               {data && data.query && saved && (

@@ -10,7 +10,7 @@ import { useChatStore } from "../utils/store";
 import router from "next/router";
 import { authService, firebaseInstance } from "../utils/fbase";
 
-type PagesType = "main" | "chat" | "my";
+type PagesType = "main" | "chat" | "my" | "share";
 
 type AppBarType = {
   page?: PagesType;
@@ -73,6 +73,27 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
             </Radio>
           </>
         );
+      case "share":
+        return (
+          <>
+            {user ? (
+              <Radio
+                clicked={false}
+                onClick={() => {
+                  router.push({
+                    pathname: "/chat",
+                  });
+                }}>
+                Chat
+              </Radio>
+            ) : (
+              <Radio clicked={false} className="icon" onClick={() => doLogin()}>
+                Login
+              </Radio>
+            )}
+          </>
+        );
+
       default:
         return <></>;
     }

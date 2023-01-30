@@ -11,6 +11,7 @@ import UserChat, { UserChatWrapper } from "./chat/UserChat";
 import { Button, Skeleton, SkeletonCircle } from "@chakra-ui/react";
 import Image from "next/image";
 import { dateToText } from "../utils/dateToText";
+import Head from "next/head";
 
 const LOADONENUM = 10;
 
@@ -90,6 +91,11 @@ const MyPage: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>AID My</title>
+        <meta name="description" content="AID My Page" />
+        <link rel="icon" href="/card.png" />
+      </Head>
       <AppBar page="my" radio={radio} onClick={setRadio} />
       <MainContainer>
         <MyPageConainer>
@@ -136,7 +142,7 @@ const MyPage: NextPage = () => {
           )}
           {radio === "found" && (
             <SavedContainer>
-              {waitings && (
+              {waitings && waitings.length > 0 && (
                 <>
                   <SavedContent>
                     <h2>Waiting For Answer</h2>
