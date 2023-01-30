@@ -19,26 +19,40 @@ const TextAnswer = ({ text }: { text: string }) => {
   //   {/* </MathJaxContext> */}
   //     </MathJax>
   // );
+
   return (
     <>
       {text && (
-        <div
-          dangerouslySetInnerHTML={{
-            __html:
-              text.replace(/\n/g, "<br />").slice(0, 6) === "<br />"
-                ? text
-                    .replace(/```([\s\S]*?)```/g, "")
-                    .replace(/\$/g, "`")
-                    .replace(/\n/g, "<br />")
-                    .replace(/<bold>(.*?)<\/bold>/g, "<strong>$1</strong>")
-                    .slice(6)
-                : text
-                    .replace(/```([\s\S]*?)```/g, "")
-                    .replace(/\$/g, "`")
-                    .replace(/\n/g, "<br />")
-                    .replace(/<bold>(.*?)<\/bold>/g, "<strong>$1</strong>"),
-          }}
-        />
+        <>
+          <MathJaxContext config={config} version={3}>
+            <MathJax>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html:
+                    text.replace(/\n/g, "<br />").slice(0, 6) === "<br />"
+                      ? text
+                          // .replace(/```([\s\S]*?)```/g, "")
+                          .replace(/\$/g, "`")
+                          .replace(/\n/g, "<br />")
+                          .replace(
+                            /<bold>(.*?)<\/bold>/g,
+                            "<strong>$1</strong>"
+                          )
+                          .slice(6)
+                      : text
+                          // .replace(/```([\s\S]*?)```/g, "")
+                          .replace(/\$/g, "`")
+                          .replace(/\n/g, "<br />")
+                          .replace(
+                            /<bold>(.*?)<\/bold>/g,
+                            "<strong>$1</strong>"
+                          ),
+                }}
+              />
+              {/* {text.replace(/```([\s\S]*?)```/g, "").replace(/\$/g, "`")} */}
+            </MathJax>
+          </MathJaxContext>
+        </>
       )}
     </>
   );

@@ -1,13 +1,7 @@
 import styled from "@emotion/styled";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import IconButton from "../../components/IconButton";
-import {
-  ArrowLeftIcon,
-  CopyIcon,
-  HamburgerIcon,
-  LinkIcon,
-  SunIcon,
-} from "@chakra-ui/icons";
+import { CopyIcon, LinkIcon } from "@chakra-ui/icons";
 import { MenuItem, useToast } from "@chakra-ui/react";
 import Image from "next/image";
 import { Menu, MenuButton, MenuList } from "@chakra-ui/react";
@@ -59,13 +53,7 @@ const IconContainer = ({
   const share = async (type: "link" | "text") => {
     if (type === "link")
       copyToClipboard("https://getaid.ai/share?id=" + id + "&saved=" + index);
-    if (type === "text")
-      copyToClipboard(
-        "dkㅏ아아아아<bold>5656ㅇㅅㄱ</bold>asdㅁㅈㅇㅂ".replace(
-          /<[^>]*>/g,
-          " "
-        )
-      );
+    if (type === "text") copyToClipboard(response.replace(/<[^>]*>/g, " "));
   };
 
   return (

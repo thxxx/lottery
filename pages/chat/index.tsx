@@ -81,27 +81,27 @@ const ChatPage: NextPage = () => {
         option
       );
 
-      const body = {
-        query: inputText,
-        history: history,
-        field: job?.toLowerCase(),
-        tag: String(option),
-      };
+      // const body = {
+      //   query: inputText,
+      //   history: history,
+      //   field: job?.toLowerCase(),
+      //   tag: String(option),
+      // };
 
-      const response = await axios.post("/davinci", body, {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      });
+      // const response = await axios.post("/davinci", body, {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "Access-Control-Allow-Origin": "*",
+      //   },
+      // });
 
-      console.log("응답", response);
-      const output = response;
-      // const output = await response.json();
-      console.log("문제 API 결과", output.data);
+      // console.log("응답", response);
+      // const output = response;
+      // // const output = await response.json();
+      // console.log("문제 API 결과", output.data);
 
-      return output.data[0];
-      // return dummy[1];
+      // return output.data[0];
+      return dummy[0];
     },
     [queries, job]
   );
@@ -194,9 +194,7 @@ const ChatPage: NextPage = () => {
   const generateAnotherAnswer = useCallback(
     async (id: string | number, query: string, option: number) => {
       setLoading(true);
-      console.log("호출", query, option, id);
       const response = await callApi(query, option);
-      console.log("호출22", response);
       let chosen;
       const filtered = chats.map((item) => {
         if (item.id === id) {
