@@ -18,6 +18,8 @@ import { Skeleton } from "@chakra-ui/react";
 import TextAnswer from "./TextAnswer";
 import ChatSlideInner from "./ChatSlide";
 import SwipeNext from "./SwipeNext";
+import { Radio } from "../../components/AppBar";
+import router from "next/router";
 
 const BWIDTH = 150;
 
@@ -171,10 +173,6 @@ const BotChat = ({
     // ];
   }, [item.query]);
 
-  const sleep = (sec: number) => {
-    return new Promise((resolve) => setTimeout(resolve, sec * 1000));
-  }; // 함수정의
-
   const clickWebOpen = useCallback(async () => {
     // 처음에만 호출한다.
     console.log("클릭 웹 오픈", item);
@@ -279,7 +277,7 @@ const BotChat = ({
                                   </span>
                                 </span>
                                 <p className="title">{doc.title}</p>
-                                <span>{doc.snippet}</span>
+                                {/* <span>{doc.snippet}</span> */}
                               </div>
                             ))}
                           </WebContainer>
@@ -308,18 +306,32 @@ const BotChat = ({
           <CustomSwipeSlide>
             {width > 1100 && <SwipeNext type="prev" />}
             <ChatSlideInner item={item}>
-              {asked ? (
-                <>
-                  We will find the answer as soon as possible and let you know
-                  by notification.
-                </>
+              {asked || item.asked ? (
+                <QuoraDid className="main">
+                  <p>
+                    We will find the answer as soon as possible and let you know
+                    by notification.
+                  </p>
+                  <p>
+                    You can see answer in
+                    <Radio
+                      onClick={() => {
+                        router.push({
+                          pathname: "/my",
+                        });
+                      }}
+                      clicked={false}>
+                      My Page
+                    </Radio>
+                  </p>
+                </QuoraDid>
               ) : (
                 <div className="agains">
                   <SelectionBtn
                     left={true}
                     onClick={() => onSubmit(item.id, item.query, item.option)}>
                     <RepeatIcon color="blackAlpha.600" width={25} height={25} />
-                    <p className="again">
+                    <p>
                       Do you want me to
                       <br />
                       answer it again?
@@ -360,6 +372,7 @@ const WebContainer = styled.div`
   text-align: start;
   width: 100%;
   padding: 0px 2px;
+  padding-bottom: 5px;
 
   .content {
     padding: 5px 5px;
@@ -417,8 +430,8 @@ const SelectionBtn = styled.div<{ left: boolean }>`
   justify-content: center;
   text-align: center;
   margin: 0px 25px;
-  color: white;
   font-weight: 700;
+  color: ${({ theme, left }) => (left ? theme.black06 : "white")};
 
   padding: 20px;
   border-radius: 10px;
@@ -466,9 +479,27 @@ const Empty = styled.div`
 `;
 
 export const Bottom = styled.div`
-  margin-top: 20px;
+  margin-top: 25px;
   width: 100%;
   background: ${({ theme }) => theme.grey + "44"};
   padding: 5px 5px;
   border-radius: 8px;
+`;
+
+const QuoraDid = styled.div`
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  font-weight: 700;
+  line-height: 1.8em;
+
+  padding: 30px 10px;
+  border-radius: 10px;
+
+  background-color: ${({ theme }) => theme.bgColor03};
+  color: ${({ theme }) => theme.black06};
 `;

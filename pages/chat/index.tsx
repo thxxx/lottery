@@ -88,15 +88,29 @@ const ChatPage: NextPage = () => {
         tag: String(option),
       };
 
-      const response = await fetch("/api/call", {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: { "Content-Type": "application/json" },
-      });
-      const output = await response.json();
-      console.log(output, "응답ㅎ ㅘㄱ인", output[0]);
+      // const response = await fetch("/api/call", {
+      //   method: "POST",
+      //   body: JSON.stringify(body),
+      //   headers: { "Content-Type": "application/json" },
+      // });
 
-      return output[0];
+      const response = await axios.post(
+        "https://z0ssobbdqh.execute-api.us-west-1.amazonaws.com/v1/davinci",
+        body,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+
+      console.log("응답", response);
+      const output = response;
+      // const output = await response.json();
+      console.log("문제 API 결과", output.data);
+
+      return output.data[0];
       // return dummy[1];
     },
     [queries, job]
@@ -205,8 +219,8 @@ const ChatPage: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Lottery</title>
-        <meta name="description" content="Lottery will give you solution" />
+        <title>AID</title>
+        <meta name="description" content="AID will give you solution" />
         <link rel="icon" href="/card.png" />
       </Head>
       <AppBar page="chat" />

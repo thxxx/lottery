@@ -19,18 +19,18 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const router = useRouter();
 
-  // useEffect(() => {
-  //   const handleRouteChange = (url: string) => {
-  //     ga.pageview(url);
-  //   };
-  //   router.events.on("routeChangeComplete", handleRouteChange);
-  //   router.events.on("hashChangeComplete", handleRouteChange);
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      ga.pageview(url);
+    };
+    router.events.on("routeChangeComplete", handleRouteChange);
+    router.events.on("hashChangeComplete", handleRouteChange);
 
-  //   return () => {
-  //     router.events.off("routeChangeComplete", handleRouteChange);
-  //     router.events.off("hashChangeComplete", handleRouteChange);
-  //   };
-  // }, [router.events]);
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+      router.events.off("hashChangeComplete", handleRouteChange);
+    };
+  }, [router.events]);
 
   const [init, setInit] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -57,7 +57,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ChakraProvider>
-      {/* <Script
+      <Script
         strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${ga.GA_TRACKING_ID}`}
       />
@@ -74,7 +74,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             });
           `,
         }}
-      /> */}
+      />
       <ThemeProvider theme={theme}>
         <MobileContainer>
           <div className="backdrop" />
@@ -92,7 +92,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 export default MyApp;
 
 const MobileContainer = styled.div`
-  font-family: Pretendard;
   width: 100%;
   background: ${({ theme }) => theme.bgColor};
   position: relative;

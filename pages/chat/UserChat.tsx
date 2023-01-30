@@ -137,9 +137,6 @@ export const BotChatWrapper = styled(UserChatWrapper)<{
       flex-direction: row;
       align-items: center;
       justify-content: center;
-      .again {
-        color: ${({ theme }) => theme.black06};
-      }
     }
   }
 

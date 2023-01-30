@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useDisclosure } from "@chakra-ui/react";
+import { Button, useDisclosure } from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import AskModal from "../components/AskModal";
@@ -26,7 +26,10 @@ const Home: NextPage = () => {
 
   const onSubmit = useCallback(
     (inputText: string, option: number) => {
-      if (!user) alert("Log in first! this is temporary message");
+      if (!user) {
+        onOpen();
+        return;
+      }
 
       console.log("전부 같지만 채팅 페이지로 이동", inputText, option);
       router.push({
@@ -40,15 +43,15 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Lottery</title>
-        <meta name="description" content="Lottery will give you solution" />
+        <title>AID</title>
+        <meta name="description" content="AID will give you solution" />
         <link rel="icon" href="/card.png" />
       </Head>
       <AppBar page="main" />
       <MainContainer>
         <div className="logo">
           <Image src="/card.png" width={30} height={30} alt="logo" />
-          <span>Lottery</span>
+          <span>AID</span>
           <span className="beta">Beta</span>
         </div>
         <DomainDesc>

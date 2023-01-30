@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <FooterContainer>
       <div className="container">
-        <div className="logo">Lottery</div>
+        <div className="logo">AID</div>
         <div className="middle">
           <span className="sentence">Get all answers you need</span>
           <span>contact@diceyai.com</span>

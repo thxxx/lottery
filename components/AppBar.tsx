@@ -62,15 +62,15 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
       case "my":
         return (
           <>
-            <div
-              className="icon"
+            <Radio
+              clicked={false}
               onClick={() => {
                 router.push({
                   pathname: "/chat",
                 });
               }}>
-              <span>Chat</span>
-            </div>
+              Chat
+            </Radio>
           </>
         );
       default:
@@ -83,7 +83,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
       <div>
         <Link href="/">
           <Image src="/card.png" width={20} height={20} alt="logo" />
-          <span>Lottery</span>
+          <span>AID</span>
         </Link>
         {page === "my" && onClick && (
           <>
@@ -104,8 +104,8 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
 
 export default React.memo(AppBar);
 
-const Radio = styled.div<{ clicked: boolean }>`
-  padding: 3px 10px;
+export const Radio = styled.span<{ clicked: boolean }>`
+  padding: 5px 10px;
   cursor: pointer;
   transition: 0.15s ease;
   border-radius: 6px;
@@ -125,11 +125,16 @@ const AppBarContainer = styled.div`
   background: white;
   border-bottom: 1px solid ${({ theme }) => theme.borderColor01};
   color: black;
-  padding: 14px 4vw;
+  padding: 0px 4vw;
+  height: 57px;
   cursor: pointer;
   position: absolute;
   top: 0px;
   left: 0px;
+
+  @media (max-width: 800px) {
+    height: 50px;
+  }
 
   display: flex;
   flex-direction: row;

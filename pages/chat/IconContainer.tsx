@@ -42,7 +42,7 @@ const IconContainer = ({
   };
 
   const share = async () => {
-    copyToClipboard("localhost:3000/share?id=" + id + "&saved=" + index);
+    copyToClipboard("https://getaid.ai/share?id=" + id + "&saved=" + index);
   };
 
   return (

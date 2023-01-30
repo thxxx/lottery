@@ -7,17 +7,41 @@ const TextAnswer = ({ text }: { text: string }) => {
     loader: { load: ["input/asciimath"] },
   };
 
+  // return (
+  //   <MathJax>
+  //   {/* <MathJaxContext config={config} version={3}> */}
+  //     {/* <MathJax>{"`frac(10)(4x) approx 2^(12)`"}</MathJax> */}
+  //       {text
+  //         .replace(/```([\s\S]*?)```/g, "")
+  //         .replace(/\$/g, "`")
+  //         .replace(/\n/g, "<br />")
+  //         .replace(/<bold>(.*?)<\/bold>/g, "<strong>$1</strong>")}
+  //   {/* </MathJaxContext> */}
+  //     </MathJax>
+  // );
   return (
-    <MathJaxContext config={config} version={3}>
-      {/* <MathJax>{"`frac(10)(4x) approx 2^(12)`"}</MathJax> */}
-      <MathJax>
-        {text
-          .replace(/```([\s\S]*?)```/g, "")
-          .replace(/\$/g, "`")
-          .replace(/\n/g, "<br />")
-          .replace(/<bold>(.*?)<\/bold>/g, "<strong>$1</strong>")}
-      </MathJax>
-    </MathJaxContext>
+    <>
+      {text && (
+        <div
+          style={{ fontSize: "1.1em" }}
+          dangerouslySetInnerHTML={{
+            __html:
+              text.replace(/\n/g, "<br />").slice(0, 6) === "<br />"
+                ? text
+                    .replace(/```([\s\S]*?)```/g, "")
+                    .replace(/\$/g, "`")
+                    .replace(/\n/g, "<br />")
+                    .replace(/<bold>(.*?)<\/bold>/g, "<strong>$1</strong>")
+                    .slice(6)
+                : text
+                    .replace(/```([\s\S]*?)```/g, "")
+                    .replace(/\$/g, "`")
+                    .replace(/\n/g, "<br />")
+                    .replace(/<bold>(.*?)<\/bold>/g, "<strong>$1</strong>"),
+          }}
+        />
+      )}
+    </>
   );
 };
 

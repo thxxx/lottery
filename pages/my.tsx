@@ -10,13 +10,21 @@ import { DomainOne } from "../utils/persona";
 import UserChat, { UserChatWrapper } from "./chat/UserChat";
 import { Button, Skeleton, SkeletonCircle } from "@chakra-ui/react";
 import Image from "next/image";
+import { dateToText } from "../utils/dateToText";
 
-const LOADONENUM = 2;
+const LOADONENUM = 10;
+
+export enum ASKED {
+  FINDING = "finding",
+  FOUND = "found",
+  NO = "no",
+}
 
 const MyPage: NextPage = () => {
   const [radio, setRadio] = useState<"found" | "saved">("found");
   const [saves, setSaves] = useState<SavedChatType[]>();
-  const [asks, setAsks] = useState<any>();
+  const [asks, setAsks] = useState<SavedChatType[]>();
+  const [waitings, setWaitings] = useState<SavedChatType[]>();
   const [pagi, setPagi] = useState<number>(1);
   const [readed, setReaded] = useState<string[]>([]);
   const { user } = useChatStore();
@@ -35,6 +43,34 @@ const MyPage: NextPage = () => {
     await dbService
       .collection("chats")
       .where("uid", "==", user?.uid)
+      .where("asked", "==", ASKED.FINDING)
+      .orderBy("createdAt", "asc")
+      .get()
+      .then((res) => {
+        const response = res.docs.map((doc) => {
+          return { ...(doc.data() as SavedChatType), id: doc.id };
+        });
+        setWaitings(response);
+      });
+    await dbService
+      .collection("chats")
+      .where("uid", "==", user?.uid)
+      .where("asked", "==", ASKED.FOUND)
+      .orderBy("createdAt", "asc")
+      .get()
+      .then((res) => {
+        const response = res.docs.map((doc) => {
+          return { ...(doc.data() as SavedChatType), id: doc.id };
+        });
+        localStorage.setItem(
+          "read",
+          JSON.stringify(response.map((item) => item.id))
+        );
+        setAsks(response);
+      });
+    await dbService
+      .collection("chats")
+      .where("uid", "==", user?.uid)
       .where("saved", "array-contains-any", [0, 1, 2, 3, 4, 5, 6, 7, 8])
       .orderBy("createdAt")
       .startAfter(pagi)
@@ -49,23 +85,6 @@ const MyPage: NextPage = () => {
 
         if (response.length < LOADONENUM) setPagi(0);
         else setPagi(response.slice(-1)[0].createdAt);
-      });
-
-    await dbService
-      .collection("chats")
-      .where("uid", "==", user?.uid)
-      .where("asked", "==", "found")
-      .orderBy("createdAt", "asc")
-      .get()
-      .then((res) => {
-        const response = res.docs.map((doc) => {
-          return { ...(doc.data() as SavedChatType), id: doc.id };
-        });
-        localStorage.setItem(
-          "read",
-          JSON.stringify(response.map((item) => item.id))
-        );
-        setAsks(response);
       });
   };
 
@@ -117,9 +136,26 @@ const MyPage: NextPage = () => {
           )}
           {radio === "found" && (
             <SavedContainer>
+              {waitings && (
+                <>
+                  <SavedContent>
+                    <h2>Waiting For Answer</h2>
+                    {waitings.map((item) => {
+                      return (
+                        <h3 key={item.id}>
+                          {item.query}
+                          <span className="date">
+                            {dateToText(item.createdAt)}
+                          </span>
+                        </h3>
+                      );
+                    })}
+                  </SavedContent>
+                </>
+              )}
               {asks ? (
                 <>
-                  {asks.map((item: any, i: number) => {
+                  {asks.map((item, i: number) => {
                     return (
                       <>
                         <SavedContent
@@ -219,6 +255,7 @@ const MyPageConainer = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
+  padding-top: 10px;
 `;
 
 const SavedContainer = styled.div`
@@ -235,14 +272,38 @@ const SavedContent = styled.div<{ isNew?: boolean }>`
   align-items: center;
   justify-content: center;
   width: 100%;
-  background: ${({ theme, isNew }) => (isNew ? theme.blue02 : "white")};
+  background: ${({ theme, isNew }) => (isNew ? theme.blue01 + "55" : "white")};
   border-left: 1px solid ${({ theme }) => theme.bgColor03};
   border-right: 1px solid ${({ theme }) => theme.bgColor03};
   border-bottom: 1px solid ${({ theme }) => theme.bgColor03};
+  border-radius: ${({ isNew }) => (isNew ? "6px" : "0px")};
 
+  padding-bottom: 10px;
   // border-radius: 8px;
   // border: 1px solid black;
-  // margin-top: 10px;
+  margin-top: ${({ isNew }) => (isNew ? "10px" : "0px")};
+
+  h2 {
+    width: 100%;
+    text-align: left;
+    font-size: 1.4em;
+    font-weight: 700;
+    padding: 12px 20px;
+  }
+  h3 {
+    width: 100%;
+    text-align: left;
+    font-size: 1.1em;
+    font-weight: 700;
+    padding: 12px 20px;
+  }
+
+  .date {
+    margin-left: 10px;
+    font-weight: 500;
+    font-size: 14px;
+    color: ${({ theme }) => theme.bgColor02};
+  }
 `;
 
 const LoadMoreButton = styled(Button)`

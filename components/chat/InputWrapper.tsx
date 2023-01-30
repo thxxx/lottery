@@ -32,6 +32,10 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
   let isEnd = useRef(false);
 
   useEffect(() => {
+    inputRef.current && inputRef.current.focus();
+  }, [job]);
+
+  useEffect(() => {
     setNowPrompts(
       prompts
         .filter((doc) => doc.domain === job || doc.domain === "default")
@@ -86,7 +90,8 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
       <div className="inners">
         {isInputFocused && (
           <p className="noti">
-            <span>{status}</span> &nbsp; Please type . or ? and wait to ask
+            <span>{status}</span> &nbsp; Please type <strong>.</strong> or{" "}
+            <strong>?</strong> and wait to ask
           </p>
         )}
         <InputContainer
@@ -119,7 +124,7 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
         <div>
           <Menu>
             <CustomMenuList>
-              <div className="desc">Good text if you add.</div>
+              {/* <div className="desc">Good text if you add.</div> */}
               {nowPrompts?.map((item) => {
                 return (
                   <MenuItem
@@ -145,7 +150,8 @@ export default React.memo(InputWrapper);
 
 const CustomMenuList = styled(MenuList)`
   .desc {
-    padding: 2px 10px;
+    padding: 4px 10px;
+    padding-bottom: 8px;
   }
 `;
 
