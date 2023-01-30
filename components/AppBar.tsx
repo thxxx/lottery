@@ -26,12 +26,7 @@ import { authService, firebaseInstance } from "../utils/fbase";
 import useWindowDimensions from "../hook/useWindowDimensions";
 import { HamburgerIcon } from "@chakra-ui/icons";
 
-enum PagesType {
-  MAIN = "main",
-  CHAT = "chat",
-  MY = "my",
-  SHARE = "share",
-}
+type PagesType = "main" | "chat" | "my" | "share";
 
 type AppBarType = {
   page?: PagesType;
@@ -63,8 +58,8 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
 
   const returnNavi = () => {
     switch (page) {
-      case PagesType.CHAT:
-      case PagesType.MAIN:
+      case "chat":
+      case "main":
         return (
           <>
             {width < 800 ? (
@@ -146,7 +141,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
             )}
           </>
         );
-      case PagesType.MY:
+      case "my":
         return (
           <>
             <Radio
@@ -159,7 +154,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
             </Radio>
           </>
         );
-      case PagesType.SHARE:
+      case "share":
         return (
           <>
             {user ? (
