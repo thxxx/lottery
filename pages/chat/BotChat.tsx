@@ -439,6 +439,10 @@ const SelectionBtn = styled.div<{ left: boolean }>`
     line-height: 1.4em;
   }
 
+  &:hover {
+    background: ${({ theme }) => theme.bgColor04};
+  }
+
   @media (max-width: 1100px) {
     width: 95%;
     margin: 0px 3px;

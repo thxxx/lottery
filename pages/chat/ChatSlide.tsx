@@ -70,6 +70,7 @@ export const InnerContainer = styled.div`
     }
     .text {
       margin-top: 3px;
+      padding: 0px 3px;
     }
   }
 `;

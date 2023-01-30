@@ -12,6 +12,7 @@ import styled from "@emotion/styled";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { PromptType, prompts } from "../../utils/prompts";
 import { useChatStore } from "../../utils/store";
+import { isMobile } from "react-device-detect";
 
 type InputType = {
   text: string;
@@ -33,7 +34,7 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
   let isEnd = useRef(false);
 
   useEffect(() => {
-    inputRef.current && inputRef.current.focus();
+    if (!isMobile) inputRef.current && inputRef.current.focus();
   }, [job]);
 
   useEffect(() => {
@@ -102,6 +103,7 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
           }}>
           {/* <Search2Icon className="search" color="gray.400" /> */}
           <Textarea
+            transitionDelay="0.03"
             disabled={loading}
             onFocus={() => setIsInputFocused(true)}
             onBlur={() => setIsInputFocused(false)}
@@ -115,6 +117,11 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
                 (inputRef.current as any).style.height = "52px";
                 if (status === "typing...") callSubmit();
               }
+            }}
+            style={{
+              border: `1px solid ${
+                status === "finishing" ? "#8D9EFF" : "black"
+              }`,
             }}
             onChange={(e) => {
               auto_grow(e.currentTarget);
