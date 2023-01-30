@@ -1,12 +1,23 @@
 import styled from "@emotion/styled";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import IconButton from "../../components/IconButton";
-import { ArrowLeftIcon, HamburgerIcon, SunIcon } from "@chakra-ui/icons";
-import { useToast } from "@chakra-ui/react";
+import {
+  ArrowLeftIcon,
+  CopyIcon,
+  HamburgerIcon,
+  LinkIcon,
+  SunIcon,
+} from "@chakra-ui/icons";
+import { MenuItem, useToast } from "@chakra-ui/react";
 import Image from "next/image";
+import { Menu, MenuButton, MenuList } from "@chakra-ui/react";
+import { CustomMenuList } from "../../components/chat/InputWrapper";
+import BottomSheet from "../../components/BottomSheet";
+import useWindowDimensions from "../../hook/useWindowDimensions";
 
 type IconContainerProps = {
   toggle: boolean;
+  response: string;
   setToggle: Dispatch<SetStateAction<boolean>>;
   saveThisChat: (index: number) => void;
   saved?: boolean;
@@ -22,17 +33,21 @@ const IconContainer = ({
   index,
   id,
   shared,
+  response,
   setToggle,
   saveThisChat,
   clickWebOpen,
 }: IconContainerProps) => {
+  const [isBottomOpen, setIsBottomOpen] = useState(false);
   const toast = useToast();
+  const { width } = useWindowDimensions();
 
   const copyToClipboard = (text: string | number) => {
     navigator.clipboard.writeText(String(text)).then(
       () => {
         toast({
-          description: "Copied to Clipboard",
+          description: "Copied to clipboard",
+          duration: 3000,
         });
       },
       (err) => {
@@ -41,39 +56,105 @@ const IconContainer = ({
     );
   };
 
-  const share = async () => {
-    copyToClipboard("https://getaid.ai/share?id=" + id + "&saved=" + index);
+  const share = async (type: "link" | "text") => {
+    if (type === "link")
+      copyToClipboard("https://getaid.ai/share?id=" + id + "&saved=" + index);
+    if (type === "text")
+      copyToClipboard(
+        "dkㅏ아아아아<bold>5656ㅇㅅㄱ</bold>asdㅁㅈㅇㅂ".replace(
+          /<[^>]*>/g,
+          " "
+        )
+      );
   };
 
   return (
     <IconContainerWrapper>
       <div>
-        {!shared && (
-          <>
-            <IconButton
-              icon={
-                <Image
-                  width={25}
-                  height={25}
-                  alt="bookmark"
-                  src={saved ? "/bookmarkfill.svg" : "bookmark.svg"}
-                />
-              }
-              tooltip="Save"
+        <Menu>
+          {!shared && (
+            <>
+              <IconButton
+                icon={
+                  <Image
+                    width={25}
+                    height={25}
+                    alt="bookmark"
+                    src={saved ? "/bookmarkfill.svg" : "bookmark.svg"}
+                  />
+                }
+                tooltip="Save"
+                onClick={() => {
+                  saveThisChat(index);
+                }}
+              />
+              <IconButton
+                icon={
+                  width > 1100 ? (
+                    <MenuButton>
+                      <Image
+                        width={25}
+                        height={25}
+                        alt="share"
+                        src="/share.svg"
+                      />
+                    </MenuButton>
+                  ) : (
+                    <Image
+                      width={25}
+                      height={25}
+                      alt="share"
+                      src="/share.svg"
+                    />
+                  )
+                }
+                tooltip="Share"
+                onClick={() => {
+                  if (width < 1100) setIsBottomOpen(true);
+                }}
+              />
+              <CustomMenuList>
+                <div className="shares">
+                  <MenuItem onClick={() => share("link")}>
+                    <div className="copy">
+                      <LinkIcon />
+                      <div>Copy link to share</div>
+                    </div>
+                  </MenuItem>
+                  <MenuItem onClick={() => share("text")}>
+                    <div className="copy">
+                      <CopyIcon />
+                      <div>Copy Text</div>
+                    </div>
+                  </MenuItem>
+                </div>
+              </CustomMenuList>
+            </>
+          )}
+        </Menu>
+        {width < 1100 && (
+          <BottomSheet
+            isBottomOpen={isBottomOpen}
+            setBottomOpen={setIsBottomOpen}>
+            <div
+              className="copy"
               onClick={() => {
-                saveThisChat(index);
-              }}
-            />
-            <IconButton
-              icon={
-                <Image width={25} height={25} alt="share" src="/share.svg" />
-              }
-              tooltip="Share"
+                share("link");
+                setIsBottomOpen(false);
+              }}>
+              <LinkIcon />
+              <span>Copy link to share</span>
+            </div>
+            <div
+              className="copy"
               onClick={() => {
-                share();
-              }}
-            />
-          </>
+                share("text");
+                setIsBottomOpen(false);
+              }}>
+              <CopyIcon />
+              <span>Copy Text</span>
+            </div>
+          </BottomSheet>
         )}
       </div>
       <div>
@@ -104,7 +185,7 @@ const IconContainer = ({
   );
 };
 
-export default IconContainer;
+export default React.memo(IconContainer);
 
 const IconContainerWrapper = styled.div`
   width: 100%;
@@ -118,5 +199,22 @@ const IconContainerWrapper = styled.div`
     flex-direction: row;
     aligm-items: center;
     justify-content: center;
+  }
+
+  .shares {
+    flex-direction: column;
+    width: 100%;
+    .copy {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      text-align: left;
+      font-weight: 700;
+      div {
+        margin-left: 10px;
+      }
+    }
   }
 `;

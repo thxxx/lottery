@@ -6,12 +6,12 @@ import { dbService } from "../utils/fbase";
 import { SavedChatType, useChatStore } from "../utils/store";
 import styled from "@emotion/styled";
 import BotChat, { CustomSwipeSlide } from "./chat/BotChat";
-import { DomainOne } from "../utils/persona";
 import UserChat, { UserChatWrapper } from "./chat/UserChat";
 import { Button, Skeleton, SkeletonCircle } from "@chakra-ui/react";
 import Image from "next/image";
 import { dateToText } from "../utils/dateToText";
 import Head from "next/head";
+import { InnerContainer } from "./chat/ChatSlide";
 
 const LOADONENUM = 10;
 
@@ -45,7 +45,7 @@ const MyPage: NextPage = () => {
       .collection("chats")
       .where("uid", "==", user?.uid)
       .where("asked", "==", ASKED.FINDING)
-      .orderBy("createdAt", "asc")
+      .orderBy("createdAt", "desc")
       .get()
       .then((res) => {
         const response = res.docs.map((doc) => {
@@ -57,7 +57,7 @@ const MyPage: NextPage = () => {
       .collection("chats")
       .where("uid", "==", user?.uid)
       .where("asked", "==", ASKED.FOUND)
-      .orderBy("createdAt", "asc")
+      .orderBy("createdAt", "desc")
       .get()
       .then((res) => {
         const response = res.docs.map((doc) => {
@@ -92,7 +92,7 @@ const MyPage: NextPage = () => {
   return (
     <>
       <Head>
-        <title>AID My</title>
+        <title>AID MY</title>
         <meta name="description" content="AID My Page" />
         <link rel="icon" href="/card.png" />
       </Head>
@@ -107,23 +107,24 @@ const MyPage: NextPage = () => {
                     return (
                       <>
                         {item.saved.map((doc: number) => {
-                          return (
-                            <SavedContent
-                              key={`key_${i}${doc}`}
-                              className="card">
-                              <UserChat
-                                text={item.query as string}
-                                displayName={item.displayName}
-                                photoURL={item.photoURL}
-                              />
-                              <BotChat
-                                item={item}
-                                savedIndex={doc}
-                                saves={saves}
-                                setSaves={setSaves}
-                              />
-                            </SavedContent>
-                          );
+                          if (item.displayName && item.photoURL && item.query)
+                            return (
+                              <SavedContent
+                                key={`key_${i}${doc}`}
+                                className="card">
+                                <UserChat
+                                  text={item.query}
+                                  displayName={item.displayName}
+                                  photoURL={item.photoURL}
+                                />
+                                <BotChat
+                                  item={item}
+                                  savedIndex={doc}
+                                  saves={saves}
+                                  setSaves={setSaves}
+                                />
+                              </SavedContent>
+                            );
                         })}
                       </>
                     );
@@ -137,7 +138,9 @@ const MyPage: NextPage = () => {
                   Load more
                 </LoadMoreButton>
               )}
-              {saves && saves.length === 0 && <EmptyThing text="save" />}
+              {saves && saves.length === 0 && (
+                <EmptyThing text="You didn't save anything yet" />
+              )}
             </SavedContainer>
           )}
           {radio === "found" && (
@@ -162,32 +165,46 @@ const MyPage: NextPage = () => {
               {asks ? (
                 <>
                   {asks.map((item, i: number) => {
-                    return (
-                      <>
-                        <SavedContent
-                          key={`key_${i}`}
-                          className="card"
-                          isNew={!readed.includes(item.id as string)}>
-                          <UserChat
-                            text={item.query as string}
-                            displayName={item.displayName}
-                            photoURL={item.photoURL}
-                          />
-                          <BotChat
-                            item={item}
-                            saves={asks}
-                            savedIndex={item.text.length - 1}
-                            setSaves={setAsks}
-                          />
-                        </SavedContent>
-                      </>
-                    );
+                    if (
+                      item.id &&
+                      item.query &&
+                      item.displayName &&
+                      item.photoURL
+                    )
+                      return (
+                        <>
+                          <SavedContent
+                            key={`key_${i}`}
+                            className="card"
+                            isNew={!readed.includes(item.id as string)}>
+                            <UserChat
+                              text={item.query}
+                              displayName={item.displayName}
+                              photoURL={item.photoURL}
+                            />
+                            <BotChat
+                              item={item}
+                              saves={asks}
+                              savedIndex={item.text.length - 1}
+                              setSaves={setAsks}
+                            />
+                          </SavedContent>
+                        </>
+                      );
                   })}
                 </>
               ) : (
                 <ChatSkeleton />
               )}
-              {asks && asks.length === 0 && <EmptyThing text="ask for" />}
+              {asks && asks.length === 0 && (
+                <EmptyThing
+                  text={
+                    waitings && waitings.length > 0
+                      ? "Please wait for few minutes"
+                      : "You didn't ask for anything yet"
+                  }
+                />
+              )}
             </SavedContainer>
           )}
         </MyPageConainer>
@@ -206,7 +223,7 @@ const ChatSkeleton = () => {
       allowTouchMove={false}
       scrollbar={{ draggable: true }}>
       <CustomSwipeSlide>
-        <div className="innerd">
+        <InnerContainer>
           <div className="profile">
             <SkeletonCircle mt={4} width={35} height={35} />
           </div>
@@ -219,7 +236,7 @@ const ChatSkeleton = () => {
               <Skeleton mt={3} width="100%" height={25} />
             </div>
           </div>
-        </div>
+        </InnerContainer>
       </CustomSwipeSlide>
     </UserChatWrapper>
   );
@@ -229,9 +246,7 @@ const EmptyThing = ({ text }: { text: string }) => {
   return (
     <EmptyTitle>
       <Image src="/empty.gif" width={150} height={150} alt="empty" />
-      <div>
-        You didn{"'"}t {text} anything yet.
-      </div>
+      <div>{text}</div>
     </EmptyTitle>
   );
 };
@@ -278,7 +293,7 @@ const SavedContent = styled.div<{ isNew?: boolean }>`
   align-items: center;
   justify-content: center;
   width: 100%;
-  background: ${({ theme, isNew }) => (isNew ? theme.blue01 + "55" : "white")};
+  background: ${({ theme, isNew }) => (isNew ? theme.blue01 + "22" : "white")};
   border-left: 1px solid ${({ theme }) => theme.bgColor03};
   border-right: 1px solid ${({ theme }) => theme.bgColor03};
   border-bottom: 1px solid ${({ theme }) => theme.bgColor03};
@@ -309,6 +324,13 @@ const SavedContent = styled.div<{ isNew?: boolean }>`
     font-weight: 500;
     font-size: 14px;
     color: ${({ theme }) => theme.bgColor02};
+  }
+
+  @media (max-width: 800) {
+    h2 {
+      font-size: 1.3em;
+      padding: 6px 20px;
+    }
   }
 `;
 

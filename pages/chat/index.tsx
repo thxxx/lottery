@@ -88,12 +88,6 @@ const ChatPage: NextPage = () => {
         tag: String(option),
       };
 
-      // const response = await fetch("/api/call", {
-      //   method: "POST",
-      //   body: JSON.stringify(body),
-      //   headers: { "Content-Type": "application/json" },
-      // });
-
       const response = await axios.post("/davinci", body, {
         headers: {
           "Content-Type": "application/json",
@@ -115,6 +109,7 @@ const ChatPage: NextPage = () => {
   const doSubmit = async (inText: string, option: number) => {
     if (!job) return;
     if (!inText) return;
+    if (loading) return;
     setLoading(true);
     setText("");
     const inputText = inText.replaceAll("\n", "<br />");
@@ -159,6 +154,7 @@ const ChatPage: NextPage = () => {
       job: job,
       webLinks: [],
       asked: "no",
+      option: option,
     };
 
     await dbService
@@ -181,6 +177,7 @@ const ChatPage: NextPage = () => {
             query: inputText,
             saved: [],
             createdAt: new Date().getTime(),
+            option: option,
           },
         ];
         setChats([...chats, ...addedChats]);
@@ -196,9 +193,14 @@ const ChatPage: NextPage = () => {
 
   const generateAnotherAnswer = useCallback(
     async (id: string | number, query: string, option: number) => {
+      setLoading(true);
+      console.log("호출", query, option, id);
       const response = await callApi(query, option);
+      console.log("호출22", response);
+      let chosen;
       const filtered = chats.map((item) => {
         if (item.id === id) {
+          chosen = item.text;
           return {
             ...item,
             text: [...(item.text as string[]), response],
@@ -208,6 +210,16 @@ const ChatPage: NextPage = () => {
         }
       });
       setChats(filtered);
+
+      if (chosen)
+        await dbService
+          .collection("chats")
+          .doc(id as string)
+          .update({
+            text: [...(chosen as string[]), response],
+          });
+
+      setLoading(false);
     },
     [chats, callApi, setChats]
   );
@@ -224,13 +236,13 @@ const ChatPage: NextPage = () => {
         <RightContainer>
           <ChatContainer>
             {currentChats?.map((item, i) => {
-              if (item.type === ChatType.USER) {
+              if (item.type === ChatType.USER && user) {
                 return (
                   <UserChat
                     key={i}
                     text={item.text as string}
-                    displayName={user?.displayName}
-                    photoURL={user?.photoURL}
+                    displayName={user.displayName}
+                    photoURL={user.photoURL}
                   />
                 );
               } else if (item.type === ChatType.LOADING) {

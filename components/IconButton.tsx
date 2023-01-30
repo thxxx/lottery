@@ -29,7 +29,22 @@ const IconWrapper = styled.div`
   cursor: pointer;
   margin-right: 4px;
 
+  img {
+    width: 25px;
+    height: 25px;
+  }
+
   &:hover {
     background: ${({ theme }) => theme.hoverBlue};
+  }
+
+  @media (max-width: 800px) {
+    width: 35px;
+    height: 35px;
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
   }
 `;

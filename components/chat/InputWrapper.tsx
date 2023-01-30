@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ArrowForwardIcon } from "@chakra-ui/icons";
+import { ArrowForwardIcon, CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { Button, Textarea } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
@@ -27,6 +27,7 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [nowPrompts, setNowPrompts] = useState<PromptType[]>();
   const [option, setOption] = useState(0);
+  const [prompt, setPrompt] = useState("");
   const { job } = useChatStore();
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   let isEnd = useRef(false);
@@ -81,7 +82,7 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
 
   const addPrompt = (prompt: string, tag: number) => {
     inputRef.current && inputRef.current.focus();
-    setText(prompt + " " + text);
+    setPrompt(prompt);
     setOption(tag);
   };
 
@@ -136,9 +137,25 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
               })}
             </CustomMenuList>
             <PromptButton as={Button}>
-              <ArrowForwardIcon className="icon" color="black" />
-              <span>Press if you want better answer</span>
+              {prompt ? (
+                <>
+                  <CheckIcon className="icon" color="purple.400" w={3} mr={1} />
+                  <span>{prompt}</span>
+                </>
+              ) : (
+                <>
+                  <ArrowForwardIcon className="icon" color="black" />
+                  <span>Press if you want better answer</span>
+                </>
+              )}
             </PromptButton>
+            {/* <CloseIcon
+                className="icon"
+                color="black"
+                w={2}
+                ml={1}
+                onClick={() => setPrompt("")}
+              /> */}
           </Menu>
         </div>
       </div>
@@ -148,7 +165,11 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
 
 export default React.memo(InputWrapper);
 
-const CustomMenuList = styled(MenuList)`
+export const CustomMenuList = styled(MenuList)`
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid ${({ theme }) => theme.black04};
+
   .desc {
     padding: 4px 10px;
     padding-bottom: 8px;
@@ -172,6 +193,12 @@ const InputOuter = styled.div`
   .noti {
     font-size: 0.8em;
     margin-bottom: 5px;
+
+    strong {
+      background: ${({ theme }) => theme.bgColor03};
+      padding: 0px 4px;
+      border-radius: 3px;
+    }
   }
 
   .inners {
@@ -257,5 +284,10 @@ export const InputContainer = styled.form`
       width: 15px;
       height: 15px;
     }
+  }
+
+  .btn {
+    display: flex;
+    flex-direction: row;
   }
 `;

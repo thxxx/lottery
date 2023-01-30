@@ -23,7 +23,6 @@ const TextAnswer = ({ text }: { text: string }) => {
     <>
       {text && (
         <div
-          style={{ fontSize: "1.1em" }}
           dangerouslySetInnerHTML={{
             __html:
               text.replace(/\n/g, "<br />").slice(0, 6) === "<br />"

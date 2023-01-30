@@ -4,11 +4,12 @@ import styled from "@emotion/styled";
 import { Swiper } from "swiper/react";
 import { CustomSwipeSlide } from "./BotChat";
 import ExpertPhoto from "../../components/ExpertPhoto";
+import ChatSlideInner from "./ChatSlide";
 
 type UserChatProps = {
   text: string;
-  displayName?: string;
-  photoURL?: string;
+  displayName: string;
+  photoURL: string;
 };
 
 const UserChat = ({ text, displayName, photoURL }: UserChatProps) => {
@@ -19,18 +20,12 @@ const UserChat = ({ text, displayName, photoURL }: UserChatProps) => {
       allowTouchMove={false}
       scrollbar={{ draggable: true }}>
       <CustomSwipeSlide>
-        <div className="innerd">
-          <div className="profile">
-            <ExpertPhoto src={photoURL} />
-          </div>
-          <div className="text">
-            <p className="name">{displayName}</p>
-            <div
-              className="main"
-              dangerouslySetInnerHTML={{ __html: text as string }}
-            />
-          </div>
-        </div>
+        <ChatSlideInner src={photoURL} name={displayName}>
+          <div
+            className="main"
+            dangerouslySetInnerHTML={{ __html: text as string }}
+          />
+        </ChatSlideInner>
       </CustomSwipeSlide>
     </UserChatWrapper>
   );
@@ -48,13 +43,6 @@ export const UserChatWrapper = styled(Swiper)`
   padding: 30px 15px;
   width: 100%;
 
-  .profile {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    width: 8%;
-  }
-
   .text {
     width: 92%;
     display: flex;
@@ -62,18 +50,10 @@ export const UserChatWrapper = styled(Swiper)`
     align-items: flex-start;
     justify-content: flex-start;
 
-    .name {
-      font-weight: 700;
-      span {
-        font-weight: 500;
-        color: rgba(0, 0, 0, 0.6);
-        font-size: 1em;
-        margin-left: 4px;
-      }
-    }
-
     .main {
-      margin-top: 15px;
+      margin-top: 10px;
+      line-height: 1.7em;
+      font-size: 1em;
 
       .loadings {
         width: 600px;
@@ -99,13 +79,8 @@ export const UserChatWrapper = styled(Swiper)`
 
   @media (max-width: 1100px) {
     padding: 20px 10px;
-
-    .profile {
-      width: 14%;
-      justify-content: flex-start;
-    }
     .text {
-      width: 86%;
+      width: 100%;
       .main {
         width: 100%;
         margin-top: 5px;

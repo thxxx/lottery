@@ -29,6 +29,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
     await authService
       .signInWithPopup(provider)
       .then((res) => {
+        router.replace(router.asPath);
         console.log("Successfully Logged In!");
       })
       .catch((err) => {
@@ -63,7 +64,6 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
         return (
           <>
             <Radio
-              clicked={false}
               onClick={() => {
                 router.push({
                   pathname: "/chat",
@@ -78,7 +78,6 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
           <>
             {user ? (
               <Radio
-                clicked={false}
                 onClick={() => {
                   router.push({
                     pathname: "/chat",
@@ -87,7 +86,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
                 Chat
               </Radio>
             ) : (
-              <Radio clicked={false} className="icon" onClick={() => doLogin()}>
+              <Radio className="icon" onClick={() => doLogin()}>
                 Login
               </Radio>
             )}
@@ -117,7 +116,15 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
           </>
         )}
       </div>
-      <div className="icons">{returnNavi()}</div>
+      <div className="icons">
+        {page === "main" && (
+          <>
+            <Radio onClick={() => {}}>Discord</Radio>
+            <Radio onClick={() => {}}>Contact us</Radio>
+          </>
+        )}
+        {returnNavi()}
+      </div>
       <FeedbackModal isOpen={isOpen} onClose={onClose} onOpen={onOpen} />
     </AppBarContainer>
   );
@@ -125,7 +132,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
 
 export default React.memo(AppBar);
 
-export const Radio = styled.span<{ clicked: boolean }>`
+export const Radio = styled.span<{ clicked?: boolean }>`
   padding: 5px 10px;
   cursor: pointer;
   transition: 0.15s ease;
@@ -148,7 +155,6 @@ const AppBarContainer = styled.div`
   color: black;
   padding: 0px 4vw;
   height: 57px;
-  cursor: pointer;
   position: absolute;
   top: 0px;
   left: 0px;
@@ -175,6 +181,7 @@ const AppBarContainer = styled.div`
 
   .icons {
     .icon {
+      cursor: pointer;
       margin-left: 15px;
       &:hover {
         color: rgba(0, 0, 0, 0.9);

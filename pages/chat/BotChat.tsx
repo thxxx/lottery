@@ -20,6 +20,7 @@ import ChatSlideInner from "./ChatSlide";
 import SwipeNext from "./SwipeNext";
 import { Radio } from "../../components/AppBar";
 import router from "next/router";
+import { DOMAINS } from "../../utils/persona";
 
 const BWIDTH = 150;
 
@@ -42,11 +43,12 @@ const BotChat = ({
   savedIndex,
   loading,
 }: BotChatType) => {
-  const { user, job, chats, setChats } = useChatStore();
+  const { chats, setChats } = useChatStore();
   const [toggle, setToggle] = useState(false);
   const [asked, setAsked] = useState(false);
   const [temps, setTemps] = useState<SavedChatType[]>();
-  const { width, height } = useWindowDimensions();
+  const [webLoading, setWebLoading] = useState(false);
+  const { width } = useWindowDimensions();
 
   useEffect(() => {
     setTemps(saves);
@@ -114,20 +116,6 @@ const BotChat = ({
   );
 
   const callWebApi = useCallback(async () => {
-    // ## bing API
-    // https://z0ssobbdqh.execute-api.us-west-1.amazonaws.com/v1/bing
-
-    // #Input
-    // {
-    //   "query": "I'm a grandmother in her 60s. What exercise should I do when my neck hurts?"
-    // }
-
-    // #Output
-    // [
-    //     processed_result, # list of {"title": ~~, "url": ~~, "snippet": ~~}
-    //     raw_result
-    // ]
-
     const body = {
       query: item.query,
     };
@@ -150,45 +138,31 @@ const BotChat = ({
     console.log(ma, "웹, 응확답인");
 
     return ma;
-
-    // return [
-    //   {
-    //     link: "https://support.google.com/websearch/answer/134479?hl=en",
-    //     title: "How to search on Google - Google Search Help",
-    //     snippet:
-    //       "The Pyramids Today Built during a time when Egypt was one of the richest and most powerful civilizations in the world, the pyramids—especially the Great Pyramids of Giza—are some of the...",
-    //   },
-    //   {
-    //     link: "https://support.google.com/websearch/answer/134479?hl=en",
-    //     title: "How to search on Google - Google Search Help",
-    //     snippet:
-    //       "The Pyramids Today Built during a time when Egypt was one of the richest and most powerful civilizations in the world, the pyramids—especially the Great Pyramids of Giza—are some of the...",
-    //   },
-    //   {
-    //     link: "https://support.google.com/websearch/answer/134479?hl=en",
-    //     title: "How to search on Google - Google Search Help",
-    //     snippet:
-    //       "The Pyramids Today Built during a time when Egypt was one of the richest and most powerful civilizations in the world, the pyramids—especially the Great Pyramids of Giza—are some of the...",
-    //   },
-    // ];
   }, [item.query]);
 
   const clickWebOpen = useCallback(async () => {
     // 처음에만 호출한다.
-    console.log("클릭 웹 오픈", item);
     setToggle(true);
-    if (item.webLinks) {
+    if ((item.webLinks && item.webLinks.length > 0) || webLoading) {
       return;
     }
-
+    setWebLoading(true);
     const response: WebLink[] = await callWebApi();
 
     // update store
-    const addedChats = chats.map((doc) => {
-      if (doc.id === item.id) return { ...doc, webLinks: response };
-      else return doc;
-    });
-    setChats(addedChats);
+    if (setSaves && saves) {
+      const addedSaves = saves.map((doc) => {
+        if (doc.id === item.id) return { ...doc, webLinks: response };
+        else return doc;
+      });
+      setSaves(addedSaves);
+    } else {
+      const addedChats = chats.map((doc) => {
+        if (doc.id === item.id) return { ...doc, webLinks: response };
+        else return doc;
+      });
+      setChats(addedChats);
+    }
 
     // update db
     const modified = {
@@ -196,7 +170,8 @@ const BotChat = ({
       webLinks: response,
     };
     await updateFirebase(modified);
-  }, [chats, item, updateFirebase, setChats, callWebApi]);
+    setWebLoading(false);
+  }, [chats, item, updateFirebase, setChats, setSaves, saves, callWebApi]);
 
   const askQuora = async () => {
     setAsked(true);
@@ -226,7 +201,14 @@ const BotChat = ({
               ) : (
                 <Empty />
               )}
-              <ChatSlideInner item={item}>
+              <ChatSlideInner
+                item={item}
+                name={
+                  <p>
+                    {DOMAINS.filter((doc) => doc.domain === item.job)[0].name}{" "}
+                    <span>@{item.job?.toLowerCase()}</span>
+                  </p>
+                }>
                 <div className="main bot">
                   {loading ? (
                     <div className="loadings">
@@ -242,6 +224,7 @@ const BotChat = ({
                 </div>
                 <Bottom>
                   <IconContainer
+                    response={tex}
                     saveThisChat={saveThisChat}
                     shared={shared}
                     saved={
@@ -260,7 +243,7 @@ const BotChat = ({
                   <>
                     {toggle && (
                       <>
-                        {item.webLinks ? (
+                        {item.webLinks && item.webLinks.length > 0 ? (
                           <WebContainer>
                             {item.webLinks.map((doc: WebLink, i: number) => (
                               <div
@@ -305,7 +288,14 @@ const BotChat = ({
         {onSubmit && (
           <CustomSwipeSlide>
             {width > 1100 && <SwipeNext type="prev" />}
-            <ChatSlideInner item={item}>
+            <ChatSlideInner
+              item={item}
+              name={
+                <p>
+                  {DOMAINS.filter((doc) => doc.domain === item.job)[0].name}{" "}
+                  <span>@{item.job?.toLowerCase()}</span>
+                </p>
+              }>
               {asked || item.asked ? (
                 <QuoraDid className="main">
                   <p>
@@ -337,8 +327,12 @@ const BotChat = ({
                       answer it again?
                     </p>
                   </SelectionBtn>
-                  <SelectionBtn left={false} onClick={() => askQuora()}>
-                    <Search2Icon color="white" width={25} height={25} />
+                  <SelectionBtn left={true} onClick={() => askQuora()}>
+                    <Search2Icon
+                      color="blackAlpha.600"
+                      width={25}
+                      height={25}
+                    />
                     <p>Get Answer from Quora</p>
                   </SelectionBtn>
                 </div>
@@ -460,15 +454,6 @@ export const CustomSwipeSlide = styled(SwiperSlide)`
   justify-content: center;
   width: 100%;
 
-  .innerd {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    max-width: 750px;
-  }
-
   @media (max-width: 1100px) {
     flex-direction: column;
   }
@@ -487,7 +472,7 @@ export const Bottom = styled.div`
 `;
 
 const QuoraDid = styled.div`
-  width: 90%;
+  width: 97%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -502,4 +487,8 @@ const QuoraDid = styled.div`
 
   background-color: ${({ theme }) => theme.bgColor03};
   color: ${({ theme }) => theme.black06};
+
+  @media (max-width: 800px) {
+    width: 90%;
+  }
 `;
