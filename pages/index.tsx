@@ -10,6 +10,8 @@ import router from "next/router";
 import { useChatStore } from "../utils/store";
 import AppBar from "../components/AppBar";
 import InputWrapper from "../components/chat/InputWrapper";
+import DomainDesc from "./chat/DomainDesc";
+import { authService } from "../utils/fbase";
 
 export const LOCAL_ID = "solomon_uuid";
 
@@ -54,24 +56,13 @@ const Home: NextPage = () => {
           <span>AID</span>
           <span className="beta">Beta</span>
         </div>
-        <DomainDesc>
-          <div>{DOMAINS.filter((doc) => doc.domain === job)[0]?.icon}</div>
-          <p className="name">
-            {DOMAINS.filter((doc) => doc.domain === job)[0]?.name}
-          </p>
-          <p className="domain">
-            @
-            {DOMAINS.filter(
-              (doc) => doc.domain === job
-            )[0]?.domain.toLowerCase()}
-          </p>
-          <p
-            className="desc"
-            dangerouslySetInnerHTML={{
-              __html: DOMAINS.filter((doc) => doc.domain === job)[0]?.desc,
-            }}
-          />
-        </DomainDesc>
+        <DomainDesc />
+        <Button
+          onClick={() => {
+            authService.signOut();
+          }}>
+          로그어웃
+        </Button>
         <CardsContainer>
           {DOMAINS.map((item) => {
             return (
@@ -101,29 +92,6 @@ const Home: NextPage = () => {
 
 export default Home;
 
-const DomainDesc = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  margin-top: 13px;
-
-  .name {
-    margin-top: 3px;
-    font-weight: 700;
-  }
-  .domain {
-    color: rgba(0, 0, 0, 0.6);
-  }
-  .desc {
-    margin-top: 5px;
-  }
-
-  @media (max-width: 800px) {
-    padding: 0px 25px;
-  }
-`;
 const MainContainer = styled.main`
   display: flex;
   flex-direction: column;
@@ -172,7 +140,7 @@ const CardsContainer = styled.div`
   // background: #00005c;
   outline: 5px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  padding: 6px 52px;
+  padding: 4px 52px;
 
   @media (max-width: 800px) {
     outline: none;

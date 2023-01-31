@@ -63,9 +63,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ChakraProvider>
-      {/* <Script
+      <Script
         strategy="afterInteractive"
-        src={`https://www.googletagmanager.com/gtag/js?id=${ga.GTM_TRACKING_ID}`}
+        src={`https://www.googletagmanager.com/gtag/js?id=${ga.GA_TRACKING_ID}`}
       />
       <Script
         id="myscript"
@@ -75,12 +75,12 @@ function MyApp({ Component, pageProps }: AppProps) {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${ga.GTM_TRACKING_ID}', {
+            gtag('config', '${ga.GA_TRACKING_ID}', {
               page_path: window.location.pathname,
             });
           `,
         }}
-      /> */}
+      />
       <ThemeProvider theme={theme}>
         <MobileContainer>
           <div className="backdrop" />

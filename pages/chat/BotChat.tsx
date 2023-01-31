@@ -21,6 +21,7 @@ import SwipeNext from "./SwipeNext";
 import { Radio } from "../../components/AppBar";
 import router from "next/router";
 import { DOMAINS } from "../../utils/persona";
+import { callApis } from "../../utils/callApi";
 
 const BWIDTH = 150;
 
@@ -120,15 +121,9 @@ const BotChat = ({
       query: item.query,
     };
 
-    const response = await fetch("/api/web", {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: { "Content-Type": "application/json" },
-    });
-    const output = await response.json();
-    console.log(output, "웹, 응확답인", output[0]);
+    const output = await callApis("web", body);
 
-    const ma = output[0].map((doc: any) => {
+    const ma = output.map((doc: any) => {
       return {
         link: doc.url,
         title: doc.title,

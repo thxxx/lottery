@@ -13,10 +13,11 @@ import {
 import InputWrapper from "../../components/chat/InputWrapper";
 import AppBar from "../../components/AppBar";
 import BotChat from "./BotChat";
-import { DomainOne } from "../../utils/persona";
+import { DOMAINS, DomainOne } from "../../utils/persona";
 import UserChat from "./UserChat";
 import axios from "axios";
 import _ from "lodash";
+import DomainDesc from "./DomainDesc";
 
 const dummy = [
   "'I can create a login page with React by using a <bold>form</bold> component with a username and password <bold>input</bold> field, and a <bold>submit</bold> button to submit the form. An example of the code would look like this:\n\n``` \nimport React, { useState } from 'react';\n\nconst LoginForm = () => {\n const [username, setUsername] = useState('');\n const [password, setPassword] = useState('');\n\n const handleSubmit = (event) => {\n   event.preventDefault();\n   // Logic to authenticate user and log them in\n };\n\n return (\n   <form onSubmit={handleSubmit}>\n     <label>\n       Username:\n       <input\n         type=\"text\"\n         value={username}\n         onChange={(e) => setUsername(e.target.value)}\n       />\n     </label>\n     <br />\n     <label>\n       Password:\n       <input\n         type=\"password\"\n         value={password}\n         onChange={(e) => setPassword(e.target.value)}\n       />\n     </label>\n     <br />\n     <button type=\"submit\">Login</button>\n   </form>\n );\n};\n\nexport default LoginForm;\n```'",
@@ -81,27 +82,27 @@ const ChatPage: NextPage = () => {
         option
       );
 
-      // const body = {
-      //   query: inputText,
-      //   history: history,
-      //   field: job?.toLowerCase(),
-      //   tag: String(option),
-      // };
+      const body = {
+        query: inputText,
+        history: history,
+        field: job?.toLowerCase(),
+        tag: String(option),
+      };
 
-      // const response = await axios.post("/davinci", body, {
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     "Access-Control-Allow-Origin": "*",
-      //   },
-      // });
+      const response = await axios.post("/davinci", body, {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
 
-      // console.log("응답", response);
-      // const output = response;
-      // // const output = await response.json();
-      // console.log("문제 API 결과", output.data);
+      console.log("응답", response);
+      const output = response;
+      // const output = await response.json();
+      console.log("문제 API 결과", output.data);
 
-      // return output.data[0];
-      return dummy[0];
+      return output.data[0];
+      // return dummy[0];
     },
     [queries, job]
   );
@@ -232,6 +233,14 @@ const ChatPage: NextPage = () => {
       <AppBar page="chat" />
       <MainContainer ref={mainRef}>
         <RightContainer>
+          {currentChats && currentChats.length > 0 ? (
+            <></>
+          ) : (
+            <>
+              <br />
+              <DomainDesc />
+            </>
+          )}
           <ChatContainer>
             {currentChats?.map((item, i) => {
               if (item.type === ChatType.USER && user) {
