@@ -56,7 +56,7 @@ const FeedbackModal = ({
       <CustomModalContent>
         <ModalHeader>Thank you for Feedback</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
+        <ModalBody pt={0}>
           <Label>Content</Label>
           <Textarea
             placeholder="Ex. the link is not working"
@@ -88,7 +88,7 @@ const FeedbackModal = ({
 export default React.memo(FeedbackModal);
 
 const Label = styled.p`
-  margin-top: 6px;
+  margin-top: 10px;
   margin-left: 3px;
   padding: 3px 0px;
   font-weight: 700;

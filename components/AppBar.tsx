@@ -35,7 +35,7 @@ type AppBarType = {
 };
 
 const AppBar = ({ page, onClick, radio }: AppBarType) => {
-  const { user } = useChatStore();
+  const { user, job } = useChatStore();
   const { width } = useWindowDimensions();
   const [isDrawer, setIsDrawer] = useState(false);
   const [isFeedback, setIsFeedback] = useState(false);
@@ -198,7 +198,10 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
             <Radio
               onClick={() => {
                 router.push({
-                  pathname: "/chat",
+                  pathname: `/chat`,
+                  query: {
+                    domain: job,
+                  },
                 });
               }}>
               Chat
@@ -212,6 +215,9 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
               onClick={() => {
                 router.push({
                   pathname: "/chat",
+                  query: {
+                    domain: job,
+                  },
                 });
               }}>
               Chat

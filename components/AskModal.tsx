@@ -50,7 +50,7 @@ const AskModal = ({ isOpen, onClose, onOpen }: AskModelProps) => {
           <p>Please Log in first!</p>
         </CustomModalBody>
         <ModalFooter>
-          <Button width="100%" onClick={() => sendRequest()}>
+          <Button mb={3} width="100%" onClick={() => sendRequest()}>
             Google LogIn
           </Button>
         </ModalFooter>
@@ -65,40 +65,19 @@ const CustomModalContent = styled(ModalContent)`
   border: 2px solid rgba(0, 0, 0, 0.8);
   font-size: 1.1em;
   color: rgba(0, 0, 0, 0.9);
+  width: 90%;
 `;
 
 const CustomModalBody = styled(ModalBody)`
+  padding: 15px 25px;
+  font-weight: 500;
+
   .label {
     padding: 10px 0px;
     margin-top: 5px;
   }
   p {
     margin-bottom: 5px;
-    font-weight: 700;
+    font-weight: 500;
   }
 `;
-
-// <p>You can use only 5 times.</p>
-// <p>
-//   If you want more, please tell us! We will let you use in 5 minutes.
-// </p>
-// <p className="label">Who are you?</p>
-// <Input
-//   value={who}
-//   onChange={(e) => setWho(e.currentTarget.value)}
-//   placeholder="Ex. Software developer"
-// />
-// <p className="label">
-//   What do you like or dislike the most of Solomon?
-// </p>
-// <Input
-//   value={feedback}
-//   onChange={(e) => setFeedback(e.currentTarget.value)}
-//   placeholder="Ex. I want more specific solution"
-// />
-// <p className="label">We will let you know after take action.</p>
-// <Input
-//   value={email}
-//   onChange={(e) => setEmail(e.currentTarget.value)}
-//   placeholder="Ex. contact@diceyai.com"
-// />

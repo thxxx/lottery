@@ -92,8 +92,14 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
       <div className="inners">
         {isInputFocused && (
           <p className="noti">
-            <span>{status}</span> &nbsp; Please type <strong>.</strong> or{" "}
-            <strong>?</strong> and wait to ask
+            <span
+              style={{
+                color: `${status === "finishing" ? "#4D5EBF" : "black"}`,
+              }}>
+              {status}
+            </span>{" "}
+            &nbsp; Please type <strong>.</strong> or <strong>?</strong> and wait
+            to ask
           </p>
         )}
         <InputContainer
@@ -104,8 +110,7 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
           {/* <Search2Icon className="search" color="gray.400" /> */}
           <Textarea
             onClick={() => {
-              console.log(11);
-              window.scrollTo(0, 10000);
+              // if (isMobile) window.scrollTo(0, 10000);
             }}
             transitionDelay="0.03"
             disabled={loading}

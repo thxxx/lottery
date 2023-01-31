@@ -90,7 +90,7 @@ const TextAnswer = ({ text }: { text: string }) => {
                     __html:
                       text.replace(/\n/g, "<br />").slice(0, 6) === "<br />"
                         ? text
-                            // .replace(/```([\s\S]*?)```/g, "")
+                            .replace(/```([\s\S]*?)```/g, "")
                             .replace(/\$/g, "`")
                             .replace(/\n/g, "<br />")
                             .replace(
@@ -99,7 +99,7 @@ const TextAnswer = ({ text }: { text: string }) => {
                             )
                             .slice(6)
                         : text
-                            // .replace(/```([\s\S]*?)```/g, "")
+                            .replace(/```([\s\S]*?)```/g, "")
                             .replace(/\$/g, "`")
                             .replace(/\n/g, "<br />")
                             .replace(
@@ -115,7 +115,8 @@ const TextAnswer = ({ text }: { text: string }) => {
                   showLineNumbers={false}
                   text={text
                     .replace(/^[\s\S]*?(?=```)/, "")
-                    .replace(/```/g, "")}
+                    .replace(/```/g, "")
+                    .trim()}
                 />
               ) : (
                 <></>

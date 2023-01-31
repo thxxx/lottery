@@ -22,6 +22,7 @@ import { Radio } from "../../components/AppBar";
 import router from "next/router";
 import { DOMAINS } from "../../utils/persona";
 import { callApis } from "../../utils/callApi";
+import Image from "next/image";
 
 const BWIDTH = 150;
 
