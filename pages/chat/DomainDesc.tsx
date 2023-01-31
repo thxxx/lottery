@@ -48,6 +48,6 @@ export const DomainDescContainer = styled.div`
   }
 
   @media (max-width: 800px) {
-    padding: 0px 25px;
+    padding: 0px 15px;
   }
 `;

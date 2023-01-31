@@ -45,24 +45,29 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>AID</title>
+        <title>AID AI</title>
         <meta name="description" content="AID will give you solution" />
-        <link rel="icon" href="/card.png" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
       <AppBar page="main" />
       <MainContainer>
         <div className="logo">
-          <Image src="/card.png" width={30} height={30} alt="logo" />
-          <span>AID</span>
-          <span className="beta">Beta</span>
+          <Image src="/favicon.png" width={36} height={36} alt="logo" />
+          <Image
+            src="/logo.png"
+            width={70}
+            height={30}
+            alt="logo"
+            style={{ marginLeft: "5px" }}
+          />
         </div>
         <DomainDesc />
-        <Button
+        {/* <Button
           onClick={() => {
             authService.signOut();
           }}>
           로그어웃
-        </Button>
+        </Button> */}
         <CardsContainer>
           {DOMAINS.map((item) => {
             return (
@@ -126,7 +131,7 @@ const MainContainer = styled.main`
   }
 
   @media (max-width: 420px) {
-    font-size: 12px;
+    font-size: 14px;
   }
 `;
 

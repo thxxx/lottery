@@ -12,6 +12,7 @@ import * as ga from "../lib/gtag";
 import Script from "next/script";
 import { authService } from "../utils/fbase";
 import TagManager, { TagManagerArgs } from "react-gtm-module";
+import Head from "next/head";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { darkMode } = useChatStore();
@@ -63,6 +64,11 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ChakraProvider>
+      <Head>
+        <title>AID AI</title>
+        <meta name="description" content="AID will give you solution" />
+        <link rel="icon" href="/favicon.png" />
+      </Head>
       <Script
         strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${ga.GA_TRACKING_ID}`}

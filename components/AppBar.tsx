@@ -7,7 +7,6 @@ import React, {
   useState,
 } from "react";
 import {
-  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -15,7 +14,6 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
-  useDisclosure,
 } from "@chakra-ui/react";
 import FeedbackModal from "./FeedbackModal";
 import Image from "next/image";
@@ -95,7 +93,11 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
                           />
                           <p>My Page</p>
                         </MenuNaviButton>
-                        <MenuNaviButton className="item" onClick={() => {}}>
+                        <MenuNaviButton
+                          className="item"
+                          onClick={() => {
+                            window.open("https://discord.gg/WBfT4bhVep");
+                          }}>
                           <Image
                             src="/discord_black.svg"
                             width={20}
@@ -140,7 +142,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
                 <>
                   <NaviButton
                     onClick={() => {
-                      window.open("https://naver.com");
+                      window.open("https://discord.gg/WBfT4bhVep");
                     }}>
                     <Image
                       src="/discord.svg"
@@ -234,8 +236,16 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
     <AppBarContainer>
       <div>
         <Link href="/">
-          <Image src="/card.png" width={20} height={20} alt="logo" />
-          <span>AID</span>
+          <Image src="/favicon.png" width={30} height={30} alt="logo" />
+          {width > 800 && (
+            <Image
+              src="/logo.png"
+              width={55}
+              height={20}
+              alt="logo"
+              style={{ marginLeft: "5px" }}
+            />
+          )}
         </Link>
         {page === "my" && onClick && (
           <>
@@ -291,7 +301,7 @@ const AppBarContainer = styled.div`
   background: white;
   border-bottom: 1px solid ${({ theme }) => theme.borderColor01};
   color: black;
-  padding: 0px 2vw;
+  padding: 0px 3vw;
   height: 55px;
   position: absolute;
   top: 0px;

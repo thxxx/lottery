@@ -122,7 +122,13 @@ const BotChat = ({
       query: item.query,
     };
 
-    const output = await callApis("web", body);
+    const response = await fetch("/api/web", {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json" },
+    });
+    const output = await response.json();
+    console.log(output, "웹, 응확답인", output[0]);
 
     const ma = output.map((doc: any) => {
       return {
