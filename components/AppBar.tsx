@@ -24,7 +24,7 @@ import { useChatStore } from "../utils/store";
 import router from "next/router";
 import { authService, firebaseInstance } from "../utils/fbase";
 import useWindowDimensions from "../hook/useWindowDimensions";
-import { HamburgerIcon } from "@chakra-ui/icons";
+import { EmailIcon, HamburgerIcon } from "@chakra-ui/icons";
 
 type PagesType = "main" | "chat" | "my" | "share";
 
@@ -35,10 +35,10 @@ type AppBarType = {
 };
 
 const AppBar = ({ page, onClick, radio }: AppBarType) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useChatStore();
   const { width } = useWindowDimensions();
   const [isDrawer, setIsDrawer] = useState(false);
+  const [isFeedback, setIsFeedback] = useState(false);
   const btnRef = useRef(null);
 
   const doLogin = useCallback(async () => {
@@ -65,7 +65,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
             {width < 800 ? (
               <>
                 <div ref={btnRef} onClick={() => setIsDrawer(true)}>
-                  <HamburgerIcon />
+                  <HamburgerIcon width={5} height={5} />
                 </div>
                 <Drawer
                   closeOnEsc
@@ -80,35 +80,57 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
                     <DrawerHeader>AID</DrawerHeader>
                     <DrawerBody>
                       <div>
-                        {user ? (
-                          <div
-                            className="item"
-                            onClick={() => {
-                              router.push({
-                                pathname: "/my",
-                              });
-                            }}>
-                            My Page
-                          </div>
-                        ) : (
-                          <div className="item" onClick={() => doLogin()}>
-                            Login
-                          </div>
-                        )}
-                        <div className="item" onClick={() => {}}>
-                          Discord
-                        </div>
-                        <div className="item" onClick={() => {}}>
-                          Contact us
-                        </div>
+                        <MenuNaviButton
+                          className="item"
+                          onClick={() => {
+                            router.push({
+                              pathname: "/my",
+                            });
+                          }}>
+                          <Image
+                            src="/my.png"
+                            width={20}
+                            height={20}
+                            alt="mypage"
+                          />
+                          <p>My Page</p>
+                        </MenuNaviButton>
+                        <MenuNaviButton className="item" onClick={() => {}}>
+                          <Image
+                            src="/discord_black.svg"
+                            width={20}
+                            height={20}
+                            alt="discord"
+                          />
+                          <p>Join</p>
+                        </MenuNaviButton>
+                        <MenuNaviButton
+                          className="item"
+                          onClick={() => {
+                            setIsFeedback(true);
+                          }}>
+                          <Image
+                            src="/message_black.svg"
+                            width={19}
+                            height={19}
+                            alt="mypage"
+                          />
+                          <p>Feedback</p>
+                        </MenuNaviButton>
+                        <MenuNaviButton
+                          className="item"
+                          onClick={() => {
+                            window.open("mailto:contact@diceyai.com");
+                          }}>
+                          <EmailIcon />
+                          <p>Contact us</p>
+                        </MenuNaviButton>
                       </div>
                     </DrawerBody>
                     <DrawerFooter>
-                      <button
-                        onClick={() => setIsDrawer(false)}
-                        className="cancel">
+                      <CustomButton onClick={() => setIsDrawer(false)}>
                         Cancel
-                      </button>
+                      </CustomButton>
                     </DrawerFooter>
                   </CustomDrawer>
                 </Drawer>
@@ -116,8 +138,37 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
             ) : (
               <>
                 <>
-                  <Radio onClick={() => {}}>Discord</Radio>
-                  <Radio onClick={() => {}}>Contact us</Radio>
+                  <NaviButton
+                    onClick={() => {
+                      window.open("https://naver.com");
+                    }}>
+                    <Image
+                      src="/discord.svg"
+                      width={20}
+                      height={20}
+                      alt="discord"
+                    />
+                    <p>Join</p>
+                  </NaviButton>
+                  <NaviButton
+                    onClick={() => {
+                      setIsFeedback(true);
+                    }}>
+                    <Image
+                      src="/message.svg"
+                      width={15}
+                      height={15}
+                      alt="mypage"
+                    />
+                    <p>Feedback</p>
+                  </NaviButton>
+                  <NaviButton
+                    onClick={() => {
+                      window.open("mailto:contact@diceyai.com");
+                    }}>
+                    <EmailIcon />
+                    <p>Contact</p>
+                  </NaviButton>
                 </>
                 {user ? (
                   <div
@@ -157,20 +208,14 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
       case "share":
         return (
           <>
-            {user ? (
-              <Radio
-                onClick={() => {
-                  router.push({
-                    pathname: "/chat",
-                  });
-                }}>
-                Chat
-              </Radio>
-            ) : (
-              <Radio className="icon" onClick={() => doLogin()}>
-                Login
-              </Radio>
-            )}
+            <Radio
+              onClick={() => {
+                router.push({
+                  pathname: "/chat",
+                });
+              }}>
+              Chat
+            </Radio>
           </>
         );
 
@@ -197,8 +242,22 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
           </>
         )}
       </div>
-      <div className="icons">{returnNavi()}</div>
-      <FeedbackModal isOpen={isOpen} onClose={onClose} onOpen={onOpen} />
+      <div className="icons">
+        {user ? (
+          <>{returnNavi()}</>
+        ) : (
+          <>
+            <Radio className="icon" onClick={() => doLogin()}>
+              Login
+            </Radio>
+          </>
+        )}
+      </div>
+      <FeedbackModal
+        isOpen={isFeedback}
+        onClose={() => setIsFeedback(false)}
+        onOpen={() => setIsFeedback(true)}
+      />
     </AppBarContainer>
   );
 };
@@ -226,8 +285,8 @@ const AppBarContainer = styled.div`
   background: white;
   border-bottom: 1px solid ${({ theme }) => theme.borderColor01};
   color: black;
-  padding: 0px 4vw;
-  height: 57px;
+  padding: 0px 2vw;
+  height: 55px;
   position: absolute;
   top: 0px;
   left: 0px;
@@ -275,23 +334,62 @@ const CustomDrawer = styled(DrawerContent)`
   padding: 0px;
 
   .item {
-    padding: 14px 10px;
+    padding: 14px 5px;
     width: 100%;
     text-align: left;
     cursor: pointer;
-    margin: 5px 0px;
+    margin: 0px 0px;
     border-radius: 6px;
 
     &:hover {
       background-color: ${({ theme }) => theme.hoverBack};
     }
   }
+`;
 
-  .cancel {
-    border-radius: 6px;
-    padding: 10px;
-    background: white;
-    width: 100%;
-    border: 1px solid ${({ theme }) => theme.bgColor04};
+const NaviButton = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  p {
+    margin-left: 6px;
+  }
+  padding: 5px 8px;
+  cursor: pointer;
+  border: none;
+  transition: 0.15s ease;
+  border-radius: 6px;
+  margin-left: 3px;
+  color: ${({ theme }) => "rgba(40,40,70,0.6)"};
+  font-weight: 900;
+  font-size: 15px;
+  font-family: Pretendard;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.hoverBack};
+  }
+`;
+
+const MenuNaviButton = styled(NaviButton)`
+  text-align: left;
+  justify-content: flex-start;
+  font-size: 17px;
+  color: black;
+
+  p {
+    margin-left: 13px;
+  }
+`;
+
+export const CustomButton = styled.button`
+  border-radius: 6px;
+  padding: 10px;
+  background: white;
+  width: 100%;
+  border: 1px solid ${({ theme }) => theme.bgColor04};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.hoverBack};
   }
 `;

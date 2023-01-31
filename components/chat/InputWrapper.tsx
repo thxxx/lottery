@@ -103,6 +103,10 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
           }}>
           {/* <Search2Icon className="search" color="gray.400" /> */}
           <Textarea
+            onClick={() => {
+              console.log(11);
+              window.scrollTo(0, 10000);
+            }}
             transitionDelay="0.03"
             disabled={loading}
             onFocus={() => setIsInputFocused(true)}
