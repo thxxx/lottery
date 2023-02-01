@@ -52,11 +52,13 @@ export type UserState = {
   job: DomainOne | undefined;
   user: UserType | undefined;
   queries: QueryType[];
+  isLoggedIn: boolean;
   setChats: (by: SavedChatType[]) => void;
   setDarkMode: (by: boolean) => void;
   setJob: (by: DomainOne) => void;
   setUser: (by: UserType) => void;
   setQueries: (by: QueryType[]) => void;
+  setIsLoggedIn: (by: boolean) => void;
 };
 
 export const useChatStore = create<UserState>((set) => ({
@@ -65,6 +67,7 @@ export const useChatStore = create<UserState>((set) => ({
   job: DomainOne.SCIENCE,
   user: undefined,
   queries: [],
+  isLoggedIn: false,
   setChats: (by) => {
     set((state) => ({ ...state, chats: by }));
   },
@@ -79,5 +82,8 @@ export const useChatStore = create<UserState>((set) => ({
   },
   setQueries: (by) => {
     set((state) => ({ ...state, queries: by }));
+  },
+  setIsLoggedIn: (by) => {
+    set((state) => ({ ...state, isLoggedIn: by }));
   },
 }));

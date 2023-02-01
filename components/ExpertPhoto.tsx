@@ -18,7 +18,7 @@ export default React.memo(ExpertPhoto);
 
 const ProfilePhoto = styled.img`
   border-radius: 300px;
-  background: brown;
+  background: white;
   display: flex;
   flex-direction: row;
   aligm-items: center;

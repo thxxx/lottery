@@ -8,6 +8,7 @@ import { Menu, MenuButton, MenuList } from "@chakra-ui/react";
 import { CustomMenuList } from "../../components/chat/InputWrapper";
 import BottomSheet from "../../components/BottomSheet";
 import useWindowDimensions from "../../hook/useWindowDimensions";
+import { useChatStore } from "../../utils/store";
 
 type IconContainerProps = {
   toggle: boolean;
@@ -33,6 +34,7 @@ const IconContainer = ({
   clickWebOpen,
 }: IconContainerProps) => {
   const [isBottomOpen, setIsBottomOpen] = useState(false);
+  const { isLoggedIn } = useChatStore();
   const toast = useToast();
   const { width } = useWindowDimensions();
 
@@ -51,6 +53,13 @@ const IconContainer = ({
   };
 
   const share = async (type: "link" | "text") => {
+    if (!isLoggedIn) {
+      toast({
+        description: "You have to login to share",
+      });
+      return;
+    }
+
     if (type === "link")
       copyToClipboard("https://getaid.ai/share?id=" + id + "&saved=" + index);
     if (type === "text") copyToClipboard(response.replace(/<[^>]*>/g, " "));

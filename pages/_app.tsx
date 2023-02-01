@@ -15,7 +15,9 @@ import TagManager, { TagManagerArgs } from "react-gtm-module";
 import Head from "next/head";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const { darkMode } = useChatStore();
+  const { darkMode, isLoggedIn, setIsLoggedIn, setUser } = useChatStore();
+  const [init, setInit] = useState(false);
+
   const theme = darkMode ? darkTheme : lightTheme;
 
   const tagManagerArgs: TagManagerArgs = {
@@ -39,11 +41,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
   }, [router.events]);
 
-  const [init, setInit] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const { setUser } = useChatStore();
-
   useEffect(() => {
+    const count = localStorage.getItem("logInCount");
+    if (!count) localStorage.setItem("logInCount", JSON.stringify(0));
     // 유저가 제작한 랜딩페이지에 들어가는 사람들까지 로그인 검사를 하면 속도가 느려지니까
     authService.onAuthStateChanged((user) => {
       if (user) {
