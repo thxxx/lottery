@@ -42,7 +42,7 @@ const SharePage = () => {
           <Head>
             <title>{data ? data.query : "Shared Content if AID"}</title>
             <meta name="description" content="Shared Content from AID" />
-            <link rel="icon" href="/card.png" />
+            <link rel="icon" href="/favicon.png" />
           </Head>
           <AppBar page="share" />
           <MainContainer>

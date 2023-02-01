@@ -172,6 +172,7 @@ const BotChat = ({
       webLinks: response,
     };
     await updateFirebase(modified);
+    if (shared) window.location.reload();
     setWebLoading(false);
   }, [chats, item, updateFirebase, setChats, setSaves, saves, callWebApi]);
 
@@ -315,6 +316,7 @@ const BotChat = ({
                       clicked={false}>
                       My Page
                     </Radio>
+                    It will takes about 1 hour.
                   </p>
                 </QuoraDid>
               ) : (
@@ -335,7 +337,7 @@ const BotChat = ({
                       width={25}
                       height={25}
                     />
-                    <p>Get Answer from Quora</p>
+                    <p>Get answer from human expert (takes 1 hour)</p>
                   </SelectionBtn>
                 </div>
               )}

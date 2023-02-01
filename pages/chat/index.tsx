@@ -228,7 +228,7 @@ const ChatPage: NextPage = () => {
       <Head>
         <title>AID Chat</title>
         <meta name="description" content="AID will give you solution" />
-        <link rel="icon" href="/card.png" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
       <AppBar page="chat" />
       <MainContainer ref={mainRef}>

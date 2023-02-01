@@ -94,7 +94,7 @@ const MyPage: NextPage = () => {
       <Head>
         <title>AID MY</title>
         <meta name="description" content="AID My Page" />
-        <link rel="icon" href="/card.png" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
       <AppBar page="my" radio={radio} onClick={setRadio} />
       <MainContainer>
