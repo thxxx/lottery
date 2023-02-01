@@ -113,8 +113,8 @@ const ChatPage: NextPage = () => {
 
     let addQueries = queries;
     addQueries.push({ query: inputText, domain: job });
-    if (addQueries.length > 5) addQueries.slice(addQueries.length - 5);
-
+    if (addQueries.length > 4)
+      addQueries = addQueries.slice(addQueries.length - 5);
     setQueries([...addQueries]);
 
     let tempChats = _.cloneDeep(chats);
