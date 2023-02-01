@@ -96,7 +96,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
                         <MenuNaviButton
                           className="item"
                           onClick={() => {
-                            window.open("https://discord.gg/WBfT4bhVep");
+                            window.open("https://discord.gg/8Gt3gXhyQH");
                           }}>
                           <Image
                             src="/discord_black.svg"
