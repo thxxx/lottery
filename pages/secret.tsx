@@ -67,7 +67,9 @@ const AdminPage: NextPage = () => {
         return (
           <Contents key={item.id}>
             {/* <div>{dateToText(new Date(item.askedAt))}</div> */}
-            <div className="answer">Query</div>
+            <div className="answer">
+              Query <span>{item.displayName}</span>
+            </div>
             <Heading as="h4" size="md">
               {item.query}
             </Heading>

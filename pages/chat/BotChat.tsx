@@ -14,7 +14,7 @@ import { dbService } from "../../utils/fbase";
 import IconContainer from "./IconContainer";
 import useWindowDimensions from "../../hook/useWindowDimensions";
 import { BotChatWrapper } from "./UserChat";
-import { Skeleton } from "@chakra-ui/react";
+import { Skeleton, useToast } from "@chakra-ui/react";
 import TextAnswer from "./TextAnswer";
 import ChatSlideInner from "./ChatSlide";
 import SwipeNext from "./SwipeNext";
@@ -45,11 +45,12 @@ const BotChat = ({
   savedIndex,
   loading,
 }: BotChatType) => {
-  const { chats, setChats } = useChatStore();
+  const { chats, isLoggedIn, setChats } = useChatStore();
   const [toggle, setToggle] = useState(false);
   const [asked, setAsked] = useState(false);
   const [temps, setTemps] = useState<SavedChatType[]>();
   const [webLoading, setWebLoading] = useState(false);
+  const toast = useToast();
   const { width } = useWindowDimensions();
 
   useEffect(() => {
@@ -57,6 +58,14 @@ const BotChat = ({
   }, []);
 
   const saveThisChat = async (idx: number) => {
+    if (!isLoggedIn) {
+      // 로그인 안했으면 금지
+      toast({
+        description: "You have to login to save your history.",
+      });
+      return;
+    }
+
     // chats store도 바꿔야하고
     // firebase도 바꿔야함
     const filteredTemp = temps?.filter((doc: any) => doc.id === item.id)[0];
@@ -164,6 +173,10 @@ const BotChat = ({
       setChats(addedChats);
     }
 
+    setWebLoading(false);
+
+    if (!isLoggedIn) return;
+
     // update db
     const modified = {
       ...item,
@@ -171,10 +184,15 @@ const BotChat = ({
     };
     await updateFirebase(modified);
     if (shared) window.location.reload();
-    setWebLoading(false);
   }, [chats, item, updateFirebase, setChats, setSaves, saves, callWebApi]);
 
   const askQuora = async () => {
+    if (!isLoggedIn) {
+      toast({
+        description: "You have to login to ask",
+      });
+      return;
+    }
     setAsked(true);
     const modified = {
       ...item,
