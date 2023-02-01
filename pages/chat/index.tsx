@@ -267,7 +267,7 @@ const ChatPage: NextPage = () => {
 
       setLoading(false);
     },
-    [chats, callApi, setChats]
+    [chats, callApi, queries, setChats]
   );
 
   return (
