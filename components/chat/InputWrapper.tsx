@@ -98,8 +98,8 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
               }}>
               {status}
             </span>{" "}
-            &nbsp; Please type <strong>.</strong> or <strong>?</strong> and wait
-            to ask
+            &nbsp; When you finish, write <strong>.</strong> or{" "}
+            <strong>?</strong> at the end
           </p>
         )}
         <InputContainer
