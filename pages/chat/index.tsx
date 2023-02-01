@@ -242,7 +242,7 @@ const ChatPage: NextPage = () => {
   const generateAnotherAnswer = useCallback(
     async (id: string | number, query: string, option: number) => {
       setLoading(true);
-      const response = await callApi(query, option);
+      const response = await callApi(query, option, queries);
       let chosen;
       const filtered = chats.map((item) => {
         if (item.id === id) {
