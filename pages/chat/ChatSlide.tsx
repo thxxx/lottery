@@ -20,10 +20,10 @@ const ChatSlideInner = ({ children, item, name, src }: ChatSlideProps) => {
     <InnerContainer>
       <div className="profile">
         {item ? <ExpertPhoto domain={item?.job} /> : <ExpertPhoto src={src} />}
-        {width < 1100 && <p className="name">{name}</p>}
+        {width < 1100 && <div className="name">{name}</div>}
       </div>
       <div className="text">
-        {width >= 1100 && <p className="name">{name}</p>}
+        {width >= 1100 && <div className="name">{name}</div>}
         <>{children}</>
       </div>
     </InnerContainer>

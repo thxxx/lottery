@@ -74,14 +74,6 @@ const ChatPage: NextPage = () => {
           ]
         : [];
 
-      console.log(
-        "히스토리 제대로 들어가는지 확인",
-        history,
-        option,
-        option,
-        option
-      );
-
       const body = {
         query: inputText,
         history: history,
@@ -96,10 +88,8 @@ const ChatPage: NextPage = () => {
         },
       });
 
-      console.log("응답", response);
       const output = response;
       // const output = await response.json();
-      console.log("문제 API 결과", output.data);
 
       return output.data[0];
       // return dummy[0];
@@ -117,6 +107,7 @@ const ChatPage: NextPage = () => {
 
     let addQueries = queries;
     addQueries.push({ query: inputText, domain: job });
+    if (addQueries.length > 5) addQueries.slice(addQueries.length - 5);
 
     setQueries([...addQueries]);
 

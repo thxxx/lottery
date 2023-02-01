@@ -128,7 +128,6 @@ const BotChat = ({
       headers: { "Content-Type": "application/json" },
     });
     const output = await response.json();
-    console.log(output, "웹, 응확답인", output[0]);
 
     const ma = output[0].map((doc: any) => {
       return {
@@ -137,7 +136,6 @@ const BotChat = ({
         snippet: doc.snippet,
       };
     });
-    console.log(ma, "웹, 응확답인");
 
     return ma;
   }, [item.query]);

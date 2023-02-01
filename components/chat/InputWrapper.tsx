@@ -57,7 +57,7 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
 
   useEffect(() => {
     if (status === "finishing") {
-      console.log("1.2초 세고, 입력 없으면 그대로 제출");
+      // console.log("1.2초 세고, 입력 없으면 그대로 제출");
       const to = setTimeout(() => {
         if (isEnd.current) {
           // if (inputRef.current) inputRef.current?.style.height = "52px";
@@ -152,7 +152,7 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
                 );
               })}
             </CustomMenuList>
-            <PromptButton as={Button}>
+            <PromptButton as={Button} onClick={() => setPrompt("")}>
               {prompt ? (
                 <>
                   <CheckIcon className="icon" color="purple.400" w={3} mr={1} />

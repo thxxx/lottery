@@ -26,7 +26,7 @@ const MyPage: NextPage = () => {
   const [saves, setSaves] = useState<SavedChatType[]>();
   const [asks, setAsks] = useState<SavedChatType[]>();
   const [waitings, setWaitings] = useState<SavedChatType[]>();
-  const [pagi, setPagi] = useState<number>(1);
+  const [pagi, setPagi] = useState<number>(100000000);
   const [readed, setReaded] = useState<string[]>([]);
   const { user } = useChatStore();
 
@@ -73,8 +73,8 @@ const MyPage: NextPage = () => {
       .collection("chats")
       .where("uid", "==", user?.uid)
       .where("saved", "array-contains-any", [0, 1, 2, 3, 4, 5, 6, 7, 8])
-      .orderBy("createdAt")
-      .startAfter(pagi)
+      .orderBy("createdAt", "desc")
+      .endAt(pagi)
       .limit(LOADONENUM)
       .get()
       .then((res) => {
@@ -228,9 +228,9 @@ const ChatSkeleton = () => {
             <SkeletonCircle mt={4} width={35} height={35} />
           </div>
           <div className="text">
-            <p className="name" style={{ width: "100%", marginTop: "3px" }}>
+            <div className="name" style={{ width: "100%", marginTop: "3px" }}>
               <Skeleton mt={4} width="50%" height={25} />
-            </p>
+            </div>
             <div className="main" style={{ width: "100%" }}>
               <Skeleton mt={3} width="100%" height={25} />
               <Skeleton mt={3} width="100%" height={25} />
