@@ -208,7 +208,7 @@ const InputOuter = styled.div`
   width: 100%;
 
   .noti {
-    font-size: 0.8em;
+    font-size: 0.85em;
     margin-bottom: 5px;
 
     strong {

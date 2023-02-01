@@ -130,7 +130,7 @@ const BotChat = ({
     const output = await response.json();
     console.log(output, "웹, 응확답인", output[0]);
 
-    const ma = output.map((doc: any) => {
+    const ma = output[0].map((doc: any) => {
       return {
         link: doc.url,
         title: doc.title,

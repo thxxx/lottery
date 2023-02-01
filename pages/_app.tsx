@@ -65,8 +65,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider>
       <Head>
-        <title>AID AI</title>
-        <meta name="description" content="AID will give you solution" />
+        <title>AID AI : Quora through conversation AI</title>
+        <meta
+          name="description"
+          content="AID is a AI assistant that can give you the most appropriate answers to all your questions."
+        />
         <link rel="icon" href="/favicon.png" />
       </Head>
       <Script
