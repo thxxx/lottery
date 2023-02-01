@@ -113,8 +113,8 @@ const ChatPage: NextPage = () => {
 
     let addQueries = queries;
     addQueries.push({ query: inputText, domain: job });
-    if (addQueries.length > 5) addQueries.slice(addQueries.length - 5);
-
+    if (addQueries.length > 4)
+      addQueries = addQueries.slice(addQueries.length - 5);
     setQueries([...addQueries]);
 
     let tempChats = _.cloneDeep(chats);
@@ -242,7 +242,7 @@ const ChatPage: NextPage = () => {
   const generateAnotherAnswer = useCallback(
     async (id: string | number, query: string, option: number) => {
       setLoading(true);
-      const response = await callApi(query, option);
+      const response = await callApi(query, option, queries);
       let chosen;
       const filtered = chats.map((item) => {
         if (item.id === id) {
@@ -267,7 +267,7 @@ const ChatPage: NextPage = () => {
 
       setLoading(false);
     },
-    [chats, callApi, setChats]
+    [chats, callApi, queries, setChats]
   );
 
   return (
