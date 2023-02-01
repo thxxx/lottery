@@ -82,8 +82,7 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.HEALTH,
     id: 5,
     name: "Michael",
-    desc: "Hello, I am Michael. I know a lot of health knowledge.  <br /> \
-        I am interested in health and I am also an expert in various sports such as soccer and basketball.",
+    desc: "Hi, I am Michael. I have extensive knowledge in the field of health and hold a strong interest in the topic. <br /> Additionally, I am an expert in various sports including soccer and basketball.",
   },
   {
     icon: (
@@ -100,8 +99,8 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.BUSINESS,
     id: 9,
     name: "Metthew",
-    desc: "Hello, I am Matthew. I'm an entrepreneur.  <br /> \
-        I am an experienced professional in the business industry. Ask me anything.",
+    desc: "Hi, I am Matthew. I am an accomplished entrepreneur with expertise in the business field.\
+          Feel free to ask me any questions.",
   },
   {
     blackIcon: (
@@ -146,8 +145,8 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.COMMONSENSE,
     id: 10,
     name: "Shopia",
-    desc: "Hello, I am Shopia. I know a lot of miscellaneous knowledge. <br /> \
-        I know all the knowledge necessary for life, such as cooking and cleaning.",
+    desc: "Hi, I am Shopia. I have a wide range of miscellaneous knowledge <br /> \
+          including practical skills for everyday living such as cooking and cleaning.",
   },
   {
     blackIcon: (
@@ -175,8 +174,8 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.ART,
     id: 8,
     name: "Andrew",
-    desc: "Hello, I am Andrew.I'm very interested in art. <br /> \
-        I'm the next Picasso. That's how serious I am about art.",
+    desc: "Hi, I'm Andrew and I have a passion for art. <br /> \
+I take my art very seriously and am dedicated to becoming the next Picasso.",
   },
   {
     icon: (
@@ -193,8 +192,8 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.MEDICAL,
     id: 12,
     name: "Liam",
-    desc: "Hello, I am Liam. I know a lot of medical knowledge.  <br /> \
-          I can't get the exact medical treatment and I can give you simple help.",
+    desc: "Hi, I am Liam. I possess substantial knowledge in the field of medicine. <br /> \
+            While I am not able to provide specific medical treatment, I can offer simple assistance.",
   },
   {
     blackIcon: (
@@ -209,8 +208,8 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.MUSIC,
     id: 1,
     name: "Elizabeth",
-    desc: "Hello, I am Elizabeth, a musician. I am good at music theory.  <br /> \
-          Also, I have various knowledge such as music history and musical instruments.",
+    desc: "Hi, I am Elizabeth, a talented musician with a strong understanding of music theory.  <br/> \
+  In addition, I possess a diverse range of knowledge including music history and proficiency ",
   },
   {
     icon: (
@@ -243,8 +242,8 @@ export const DOMAINS: DomainType[] = [
     domain: DomainOne.LAW,
     id: 3,
     name: "Olivia",
-    desc: "Hello, I am Olivia. I know a lot of law knowledge.  <br /> \
-      I'm an AI expert, so it's not always right for me to answer. But I can help you.",
+    desc: "Hi, my name is Olivia. I have extensive knowledge in the field of law. <br /> \
+            I am willing to assist you to the best of my ability.",
   },
 ];
 

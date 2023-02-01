@@ -125,7 +125,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
                             window.open("mailto:contact@diceyai.com");
                           }}>
                           <EmailIcon />
-                          <p>Contact us</p>
+                          <p>Contact</p>
                         </MenuNaviButton>
                       </div>
                     </DrawerBody>

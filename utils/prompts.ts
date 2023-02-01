@@ -168,7 +168,7 @@ export const prompts: PromptType[] = [
     domain: DomainOne.PHILOSOPHY,
   },
   {
-    text: "Including various philosophical knowledge by country",
+    text: "Including knowledge of various philosophical beliefs from different countries.",
     tag: 3,
     domain: DomainOne.PHILOSOPHY,
   },
