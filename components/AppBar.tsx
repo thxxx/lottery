@@ -208,6 +208,21 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
               }}>
               Chat
             </Radio>
+            <Radio
+              onClick={() => {
+                authService.signOut();
+                router.push({
+                  pathname: `/`,
+                  query: {
+                    domain: job,
+                  },
+                });
+
+              }
+              }>
+              Logout
+            </Radio>
+            
           </>
         );
       case "share":
