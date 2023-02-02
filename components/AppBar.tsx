@@ -142,7 +142,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
                 <>
                   <NaviButton
                     onClick={() => {
-                      window.open("https://discord.gg/WBfT4bhVep");
+                      window.open("https://discord.gg/8Gt3gXhyQH");
                     }}>
                     <Image
                       src="/discord.svg"
@@ -208,6 +208,21 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
               }}>
               Chat
             </Radio>
+            <Radio
+              onClick={() => {
+                authService.signOut();
+                router.push({
+                  pathname: `/`,
+                  query: {
+                    domain: job,
+                  },
+                });
+
+              }
+              }>
+              Logout
+            </Radio>
+            
           </>
         );
       case "share":
