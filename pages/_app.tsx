@@ -89,6 +89,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             });
           `,
         }}
+        
       />
       <ThemeProvider theme={theme}>
         <MobileContainer>
