@@ -23,6 +23,7 @@ import UserChat from "./UserChat";
 import axios from "axios";
 import _ from "lodash";
 import DomainDesc from "./DomainDesc";
+import { uuid } from "uuidv4";
 
 const dummy = [
   "'I can create a login page with React by using a <bold>form</bold> component with a username and password <bold>input</bold> field, and a <bold>submit</bold> button to submit the form. An example of the code would look like this:\n\n``` \nimport React, { useState } from 'react';\n\nconst LoginForm = () => {\n const [username, setUsername] = useState('');\n const [password, setPassword] = useState('');\n\n const handleSubmit = (event) => {\n   event.preventDefault();\n   // Logic to authenticate user and log them in\n };\n\n return (\n   <form onSubmit={handleSubmit}>\n     <label>\n       Username:\n       <input\n         type=\"text\"\n         value={username}\n         onChange={(e) => setUsername(e.target.value)}\n       />\n     </label>\n     <br />\n     <label>\n       Password:\n       <input\n         type=\"password\"\n         value={password}\n         onChange={(e) => setPassword(e.target.value)}\n       />\n     </label>\n     <br />\n     <button type=\"submit\">Login</button>\n   </form>\n );\n};\n\nexport default LoginForm;\n```'",
@@ -137,6 +138,9 @@ const ChatPage: NextPage = () => {
 
     const response = await callApi(inputText, option, addQueries);
 
+    let uuidd = localStorage.getItem("uuid");
+    if (!uuidd) uuidd = "none";
+
     if (isLoggedIn && user) {
       const body: SavedChatType = {
         id: user.uid,
@@ -148,6 +152,7 @@ const ChatPage: NextPage = () => {
         email: user.email,
         photoURL: user.photoURL,
         uid: user.uid,
+        uuid: uuidd,
         saved: [],
         job: job,
         webLinks: [],
@@ -191,17 +196,18 @@ const ChatPage: NextPage = () => {
         });
     } else {
       // When User did not login.
+      let uuidd = localStorage.getItem("uuid");
+      if (!uuidd) {
+        uuidd = uuid();
+        localStorage.setItem("uuid", JSON.stringify(uuidd));
+      }
 
       const body = {
-        // id: user.uid,
+        uuid: uuidd,
         type: ChatType.BOT,
         query: inputText,
         text: [response],
         createdAt: new Date().getTime(),
-        // displayName: user.displayName,
-        // email: user.email,
-        // photoURL: user.photoURL,
-        // uid: user.uid,
         saved: [],
         job: job,
         webLinks: [],
@@ -256,17 +262,16 @@ const ChatPage: NextPage = () => {
       });
       setChats(filtered);
 
-      if (chosen)
+      if (chosen && isLoggedIn)
         await dbService
           .collection("chats")
           .doc(id as string)
           .update({
             text: [...(chosen as string[]), response],
           });
-
       setLoading(false);
     },
-    [chats, callApi, queries, setChats]
+    [chats, callApi, queries, setChats, isLoggedIn]
   );
 
   return (
@@ -319,6 +324,7 @@ const ChatPage: NextPage = () => {
                   <BotChat
                     key={i}
                     item={item}
+                    loading={loading}
                     onSubmit={generateAnotherAnswer}
                   />
                 );

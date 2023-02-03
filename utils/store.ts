@@ -32,6 +32,7 @@ export type SavedChatType = {
   photoURL?: string;
   uid?: string;
   option?: number;
+  uuid?: string;
 } & UserChatType;
 
 export type UserType = {

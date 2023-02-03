@@ -24,6 +24,7 @@ import { DOMAINS } from "../../utils/persona";
 import { callApis } from "../../utils/callApi";
 import Image from "next/image";
 import ToastMessage from "../../components/ToastMessage";
+import { LogDataType, LogType, notLogList } from "../../utils/notLoggingList";
 
 const BWIDTH = 150;
 
@@ -46,7 +47,7 @@ const BotChat = ({
   savedIndex,
   loading,
 }: BotChatType) => {
-  const { chats, isLoggedIn, setChats } = useChatStore();
+  const { user, chats, isLoggedIn, setChats } = useChatStore();
   const [toggle, setToggle] = useState(false);
   const [asked, setAsked] = useState(false);
   const [temps, setTemps] = useState<SavedChatType[]>();
@@ -201,8 +202,31 @@ const BotChat = ({
       webLinks: response,
     };
     await updateFirebase(modified);
+
+    const uuidd = localStorage.getItem("uuid");
+    const body: LogDataType = {
+      questionId: modified.id,
+      userId: user ? user.uid : uuidd ? uuidd : "notLoggedIn",
+      loggedAt: new Date(),
+      type: LogType.VIEW,
+    };
+    if (user && notLogList.includes(user.uid)) return;
+    await dbService.collection("log").add(body);
+
     if (shared) window.location.reload();
-  }, [chats, item, updateFirebase, setChats, setSaves, saves, callWebApi]);
+  }, [
+    chats,
+    item,
+    updateFirebase,
+    setChats,
+    setSaves,
+    saves,
+    callWebApi,
+    isLoggedIn,
+    shared,
+    user,
+    webLoading,
+  ]);
 
   const askQuora = async () => {
     if (!isLoggedIn) {
@@ -355,24 +379,48 @@ const BotChat = ({
                 </QuoraDid>
               ) : (
                 <div className="agains">
-                  <SelectionBtn
-                    left={true}
-                    onClick={() => onSubmit(item.id, item.query, item.option)}>
-                    <RepeatIcon color="blackAlpha.600" width={25} height={25} />
-                    <p>
-                      Do you want me to
-                      <br />
-                      answer it again?
-                    </p>
-                  </SelectionBtn>
-                  <SelectionBtn left={true} onClick={() => askQuora()}>
-                    <Search2Icon
-                      color="blackAlpha.600"
-                      width={25}
-                      height={25}
-                    />
-                    <p>Get answer from human expert (takes 1 hour)</p>
-                  </SelectionBtn>
+                  {loading ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                        height: "100px",
+                      }}>
+                      <Skeleton h={6} width="95%" />
+                      <div style={{ marginTop: "10px" }}></div>
+                      <Skeleton h={6} width="95%" />
+                      <div style={{ marginTop: "10px" }}></div>
+                      <Skeleton className="loading" width="95%" h={6} />
+                    </div>
+                  ) : (
+                    <>
+                      <SelectionBtn
+                        left={true}
+                        onClick={() =>
+                          onSubmit(item.id, item.query, item.option)
+                        }>
+                        <RepeatIcon
+                          color="blackAlpha.600"
+                          width={25}
+                          height={25}
+                        />
+                        <p>
+                          Do you want me to
+                          <br />
+                          answer it again?
+                        </p>
+                      </SelectionBtn>
+                      <SelectionBtn left={true} onClick={() => askQuora()}>
+                        <Search2Icon
+                          color="blackAlpha.600"
+                          width={25}
+                          height={25}
+                        />
+                        <p>Get answer from human expert (takes 1 hour)</p>
+                      </SelectionBtn>
+                    </>
+                  )}
                 </div>
               )}
             </ChatSlideInner>

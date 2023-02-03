@@ -199,6 +199,16 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
           <>
             <Radio
               onClick={() => {
+                authService.signOut();
+                // router.push({
+                //   pathname: `/`,
+                // });
+                window.location.href = "/";
+              }}>
+              Logout
+            </Radio>
+            <Radio
+              onClick={() => {
                 router.push({
                   pathname: `/chat`,
                   query: {
@@ -208,21 +218,6 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
               }}>
               Chat
             </Radio>
-            <Radio
-              onClick={() => {
-                authService.signOut();
-                router.push({
-                  pathname: `/`,
-                  query: {
-                    domain: job,
-                  },
-                });
-
-              }
-              }>
-              Logout
-            </Radio>
-            
           </>
         );
       case "share":
@@ -244,6 +239,43 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
 
       default:
         return <></>;
+    }
+  };
+
+  const returnUnloggedIn = () => {
+    switch (page) {
+      case "main":
+      case "chat":
+      case "my":
+        return (
+          <>
+            <NaviButton
+              onClick={() => {
+                window.open("https://discord.gg/8Gt3gXhyQH");
+              }}>
+              <Image src="/discord.svg" width={20} height={20} alt="discord" />
+              <p>Join</p>
+            </NaviButton>
+            <NaviButton
+              onClick={() => {
+                setIsFeedback(true);
+              }}>
+              <Image src="/message.svg" width={15} height={15} alt="mypage" />
+              <p>Feedback</p>
+            </NaviButton>
+            <NaviButton
+              onClick={() => {
+                window.open("mailto:contact@diceyai.com");
+              }}>
+              <EmailIcon />
+              <p>Contact</p>
+            </NaviButton>
+            <Radio className="icon" onClick={() => doLogin()}>
+              Login
+            </Radio>
+          </>
+        );
+      case "share":
     }
   };
 
@@ -274,15 +306,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
         )}
       </div>
       <div className="icons">
-        {user ? (
-          <>{returnNavi()}</>
-        ) : (
-          <>
-            <Radio className="icon" onClick={() => doLogin()}>
-              Login
-            </Radio>
-          </>
-        )}
+        {user ? <>{returnNavi()}</> : <>{returnUnloggedIn()}</>}
       </div>
       <FeedbackModal
         isOpen={isFeedback}

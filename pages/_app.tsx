@@ -13,6 +13,7 @@ import Script from "next/script";
 import { authService } from "../utils/fbase";
 import TagManager, { TagManagerArgs } from "react-gtm-module";
 import Head from "next/head";
+import {uuid} from "uuidv4"
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { darkMode, isLoggedIn, setIsLoggedIn, setUser } = useChatStore();
@@ -44,7 +45,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const count = localStorage.getItem("logInCount");
     if (!count) localStorage.setItem("logInCount", JSON.stringify(0));
-    // 유저가 제작한 랜딩페이지에 들어가는 사람들까지 로그인 검사를 하면 속도가 느려지니까
+    const uuidd = localStorage.getItem("uuid");
+    if (!uuidd) localStorage.setItem("uuid", JSON.stringify(uuid()));
+
     authService.onAuthStateChanged((user) => {
       if (user) {
         const body = {
