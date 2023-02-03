@@ -25,6 +25,7 @@ const AdminPage = () => {
   const [password, setPassword] = useState<string>("");
   const [pass, setPass] = useState(false);
   const [chattings, setChattings] = useState<any>();
+  const [allChats, setAllChats] = useState<any>();
   const [person, setPerson] = useState("");
   const [domains, setDomains] = useState("");
   const [search, setSearch] = useState(false);
@@ -42,7 +43,6 @@ const AdminPage = () => {
   }, []);
 
   const init = async () => {
-    console.log("zz");
     setSearch(false);
 
     await dbService
@@ -53,8 +53,13 @@ const AdminPage = () => {
         const response = res.docs.map((doc: any) => {
           return { ...doc.data(), id: doc.id };
         });
+        setAllChats(response);
         setChattings(response);
       });
+  };
+
+  const reset = () => {
+    setChattings(allChats);
   };
 
   const returnDomainQuestions = (domain: string) => {
@@ -112,17 +117,11 @@ const AdminPage = () => {
   };
 
   const findByName = async () => {
-    await dbService
-      .collection("chats")
-      .where("displayName", "==", person)
-      .get()
-      .then((res) => {
-        const response = res.docs.map((doc: any) => {
-          return { ...doc.data(), id: doc.id };
-        });
-        setChattings(response);
-        setSearch(true);
-      });
+    let modified = [...allChats];
+    modified.filter((doc) => doc.displayName === person);
+
+    setChattings(modified);
+    setSearch(true);
   };
 
   return (
@@ -156,7 +155,7 @@ const AdminPage = () => {
               </Button>
               <Button
                 onClick={() => {
-                  init();
+                  reset();
                 }}>
                 Reset
               </Button>
