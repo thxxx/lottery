@@ -10,7 +10,7 @@ const DS = [
   "software",
   "agriculture",
   "law",
-  "medicine",
+  "science",
   "music",
   "philosophy",
   "business",
