@@ -8,8 +8,8 @@ import ChatSlideInner from "./ChatSlide";
 
 type UserChatProps = {
   text: string;
-  displayName: string;
-  photoURL: string;
+  displayName?: string;
+  photoURL?: string;
 };
 
 const UserChat = ({ text, displayName, photoURL }: UserChatProps) => {
@@ -20,7 +20,9 @@ const UserChat = ({ text, displayName, photoURL }: UserChatProps) => {
       allowTouchMove={false}
       scrollbar={{ draggable: true }}>
       <CustomSwipeSlide>
-        <ChatSlideInner src={photoURL} name={displayName}>
+        <ChatSlideInner
+          src={photoURL ? photoURL : "favicon.png"}
+          name={displayName ? displayName : "You"}>
           <div
             className="main"
             dangerouslySetInnerHTML={{ __html: text as string }}

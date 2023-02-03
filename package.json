@@ -33,6 +33,7 @@
     "styled-icons": "^10.47.0",
     "swiper": "^8.4.6",
     "uuid": "^9.0.0",
+    "uuidv4": "^6.2.13",
     "zustand": "^4.2.0"
   },
   "devDependencies": {

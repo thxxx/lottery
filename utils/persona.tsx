@@ -100,7 +100,7 @@ export const DOMAINS: DomainType[] = [
     id: 9,
     name: "Metthew",
     desc: "Hi, I am Matthew. I am an accomplished entrepreneur with expertise in the business field.\
-          Feel free to ask me any questions.",
+          <br /> Feel free to ask me any questions.",
   },
   {
     blackIcon: (

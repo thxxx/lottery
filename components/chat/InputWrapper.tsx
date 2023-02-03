@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import { ArrowForwardIcon, CheckIcon, CloseIcon } from "@chakra-ui/icons";
-import { Button, Textarea } from "@chakra-ui/react";
+import { Button, Textarea, Toast, useToast } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { PromptType, prompts } from "../../utils/prompts";
@@ -29,8 +29,9 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
   const [nowPrompts, setNowPrompts] = useState<PromptType[]>();
   const [option, setOption] = useState(0);
   const [prompt, setPrompt] = useState("");
-  const { job } = useChatStore();
+  const { job, isLoggedIn } = useChatStore();
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  const toast = useToast();
   let isEnd = useRef(false);
 
   useEffect(() => {
@@ -48,16 +49,45 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
 
   const callSubmit = useCallback(() => {
     if (status !== "end") {
-      onSubmit(text, option);
       setStatus("end");
       setOption(0);
       isEnd.current = false;
+      if (!isLoggedIn) {
+        const countLogin = localStorage.getItem("logInCount");
+        if (countLogin) {
+          const count = parseInt(JSON.parse(countLogin));
+          if (count > 4) {
+            // 로그인하라고 해야함
+            toast({
+              description: "You can ask 5 question before login.",
+              status: "warning",
+              duration: 3000,
+            });
+            setStatus("typing...");
+            return;
+          } else {
+            // 로그인 안했어도 채팅할 수 있음
+            localStorage.setItem("logInCount", JSON.stringify(count + 1));
+            onSubmit(text, option);
+          }
+        } else {
+          toast({
+            description: "You have to login to ask",
+            status: "warning",
+            duration: 3000,
+          });
+          setStatus("typing...");
+          return;
+        }
+      } else {
+        onSubmit(text, option);
+      }
     }
-  }, [status, text, option, onSubmit]);
+  }, [status, text, option, onSubmit, isLoggedIn]);
 
   useEffect(() => {
     if (status === "finishing") {
-      console.log("1.2초 세고, 입력 없으면 그대로 제출");
+      // console.log("1.2초 세고, 입력 없으면 그대로 제출");
       const to = setTimeout(() => {
         if (isEnd.current) {
           // if (inputRef.current) inputRef.current?.style.height = "52px";
@@ -152,7 +182,7 @@ const InputWrapper = ({ text, loading, setText, onSubmit }: InputType) => {
                 );
               })}
             </CustomMenuList>
-            <PromptButton as={Button}>
+            <PromptButton as={Button} onClick={() => setPrompt("")}>
               {prompt ? (
                 <>
                   <CheckIcon className="icon" color="purple.400" w={3} mr={1} />

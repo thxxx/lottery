@@ -28,12 +28,12 @@ const Home: NextPage = () => {
 
   const onSubmit = useCallback(
     (inputText: string, option: number) => {
-      if (!user) {
-        onOpen();
-        return;
-      }
+      // if (!user) {
+      //   onOpen();
+      //   return;
+      // }
 
-      console.log("전부 같지만 채팅 페이지로 이동", inputText, option);
+      // console.log("전부 같지만 채팅 페이지로 이동", inputText, option);
       router.push({
         pathname: `/chat`,
         query: { isFromHome: true, inputQuery: inputText, inputOption: option },

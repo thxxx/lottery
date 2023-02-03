@@ -8,6 +8,9 @@ import { Menu, MenuButton, MenuList } from "@chakra-ui/react";
 import { CustomMenuList } from "../../components/chat/InputWrapper";
 import BottomSheet from "../../components/BottomSheet";
 import useWindowDimensions from "../../hook/useWindowDimensions";
+import { useChatStore } from "../../utils/store";
+import { dbService } from "../../utils/fbase";
+import { LogDataType, LogType, notLogList } from "../../utils/notLoggingList";
 
 type IconContainerProps = {
   toggle: boolean;
@@ -33,6 +36,7 @@ const IconContainer = ({
   clickWebOpen,
 }: IconContainerProps) => {
   const [isBottomOpen, setIsBottomOpen] = useState(false);
+  const { isLoggedIn, user } = useChatStore();
   const toast = useToast();
   const { width } = useWindowDimensions();
 
@@ -51,9 +55,31 @@ const IconContainer = ({
   };
 
   const share = async (type: "link" | "text") => {
-    if (type === "link")
+    if (!isLoggedIn) {
+      toast({
+        description: "You have to login to share",
+      });
+      return;
+    }
+
+    const uuidd = localStorage.getItem("uuid");
+    let body: LogDataType = {
+      questionId: id,
+      userId: user ? user.uid : uuidd ? uuidd : "notLoggedIn",
+      loggedAt: new Date(),
+      type: LogType.SHARE,
+    };
+
+    if (type === "link") {
+      body.type = LogType.SHARE;
       copyToClipboard("https://getaid.ai/share?id=" + id + "&saved=" + index);
-    if (type === "text") copyToClipboard(response.replace(/<[^>]*>/g, " "));
+    }
+    if (type === "text") {
+      body.type = LogType.COPY;
+      copyToClipboard(response.replace(/<[^>]*>/g, " "));
+    }
+    if (user && notLogList.includes(user.uid)) return;
+    await dbService.collection("log").add(body);
   };
 
   return (

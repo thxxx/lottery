@@ -14,7 +14,7 @@ import { dbService } from "../../utils/fbase";
 import IconContainer from "./IconContainer";
 import useWindowDimensions from "../../hook/useWindowDimensions";
 import { BotChatWrapper } from "./UserChat";
-import { Skeleton } from "@chakra-ui/react";
+import { Skeleton, useToast } from "@chakra-ui/react";
 import TextAnswer from "./TextAnswer";
 import ChatSlideInner from "./ChatSlide";
 import SwipeNext from "./SwipeNext";
@@ -23,6 +23,8 @@ import router from "next/router";
 import { DOMAINS } from "../../utils/persona";
 import { callApis } from "../../utils/callApi";
 import Image from "next/image";
+import ToastMessage from "../../components/ToastMessage";
+import { LogDataType, LogType, notLogList } from "../../utils/notLoggingList";
 
 const BWIDTH = 150;
 
@@ -45,11 +47,12 @@ const BotChat = ({
   savedIndex,
   loading,
 }: BotChatType) => {
-  const { chats, setChats } = useChatStore();
+  const { user, chats, isLoggedIn, setChats } = useChatStore();
   const [toggle, setToggle] = useState(false);
   const [asked, setAsked] = useState(false);
   const [temps, setTemps] = useState<SavedChatType[]>();
   const [webLoading, setWebLoading] = useState(false);
+  const toast = useToast();
   const { width } = useWindowDimensions();
 
   useEffect(() => {
@@ -57,6 +60,14 @@ const BotChat = ({
   }, []);
 
   const saveThisChat = async (idx: number) => {
+    if (!isLoggedIn) {
+      // 로그인 안했으면 금지
+      toast({
+        description: "You have to login to save your history.",
+      });
+      return;
+    }
+
     // chats store도 바꿔야하고
     // firebase도 바꿔야함
     const filteredTemp = temps?.filter((doc: any) => doc.id === item.id)[0];
@@ -66,6 +77,23 @@ const BotChat = ({
     const isNotEmpty =
       (!saves && item.saved.length > 0) ||
       (saves && filteredTemp?.saved.length > 0);
+
+    if (!isSavedNow)
+      toast({
+        render: () => (
+          <ToastMessage>
+            You can see it in &nbsp;
+            <Image
+              src="/myWhite.png"
+              width={20}
+              height={20}
+              alt="mypage"
+            />{" "}
+            &nbsp; My page.
+          </ToastMessage>
+        ),
+        duration: 3000,
+      });
 
     let modified = {
       ...item,
@@ -128,7 +156,6 @@ const BotChat = ({
       headers: { "Content-Type": "application/json" },
     });
     const output = await response.json();
-    console.log(output, "웹, 응확답인", output[0]);
 
     const ma = output[0].map((doc: any) => {
       return {
@@ -137,7 +164,6 @@ const BotChat = ({
         snippet: doc.snippet,
       };
     });
-    console.log(ma, "웹, 응확답인");
 
     return ma;
   }, [item.query]);
@@ -166,16 +192,49 @@ const BotChat = ({
       setChats(addedChats);
     }
 
+    setWebLoading(false);
+
+    if (!isLoggedIn) return;
+
     // update db
     const modified = {
       ...item,
       webLinks: response,
     };
     await updateFirebase(modified);
-    setWebLoading(false);
-  }, [chats, item, updateFirebase, setChats, setSaves, saves, callWebApi]);
+
+    const uuidd = localStorage.getItem("uuid");
+    const body: LogDataType = {
+      questionId: modified.id,
+      userId: user ? user.uid : uuidd ? uuidd : "notLoggedIn",
+      loggedAt: new Date(),
+      type: LogType.VIEW,
+    };
+    if (user && notLogList.includes(user.uid)) return;
+    await dbService.collection("log").add(body);
+
+    if (shared) window.location.reload();
+  }, [
+    chats,
+    item,
+    updateFirebase,
+    setChats,
+    setSaves,
+    saves,
+    callWebApi,
+    isLoggedIn,
+    shared,
+    user,
+    webLoading,
+  ]);
 
   const askQuora = async () => {
+    if (!isLoggedIn) {
+      toast({
+        description: "You have to login to ask",
+      });
+      return;
+    }
     setAsked(true);
     const modified = {
       ...item,
@@ -315,28 +374,53 @@ const BotChat = ({
                       clicked={false}>
                       My Page
                     </Radio>
+                    It will takes about 1 hour.
                   </p>
                 </QuoraDid>
               ) : (
                 <div className="agains">
-                  <SelectionBtn
-                    left={true}
-                    onClick={() => onSubmit(item.id, item.query, item.option)}>
-                    <RepeatIcon color="blackAlpha.600" width={25} height={25} />
-                    <p>
-                      Do you want me to
-                      <br />
-                      answer it again?
-                    </p>
-                  </SelectionBtn>
-                  <SelectionBtn left={true} onClick={() => askQuora()}>
-                    <Search2Icon
-                      color="blackAlpha.600"
-                      width={25}
-                      height={25}
-                    />
-                    <p>Get Answer from Quora</p>
-                  </SelectionBtn>
+                  {loading ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                        height: "100px",
+                      }}>
+                      <Skeleton h={6} width="95%" />
+                      <div style={{ marginTop: "10px" }}></div>
+                      <Skeleton h={6} width="95%" />
+                      <div style={{ marginTop: "10px" }}></div>
+                      <Skeleton className="loading" width="95%" h={6} />
+                    </div>
+                  ) : (
+                    <>
+                      <SelectionBtn
+                        left={true}
+                        onClick={() =>
+                          onSubmit(item.id, item.query, item.option)
+                        }>
+                        <RepeatIcon
+                          color="blackAlpha.600"
+                          width={25}
+                          height={25}
+                        />
+                        <p>
+                          Do you want me to
+                          <br />
+                          answer it again?
+                        </p>
+                      </SelectionBtn>
+                      <SelectionBtn left={true} onClick={() => askQuora()}>
+                        <Search2Icon
+                          color="blackAlpha.600"
+                          width={25}
+                          height={25}
+                        />
+                        <p>Get answer from human expert (takes 1 hour)</p>
+                      </SelectionBtn>
+                    </>
+                  )}
                 </div>
               )}
             </ChatSlideInner>

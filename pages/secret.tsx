@@ -31,8 +31,6 @@ const AdminPage: NextPage = () => {
   };
 
   const submit = async (text: string, item: AskType) => {
-    console.log("제출", text, item);
-
     let ms = _.cloneDeep(item.saved);
     ms.push(item.saved.length + 1);
     let mt = _.cloneDeep(item.text as string[]);
@@ -50,7 +48,7 @@ const AdminPage: NextPage = () => {
       .doc(item.id as string)
       .update(body)
       .then((res) => {
-        console.log("결과 출력", res);
+        // console.log("결과 출력", res);
       });
 
     if (asks) {
@@ -69,7 +67,9 @@ const AdminPage: NextPage = () => {
         return (
           <Contents key={item.id}>
             {/* <div>{dateToText(new Date(item.askedAt))}</div> */}
-            <div className="answer">Query</div>
+            <div className="answer">
+              Query <span>{item.displayName}</span>
+            </div>
             <Heading as="h4" size="md">
               {item.query}
             </Heading>
