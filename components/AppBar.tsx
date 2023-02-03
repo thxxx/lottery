@@ -46,7 +46,7 @@ const AppBar = ({ page, onClick, radio }: AppBarType) => {
     await authService
       .signInWithPopup(provider)
       .then((res) => {
-        router.replace(router.asPath);
+        window.location.reload();
         console.log("Successfully Logged In!");
       })
       .catch((err) => {
