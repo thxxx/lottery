@@ -23,6 +23,7 @@ import router from "next/router";
 import { DOMAINS } from "../../utils/persona";
 import { callApis } from "../../utils/callApi";
 import Image from "next/image";
+import ToastMessage from "../../components/ToastMessage";
 
 const BWIDTH = 150;
 
@@ -75,6 +76,23 @@ const BotChat = ({
     const isNotEmpty =
       (!saves && item.saved.length > 0) ||
       (saves && filteredTemp?.saved.length > 0);
+
+    if (!isSavedNow)
+      toast({
+        render: () => (
+          <ToastMessage>
+            You can see it in &nbsp;
+            <Image
+              src="/myWhite.png"
+              width={20}
+              height={20}
+              alt="mypage"
+            />{" "}
+            &nbsp; My page.
+          </ToastMessage>
+        ),
+        duration: 3000,
+      });
 
     let modified = {
       ...item,

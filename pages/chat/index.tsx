@@ -37,7 +37,6 @@ const ChatPage: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const {
     isLoggedIn,
-    setIsLoggedIn,
     chats,
     queries,
     job,
